@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thế Giới Học Tập Của Bé</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <style>
+        :root { --primary: #e91e63; --blue: #2196F3; --orange: #ff9800; --purple: #9c27b0; --yellow: #ffeb3b; --bg: #e0f7fa; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; }
+
+        /* HEADER VÀNG NHƯ ẢNH */
+        .top-header { 
+            background: var(--yellow); padding: 10px 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 5px solid #fbc02d; border-radius: 0 0 20px 20px;
+        }
+        .header-info { font-weight: bold; color: #333; display: flex; align-items: center; gap: 5px; }
+        
+        /* CỤM ĐĂNG KÝ / ĐĂNG NHẬP GÓC PHẢI */
+        .auth-zone { display: flex; align-items: center; gap: 8px; position: relative; }
+        .auth-zone input { padding: 8px 12px; border-radius: 15px; border: 2px solid #fff; outline: none; width: 140px; font-size: 13px; }
+        .btn-auth { padding: 7px 12px; border-radius: 12px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .btn-reg { background: var(--blue); }
+        .btn-login { background: #4CAF50; }
+        .btn-out { background: #f44336; }
+        .btn-auth:hover { opacity: 0.9; transform: scale(1.05); }
+
+        /* NAVIGATION BUTTONS (HỒNG, LAM, CAM, TÍM) */
+        .nav-container { display: flex; justify-content: center; gap: 15px; padding: 20px; flex-wrap: wrap; }
+        .btn-nav { 
+            padding: 12px 25px; border-radius: 30px; text-decoration: none; 
+            color: white; font-weight: bold; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 5px rgba(0,0,0,0.1); transition: 0.2s; cursor: pointer;
+        }
+        .bg-pink { background: var(--primary); }
+        .bg-blue { background: var(--blue); }
+        .bg-orange { background: var(--orange); }
+        .bg-purple { background: var(--purple); }
+
+        /* MAIN BOX */
+        .main-box { 
+            background: white; margin: 0 auto 30px; width: 92%; max-width: 1000px; 
+            border-radius: 30px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .welcome-section { display: flex; align-items: center; gap: 30px; margin-bottom: 10px; width: 100%; justify-content: center; }
+        .welcome-img { width: 220px; }
+        .welcome-text h2 { color: var(--primary); margin-bottom: 10px; }
+        
+        /* VINH DANH GỌN GÀNG */
+        .leaderboard-row { display: flex; gap: 20px; width: 100%; margin-top: 20px; border-top: 2px dashed #eee; padding-top: 20px; }
+        .board-card { flex: 1; background: #fffde7; border-radius: 20px; padding: 15px; border: 2px solid #fff59d; min-height: 150px; }
+        .board-card h3 { margin: 0 0 10px 0; font-size: 16px; text-align: center; color: #d84315; }
+        .rank-item { display: flex; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #fff; font-size: 14px; font-weight: bold; }
+        
+        #error-msg { color: #d32f2f; font-size: 11px; position: absolute; top: 40px; right: 0; font-weight: bold; background: #ffcdd2; padding: 2px 8px; border-radius: 5px; display: none; z-index: 10; }
+    </style>
+</head>
+<body>
+
+    <div class="top-header">
+        <div class="header-info">🏠 Phạm Quốc Đại | 📞 0393125184</div>
+        
+        <div class="auth-zone">
+            <div id="auth-form" style="display: flex; gap: 5px; align-items: center;">
+                <input type="text" id="username" placeholder="Nhập tên bé...">
+                <button class="btn-auth btn-reg" onclick="handleAuth('register')">Đăng Ký</button>
+                <button class="btn-auth btn-login" onclick="handleAuth('login')">Đăng Nhập</button>
+                <div id="error-msg"></div>
+            </div>
+
+            <div id="user-logged" style="display: none; align-items: center; gap: 10px;">
+                <span style="font-weight: bold; color: #c2185b;">Chào mừng bé: <span id="display-name" style="color: #1976D2;"></span>! ✨</span>
+                <button class="btn-auth btn-out" onclick="logout()">Thoát</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <a href="index.html" class="btn-nav bg-pink">🏠 Trang chủ</a>
+        <a href="toan.html" class="btn-nav bg-blue" onclick="return checkLogin()">🔢 Toán Học</a>
+        <a href="javascript:void(0)" class="btn-nav bg-orange" onclick="checkLogin('Tiếng Việt')">📖 Tiếng Việt</a>
+        <a href="TA.html" class="btn-nav bg-purple" onclick="return checkLogin()">🔤 Tiếng Anh</a>
+    </div>
+
+    <div class="main-box">
+        <div class="welcome-section">
+            <img src="https://i.ibb.co/wZ9Yz65T/anh2.png" class="welcome-img">
+            <div class="welcome-text">
+                <h2>Chào mừng bé yêu đến với Thế Giới Học Tập!</h2>
+                <div style="background: #fff9c4; padding: 15px; border-radius: 20px; font-weight: bold; font-size: 14px; line-height: 1.6;">
+                    Bé ơi, hãy lưu ý nhé: ✨<br>
+                    1. <b>Vui lòng đăng nhập</b> để bắt đầu học tập.<br>
+                    2. Nếu chưa có tài khoản, bé hãy <b>Đăng ký</b> ở góc phải nhé.<br>
+                    3. Cố gắng đạt điểm cao để có tên trên Bảng Vàng!
+                </div>
+            </div>
+        </div>
+
+        <div class="leaderboard-row">
+            <div class="board-card">
+                <h3>🏆 BẢNG VÀNG HÔM NAY</h3>
+                <div id="top-day">Đang tải...</div>
+            </div>
+            <div class="board-card">
+                <h3>👑 NGÔI SAO CỦA THÁNG</h3>
+                <div id="top-month">Đang tải...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CẤU HÌNH FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWBs-QTOaRpylR3ysfKvYvIO38VJpNbKk",
+            authDomain: "toan-bibon.firebaseapp.com",
+            databaseURL: "https://toan-bibon-default-rtdb.firebaseio.com",
+            projectId: "toan-bibon",
+            storageBucket: "toan-bibon.firebasestorage.app",
+            messagingSenderId: "14060225460",
+            appId: "1:14060225460:web:d04073d113e7076f3828e1"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function checkState() {
+            const name = localStorage.getItem('kidName');
+            if (name) {
+                document.getElementById('auth-form').style.display = 'none';
+                document.getElementById('user-logged').style.display = 'flex';
+                document.getElementById('display-name').innerText = name;
+            }
+            loadLeaderboard();
+        }
+
+        // CHẶN HỌC CHUI
+        function checkLogin(subjectName) {
+            const isLogged = localStorage.getItem('kidName');
+            if (!isLogged) {
+                alert("Bé ơi! Vui lòng ĐĂNG NHẬP để vào học nhé.\nNếu chưa có tài khoản, bé hãy chọn ĐĂNG KÝ ở góc phải nha!");
+                return false;
+            }
+            if (subjectName) {
+                alert("Môn " + subjectName + " đang được soạn bài, bé quay lại sau nhé!");
+                return false;
+            }
+            return true;
+        }
+
+        // XỬ LÝ ĐĂNG KÝ / ĐĂNG NHẬP
+        function handleAuth(mode) {
+            const nameInput = document.getElementById('username');
+            const name = nameInput.value.trim();
+            if(!name) { showErr("Bé hãy nhập tên nhé!"); return; }
+
+            database.ref('users/' + name).once('value', snapshot => {
+                const exists = snapshot.exists();
+                if (mode === 'register') {
+                    if (exists) {
+                        showErr("Tên bị trùng rồi bé ơi!");
+                    } else {
+                        database.ref('users/' + name).set({ createdAt: Date.now() }).then(() => loginSuccess(name));
+                    }
+                } else {
+                    if (exists) {
+                        loginSuccess(name);
+                    } else {
+                        showErr("Tên chưa đăng ký bé ơi!");
+                    }
+                }
+            });
+        }
+
+        function showErr(msg) {
+            const err = document.getElementById('error-msg');
+            err.innerText = msg;
+            err.style.display = 'block';
+            setTimeout(() => { err.style.display = 'none'; }, 3000);
+        }
+
+        function loginSuccess(name) {
+            localStorage.setItem('kidName', name);
+            location.reload();
+        }
+
+        function logout() {
+            localStorage.removeItem('kidName');
+            location.reload();
+        }
+
+        // TỔNG HỢP DỮ LIỆU TOÁN + TIẾNG ANH LÊN BẢNG VÀNG
+        function loadLeaderboard() {
+            const mathRef = database.ref('results').once('value');
+            const englishRef = database.ref('english_history').once('value');
+
+            Promise.all([mathRef, englishRef]).then(snapshots => {
+                let allData = [];
+                
+                // Gom dữ liệu môn Toán
+                snapshots[0].forEach(c => {
+                    let val = c.val();
+                    if(val.name && val.score) allData.push({ name: val.name, score: parseInt(val.score), time: val.time || 0 });
+                });
+
+                // Gom dữ liệu môn Tiếng Anh
+                snapshots[1].forEach(c => {
+                    let val = c.val();
+                    if(val.studentName && val.result) {
+                        let scoreValue = parseInt(val.result.split('/')[0]) || 0;
+                        allData.push({ name: val.studentName, score: scoreValue, time: val.timestamp || 0 });
+                    }
+                });
+
+                const now = Date.now();
+                const render = (period, elementId) => {
+                    let filtered = allData.filter(r => (now - r.time) < period);
+                    let best = {};
+                    filtered.forEach(r => { 
+                        if(!best[r.name] || r.score > best[r.name]) best[r.name] = r.score; 
+                    });
+                    
+                    let sorted = Object.keys(best).map(n => ({n, s: best[n]}))
+                                 .sort((a,b) => b.s - a.s).slice(0, 5);
+                    
+                    let html = "";
+                    const m = ["🥇","🥈","🥉","4","5"];
+                    sorted.forEach((it, i) => {
+                        html += `<div class="rank-item"><span>${m[i]} ${it.n}</span><span style="color:#e91e63">${it.s}đ</span></div>`;
+                    });
+                    document.getElementById(elementId).innerHTML = html || "<div style='font-size:12px;color:#999;text-align:center;margin-top:20px;'>Chưa có dữ liệu</div>";
+                };
+
+                render(24*60*60*1000, 'top-day');
+                render(30*24*60*60*1000, 'top-month');
+            });
+        }
+        window.onload = checkState;
+    </script>
+</body>
+</html>

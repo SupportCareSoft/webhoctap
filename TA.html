@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibon English - Học Tiếng Anh Cùng Bé</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root { 
+            --primary: #e91e63; --blue: #2196F3; --orange: #ff9800; 
+            --purple: #9c27b0; --yellow: #ffeb3b; --bg: #e0f7fa; 
+            --correct: #2ecc71;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* HEADER VÀNG ĐỒNG BỘ TRANG CHỦ */
+        .top-header { 
+            background: var(--yellow); padding: 10px 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 5px solid #fbc02d; border-radius: 0 0 20px 20px;
+            margin-bottom: 20px;
+        }
+        .header-info { font-weight: bold; color: #333; }
+        .user-logged { display: flex; align-items: center; gap: 10px; font-weight: bold; color: #c2185b; }
+
+        /* NÚT VỀ TRANG CHỦ */
+        .btn-home {
+            background: var(--primary); color: white; padding: 10px 20px; 
+            border-radius: 25px; text-decoration: none; font-weight: bold; 
+            box-shadow: 0 4px rgba(0,0,0,0.1); transition: 0.2s;
+        }
+        .btn-home:active { transform: translateY(2px); box-shadow: none; }
+
+        /* VÙNG CHỨA NỘI DUNG */
+        .main-box { 
+            background: white; margin: 0 auto 30px; width: 92%; max-width: 900px; 
+            border-radius: 30px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* MENU CHỦ ĐỀ - DẠNG NÚT BO TRÒN */
+        .menu-container { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .menu-btn {
+            padding: 10px 20px; border: none; border-radius: 30px; background: #f0f0f0;
+            font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 3px #ddd;
+        }
+        .menu-btn.active { background: var(--purple); color: white; box-shadow: 0 3px #7b1fa2; }
+
+        /* LƯỚI CÂU HỎI */
+        .quiz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; }
+        .card {
+            background: #fff; border: 2px solid #f0f0f0; border-radius: 25px;
+            padding: 20px; text-align: center; transition: 0.3s;
+        }
+        .card:hover { border-color: var(--blue); transform: translateY(-3px); }
+
+        .speak-btn {
+            background: var(--blue); color: white; border: none; border-radius: 50%;
+            width: 45px; height: 45px; cursor: pointer; margin-bottom: 10px; font-size: 20px;
+            box-shadow: 0 4px #1976D2;
+        }
+        .speak-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        .card img { width: 110px; height: 110px; object-fit: contain; margin-bottom: 15px; }
+
+        /* LỰA CHỌN VÀ NHẬP LIỆU */
+        .opt-zone { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .opt-zone button { 
+            padding: 8px 15px; border-radius: 12px; border: 2px solid #eee; 
+            background: white; cursor: pointer; font-weight: bold; 
+        }
+        .opt-zone button:hover { background: #e3f2fd; border-color: var(--blue); }
+
+        .input-zone { display: none; width: 100%; }
+        .eng-input {
+            width: 85%; padding: 12px; border: 3px solid #eee; border-radius: 15px;
+            text-align: center; font-size: 18px; font-weight: bold; outline: none;
+        }
+        .eng-input.is-correct { border-color: var(--correct); background: #f1fdf5; }
+
+        /* NÚT NỘP BÀI */
+        .btn-submit {
+            padding: 15px 60px; border-radius: 50px; border: none;
+            background: #4CAF50; color: white; font-size: 20px; font-weight: bold;
+            cursor: pointer; margin: 30px 0; box-shadow: 0 6px #388E3C;
+        }
+        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
+
+        @media (max-width: 600px) { .quiz-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="top-header">
+        <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+        <div class="user-logged">
+            <span>🚀 Bé đang học: <span id="display-name" style="color: var(--blue);">...</span></span>
+        </div>
+    </div>
+
+    <div class="main-box">
+        <h2 style="color: var(--purple); margin-top: 0;">🔤 Thử Thách Tiếng Anh</h2>
+        
+        <div class="menu-container" id="menu">
+            <button class="menu-btn active" onclick="changeTopic('ANIMALS', this)">🐶 Animals</button>
+            <button class="menu-btn" onclick="changeTopic('FRUITS', this)">🍎 Fruits</button>
+            <button class="menu-btn" onclick="changeTopic('COLORS', this)">🎨 Colors</button>
+            <button class="menu-btn" onclick="changeTopic('NUMBERS', this)">🔢 Numbers</button>
+        </div>
+
+        <div class="quiz-grid" id="quiz-container"></div>
+
+        <button class="btn-submit" id="submitBtn" onclick="sendReport()">Nộp bài & Lưu Điểm 🚀</button>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWBs-QTOaRpylR3ysfKvYvIO38VJpNbKk",
+            authDomain: "toan-bibon.firebaseapp.com",
+            databaseURL: "https://toan-bibon-default-rtdb.firebaseio.com",
+            projectId: "toan-bibon",
+            storageBucket: "toan-bibon.firebasestorage.app",
+            messagingSenderId: "14060225460",
+            appId: "1:14060225460:web:d04073d113e7076f3828e1"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        const kidName = localStorage.getItem('kidName');
+        let activeTopic = 'ANIMALS';
+        let currentState = [];
+
+        const dataSet = {
+            ANIMALS: [
+                { img: "https://cdn-icons-png.flaticon.com/512/616/616408.png", ans: "dog", opts: ["cat", "dog", "ant"] },
+                { img: "https://cdn-icons-png.flaticon.com/512/616/616430.png", ans: "cat", opts: ["cat", "bat", "pig"] },
+                { img: "https://i.ibb.co/3mp8d46j/bird.webp", ans: "bird", opts: ["bird", "bee", "owl"] },
+				<!--https://cdn-icons-png.flaticon.com/512/2395/2395796.png-->
+				
+				<!--https://cdn-icons-png.flaticon.com/512/1998/1998627.png-->
+                { img: "https://i.ibb.co/pHWP2Hm/lion.jpg", ans: "lion", opts: ["bear", "lion", "tiger"] }
+				
+				
+            ],
+            FRUITS: [
+                { img: "https://cdn-icons-png.flaticon.com/512/415/415733.png", ans: "apple", opts: ["apple", "mango", "banana"] },
+                { img: "https://cdn-icons-png.flaticon.com/512/2909/2909787.png", ans: "banana", opts: ["pear", "banana", "grape"] }
+            ],
+            COLORS: [
+                { img: "https://cdn-icons-png.flaticon.com/512/2911/2911230.png", ans: "red", opts: ["blue", "red", "green"] }
+            ],
+            NUMBERS: [
+                { img: "https://cdn-icons-png.flaticon.com/512/3570/3570095.png", ans: "one", opts: ["one", "two", "three"] }
+            ]
+        };
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+
+        function changeTopic(topic, btn) {
+            activeTopic = topic;
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('quiz-container');
+            const items = dataSet[activeTopic] || [];
+            currentState = items.map(() => ({ done: false }));
+            
+            container.innerHTML = items.map((item, i) => `
+                <div class="card">
+                    <button class="speak-btn" onclick="speak('${item.ans}')">🔊</button>
+                    <br><img src="${item.img}">
+                    <div id="opt-box-${i}" class="opt-zone">
+                        ${item.opts.map(o => `<button onclick="handleChoice(${i}, '${o}', '${item.ans}')">${o}</button>`).join('')}
+                    </div>
+                    <div id="input-box-${i}" class="input-zone">
+                        <div style="color:var(--correct);font-weight:bold;font-size:14px;margin-bottom:8px">Đúng rồi! Bé hãy gõ lại:</div>
+                        <input type="text" class="eng-input" id="in-${i}" oninput="checkInput(${i}, '${item.ans}')" placeholder="...">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleChoice(i, chosen, correct) {
+            if (chosen === correct) {
+                document.getElementById(`opt-box-${i}`).style.display = 'none';
+                document.getElementById(`input-box-${i}`).style.display = 'block';
+                speak(correct);
+            } else { speak('Try again'); }
+        }
+
+        function checkInput(i, correct) {
+            const el = document.getElementById(`in-${i}`);
+            const isCorrect = el.value.trim().toLowerCase() === correct.toLowerCase();
+            currentState[i].done = isCorrect;
+            if (isCorrect) { el.classList.add('is-correct'); speak("Excellent"); }
+            else { el.classList.remove('is-correct'); }
+        }
+
+        async function sendReport() {
+            if(!kidName) { alert("Bé cần đăng nhập ở trang chủ!"); return; }
+            const score = currentState.filter(s => s.done).length;
+            const total = dataSet[activeTopic].length;
+            const btn = document.getElementById('submitBtn');
+
+            btn.disabled = true;
+            btn.innerText = "⏳ Đang lưu...";
+
+            try {
+                await db.ref('english_history').push({
+                    studentName: kidName,
+                    topic: activeTopic,
+                    result: `${score}/${total}`,
+                    date: new Date().toLocaleString('vi-VN'),
+                    timestamp: Date.now()
+                });
+                alert("Tuyệt vời! Bé " + kidName + " đã hoàn thành bài học.");
+                window.location.href = "index.html";
+            } catch (e) {
+                alert("Lỗi lưu điểm: " + e.message);
+                btn.disabled = false;
+                btn.innerText = "Nộp bài & Lưu Điểm 🚀";
+            }
+        }
+
+        window.onload = () => {
+            if (!kidName) {
+                alert("Bé hãy quay lại Trang Chủ để đăng nhập nhé!");
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('display-name').innerText = kidName;
+            }
+            render();
+        };
+    </script>
+</body>
+</html>

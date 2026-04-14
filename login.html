@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Bé Học Toán</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #e0f7fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        h2 { color: #e91e63; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: #2196F3; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        .btn-reg { background: #2196F3; color: white; }
+        .btn-login { background: #4CAF50; color: white; }
+        .error-msg { color: red; font-size: 14px; margin-top: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>Chào Bé Học Toán! 🎨</h2>
+    <input type="text" id="username" placeholder="Nhập tên của bé (VD: Bi Bon)">
+    <div id="error-msg" class="error-msg">Tên này đã có người sử dụng rồi!</div>
+    
+    <button class="btn btn-login" onclick="handleAuth('login')">Đăng Nhập</button>
+    <button class="btn btn-reg" onclick="handleAuth('register')">Đăng Ký Thành Viên Mới</button>
+    
+    <p style="font-size: 12px; color: #666; margin-top: 20px;">* Lưu ý: Tên bé dùng để lưu bảng vinh danh nên không được trùng nhau nhé!</p>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAWBs-QTOaRpylR3ysfKvYvIO38VJpNbKk",
+        authDomain: "toan-bibon.firebaseapp.com",
+        databaseURL: "https://toan-bibon-default-rtdb.firebaseio.com",
+        projectId: "toan-bibon",
+        storageBucket: "toan-bibon.firebasestorage.app",
+        messagingSenderId: "14060225460",
+        appId: "1:14060225460:web:d04073d113e7076f3828e1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function handleAuth(type) {
+        const name = document.getElementById('username').value.trim();
+        const errorElement = document.getElementById('error-msg');
+        
+        if (!name) { alert("Bé ơi, hãy nhập tên nhé!"); return; }
+
+        // Kiểm tra sự tồn tại của tên trong nhánh 'users'
+        database.ref('users/' + name).once('value', snapshot => {
+            const exists = snapshot.exists();
+
+            if (type === 'register') {
+                if (exists) {
+                    errorElement.style.display = 'block';
+                    errorElement.innerText = "Tên này đã có bạn dùng rồi, bé chọn tên khác nhé!";
+                } else {
+                    // Đăng ký mới
+                    database.ref('users/' + name).set({
+                        createdAt: Date.now(),
+                        totalScore: 0
+                    }).then(() => {
+                        loginSuccess(name);
+                    });
+                }
+            } else {
+                // Đăng nhập
+                if (exists) {
+                    loginSuccess(name);
+                } else {
+                    errorElement.style.display = 'block';
+                    errorElement.innerText = "Tên này chưa đăng ký, bé hãy bấm Đăng Ký nhé!";
+                }
+            }
+        });
+    }
+
+    function loginSuccess(name) {
+        localStorage.setItem('kidName', name);
+        window.location.href = "index.html"; // Chuyển đến trang chủ
+    }
+</script>
+</body>
+</html>

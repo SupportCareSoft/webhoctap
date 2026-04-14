@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toán Học Thông Minh - Bé Bi Học Tập</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <style>
+        :root { --yellow-header: #ffeb3b; --bg-light: #e0f7fa; --primary: #e91e63; --blue: #2196F3; --green: #4CAF50; --purple: #9c27b0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-light); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* Header vàng */
+        .top-header { background: var(--yellow-header); padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fbc02d; font-weight: bold; font-size: 14px; }
+        
+        /* Điều hướng căn giữa */
+        .nav-bar { background: white; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-row { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; }
+        .btn-home { background: var(--primary); color: white; padding: 10px 25px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 4px #ad1457; }
+        .kid-info-box { background: white; border: 2px solid var(--blue); padding: 8px 25px; border-radius: 25px; color: var(--blue); font-weight: bold; font-size: 18px; }
+
+        select { padding: 12px 20px; border-radius: 15px; border: 3px solid var(--blue); font-weight: bold; font-size: 18px; width: 450px; outline: none; }
+
+        /* Bố cục chính */
+        .main-wrapper { display: flex; justify-content: center; align-items: flex-start; padding: 20px; gap: 15px; flex-grow: 1; }
+        .chibi-side { width: 140px; flex-shrink: 0; position: sticky; top: 150px; }
+        .chibi-side img { width: 100%; }
+        .exercise-area { background: rgba(255, 255, 255, 0.5); padding: 30px; border-radius: 35px; max-width: 1100px; width: 100%; }
+        .math-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; width: 100%; }
+
+        .math-card { background: white; padding: 15px 25px; border-radius: 20px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        .num-box { background: #FFD54F; padding: 8px 12px; border-radius: 10px; font-weight: 900; font-size: 22px; min-width: 50px; text-align: center; }
+        .ans-input { width: 90px; height: 45px; border: 3px solid #eee; border-radius: 12px; text-align: center; font-size: 22px; font-weight: bold; outline: none; margin-left: auto; }
+        .ans-input.correct { border-color: var(--green) !important; background: #e8f5e9; }
+        .ans-input.wrong { border-color: var(--primary) !important; background: #ffebee; }
+
+        .action-footer { padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .btn-group { display: flex; gap: 15px; }
+        .btn-footer { padding: 15px 30px; border-radius: 20px; border: none; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+
+        #history-section { display: none; width: 90%; max-width: 800px; background: white; border-radius: 25px; padding: 20px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid var(--purple); }
+        .history-table { width: 100%; border-collapse: collapse; }
+        .history-table th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+
+        @media (max-width: 1100px) { .chibi-side { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="top-header">
+        <div class="header-left">🏠 Phạm Quốc Đại | 📞 0393125184</div>
+         <!--<div class="header-right">Chào mừng bé Bi! ✨</div>-->
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-row">
+            <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+            <div id="kid-badge" class="kid-info-box">Bé Bi đang học! 🚀</div>
+        </div>
+        <select id="level-select" onchange="generateMath()">
+            <option value="kid5">Bé 5 tuổi: Phạm vi 10</option>
+            <option value="l1-easy">Lớp 1: Cộng trừ KHÔNG NHỚ</option>
+            <option value="l1-hard">Lớp 1: Cộng trừ CÓ NHỚ</option>
+            <option value="l2">Lớp 2: Nhân/Chia bảng 2, 3, 4, 5</option>
+            <option value="l3">Lớp 3: Nhân/Chia nâng cao</option>
+            <option value="l4">Lớp 4: Đổi đơn vị (kg, m, km)</option>
+            <option value="l5">Lớp 5: Số thập phân</option>
+        </select>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="chibi-side"><img src="https://i.ibb.co/TB3TPsD5/anh3.png"></div>
+        <div class="exercise-area">
+            <div id="container" class="math-grid"></div>
+        </div>
+        <div class="chibi-side"><img src="https://i.ibb.co/wZ9Yz65T/anh2.png"></div>
+    </div>
+
+    <div class="action-footer">
+        <div class="btn-group">
+            <button class="btn-footer" style="background: var(--blue);" onclick="generateMath()">🔄 Đổi bài mới</button>
+            <button class="btn-footer" style="background: var(--green);" onclick="checkResults()">✅ Nộp bài</button>
+            <button class="btn-footer" style="background: var(--purple);" onclick="toggleHistory()">📊 Lịch sử</button>
+        </div>
+        <div id="history-section">
+            <h3 style="text-align: center; color: var(--purple);">Kết quả 30 ngày gần nhất</h3>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="history-table">
+                    <thead><tr><th>Ngày</th><th>Lớp</th><th>Điểm</th></tr></thead>
+                    <tbody id="history-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      const firebaseConfig = {
+  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+  authDomain: "bon-bi.firebaseapp.com",
+  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+  projectId: "bon-bi",
+  storageBucket: "bon-bi.firebasestorage.app",
+  messagingSenderId: "988400970351",
+  appId: "1:988400970351:web:21e9181950114225417b9a"
+};
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const kidName = localStorage.getItem('kidName') || "Bi";
+        document.getElementById('kid-badge').innerText = `Bé ${kidName} đang học! 🚀`;
+
+        function generateMath() {
+            const level = document.getElementById('level-select').value;
+            const container = document.getElementById('container');
+            container.innerHTML = "";
+            let count = 0;
+
+            while(count < 20) {
+                let n1, n2, op, ans, html = "";
+                
+                if (level === 'l2') { // LOGIC LỚP 2 CHUẨN
+                    let table = [2, 3, 4, 5][Math.floor(Math.random() * 4)]; // Bảng nhân 2,3,4,5
+                    let num = Math.floor(Math.random() * 9) + 1; // Từ 1 đến 9
+                    op = Math.random() > 0.5 ? 'x' : ':';
+                    if (op === 'x') {
+                        n1 = table; n2 = num; ans = n1 * n2;
+                    } else {
+                        ans = num; n2 = table; n1 = ans * n2; // Phép chia ngược từ phép nhân
+                    }
+                } else if (level === 'l1-hard') {
+                    op = Math.random() > 0.5 ? '+' : '-';
+                    if (op === '+') {
+                        n1 = Math.floor(Math.random() * 9) + 12;
+                        n2 = Math.floor(Math.random() * 8) + (10 - (n1 % 10));
+                    } else {
+                        n1 = Math.floor(Math.random() * 20) + 11;
+                        n2 = Math.floor(Math.random() * 8) + (n1 % 10) + 1;
+                        if (n2 >= n1) n2 = n1 - 1;
+                    }
+                    ans = (op === '+') ? n1 + n2 : n1 - n2;
+                } else if (level === 'l3') {
+                    op = Math.random() > 0.5 ? 'x' : ':';
+                    if (op === 'x') { n1 = Math.floor(Math.random() * 150) + 10; n2 = Math.floor(Math.random() * 7) + 2; ans = n1 * n2; }
+                    else { n2 = Math.floor(Math.random() * 8) + 2; ans = Math.floor(Math.random() * 100) + 10; n1 = ans * n2; }
+                } else if (level === 'l5') {
+                    n1 = (Math.random() * 50 + 5).toFixed(1); n2 = (Math.random() * 40 + 5).toFixed(1);
+                    op = Math.random() > 0.5 ? '+' : '-';
+                    ans = (op === '+') ? (parseFloat(n1) + parseFloat(n2)).toFixed(1) : (parseFloat(n1) - parseFloat(n2)).toFixed(1);
+                } else if (level === 'l4') {
+                    let u = [{f:'kg',t:'g',r:1000},{f:'m',t:'cm',r:100},{f:'km',t:'m',r:1000}][Math.floor(Math.random()*3)];
+                    n1 = Math.floor(Math.random()*89)+10;
+                    html = `<span class="num-box">${n1}</span> <b>${u.f}</b> = <input type="number" class="ans-input" data-ans="${n1*u.r}"> <b>${u.t}</b>`;
+                    container.innerHTML += `<div class="math-card">${html}</div>`;
+                    count++; continue;
+                } else if (level === 'kid5') {
+                    n1 = Math.floor(Math.random()*9)+1; n2 = Math.floor(Math.random()*(10-n1)); op = '+'; ans = n1+n2;
+                } else {
+                    n1 = Math.floor(Math.random()*80)+10; op = Math.random()>0.5?'+':'-'; let u1=n1%10; n2=op==='+'?Math.floor(Math.random()*(10-u1)):Math.floor(Math.random()*(u1+1)); ans=op==='+'?n1+n2:n1-n2;
+                }
+
+                html = `<span class="num-box">${n1}</span> <b class="math-op">${op}</b> <span class="num-box">${n2}</span> <b class="math-op">=</b> <input type="text" class="ans-input" data-ans="${ans}">`;
+                container.innerHTML += `<div class="math-card">${html}</div>`;
+                count++;
+            }
+        }
+
+        function checkResults() {
+            let score = 0;
+            document.querySelectorAll('.ans-input').forEach(i => {
+                i.classList.remove('correct', 'wrong');
+                if(parseFloat(i.value) === parseFloat(i.dataset.ans)) { i.classList.add('correct'); score++; }
+                else i.classList.add('wrong');
+            });
+            database.ref('results').push({ name: kidName, score: score, level: document.getElementById('level-select').selectedOptions[0].text, time: Date.now() });
+            alert(`Bé ${kidName} đạt ${score}/20 điểm!`);
+        }
+
+        function toggleHistory() {
+            const section = document.getElementById('history-section');
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
+            if(section.style.display === 'block') {
+                const body = document.getElementById('history-body');
+                body.innerHTML = "Đang tải...";
+                const monthAgo = Date.now() - (30*24*60*60*1000);
+                database.ref('results').orderByChild('time').startAt(monthAgo).once('value', snapshot => {
+                    body.innerHTML = "";
+                    let results = [];
+                    snapshot.forEach(c => { if(c.val().name === kidName) results.unshift(c.val()); });
+                    results.forEach(r => {
+                        const d = new Date(r.time).toLocaleDateString('vi-VN');
+                        body.innerHTML += `<tr><td>${d}</td><td>${r.level}</td><td>${r.score}/20</td></tr>`;
+                    });
+                });
+            }
+        }
+        window.onload = generateMath;
+    </script>
+</body>
+</html>
