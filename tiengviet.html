@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibon Tiếng Việt - Tiểu học</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <style>
+        :root { --primary: #e91e63; --blue: #2196F3; --orange: #ff9800; --yellow: #ffeb3b; --green: #2ecc71; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; margin: 0; padding-bottom: 30px; }
+        .top-header { background: var(--yellow); padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #fbc02d; position: sticky; top: 0; z-index: 1000; }
+        .container { max-width: 1200px; margin: 15px auto; display: flex; gap: 15px; padding: 0 10px; }
+        .sidebar { width: 220px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); height: fit-content; }
+        .grade-item { padding: 12px; margin: 8px 0; border-radius: 12px; cursor: pointer; font-weight: bold; border: 1px solid #eee; transition: 0.3s; text-align: center; }
+        .grade-item.active { background: var(--orange); color: white; border-color: var(--orange); }
+        .main-content { flex: 1; background: white; padding: 20px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .topic-header { display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--blue); margin: 20px 0 10px 0; background: #f0f7ff; padding: 10px; border-radius: 0 15px 15px 0; gap: 10px; }
+        .btn-reset { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .ex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 10px; margin-bottom: 30px; }
+        .ex-card { padding: 15px 5px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid #eee; font-size: 13px; font-weight: bold; background: #fff; }
+        .status-correct { border-color: var(--green); background: #e8f5e9; color: #1b5e20; }
+        .status-wrong { border-color: #e74c3c; background: #fdedec; color: #78281f; }
+        #quiz-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 10px; }
+        .quiz-box {
+            background: white;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            padding: 20px 25px;
+            border-radius: 30px;
+            text-align: center;
+            overflow-y: auto;
+            position: relative;
+        }
+        .q-text-main { font-size: 20px; color: #444; margin-bottom: 15px; font-weight: 500; line-height: 1.5; }
+        .highlight-word { font-size: 48px; font-weight: 900; color: var(--primary); display: block; margin: 5px 0; line-height: 1.2; }
+        .btn-opt { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #f0f0f0; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 22px; color: #333; transition: 0.2s; background: #fff; }
+        .btn-opt:hover { background: #f8f9fa; border-color: var(--blue); }
+        .symbol-style { font-size: 42px; color: var(--primary); font-weight: bold; line-height: 1; }
+        .topic-note { color:#666; font-size:13px; margin-top:4px; }
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            .sidebar { width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-header">
+    <a href="index.html" style="text-decoration:none; background:var(--primary); color:white; padding:8px 18px; border-radius:20px; font-weight:bold; font-size:14px;">🏠 Trang Chủ</a>
+    <div style="font-weight:bold; font-size:15px;">Bé: <span id="display-name" style="color:var(--primary)">...</span></div>
+</div>
+
+<div class="container">
+    <div class="sidebar" id="grade-menu"></div>
+    <div class="main-content">
+        <h2 id="grade-title" style="color: var(--blue); margin: 0; font-size: 24px;">Đang tải...</h2>
+        <div id="content-area"></div>
+    </div>
+</div>
+
+<div id="quiz-overlay">
+    <div class="quiz-box">
+        <div id="q-container" class="q-text-main"></div>
+        <div id="q-opts"></div>
+        <button onclick="closeQuiz()" style="margin-top:15px; border:none; background:none; color:gray; cursor:pointer; font-weight:bold; text-decoration: underline; font-size: 14px;">Thoát</button>
+    </div>
+</div>
+
+<script>
+const kidName = localStorage.getItem('kidName') || "Quốc Anh";
+const firebaseConfig = {
+    apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+    authDomain: "bon-bi.firebaseapp.com",
+    databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+    projectId: "bon-bi",
+    storageBucket: "bon-bi.firebasestorage.app",
+    messagingSenderId: "988400970351",
+    appId: "1:988400970351:web:21e9181950114225417b9a"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const symbolMap = { "Dấu sắc": "´", "Dấu huyền": "`", "Dấu hỏi": "?", "Dấu ngã": "~", "Dấu nặng": "." };
+
+const QUESTION_BANK = {
+    "5t_a": [
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">A</span>', opts: ['A', 'B', 'C'], ans: 'A' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Ă</span>', opts: ['Ă', 'Â', 'B'], ans: 'Ă' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Â</span>', opts: ['Ă', 'Â', 'Ê'], ans: 'Â' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">B</span>', opts: ['B', 'D', 'Đ'], ans: 'B' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">C</span>', opts: ['C', 'G', 'Q'], ans: 'C' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">D</span>', opts: ['D', 'Đ', 'B'], ans: 'D' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Đ</span>', opts: ['D', 'Đ', 'P'], ans: 'Đ' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">E</span>', opts: ['E', 'Ê', 'I'], ans: 'E' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Ê</span>', opts: ['E', 'Ê', 'Ô'], ans: 'Ê' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">G</span>', opts: ['G', 'C', 'Q'], ans: 'G' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">H</span>', opts: ['H', 'K', 'N'], ans: 'H' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">I</span>', opts: ['I', 'Y', 'E'], ans: 'I' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">K</span>', opts: ['K', 'H', 'L'], ans: 'K' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">L</span>', opts: ['L', 'N', 'M'], ans: 'L' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">M</span>', opts: ['M', 'N', 'H'], ans: 'M' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">N</span>', opts: ['N', 'M', 'L'], ans: 'N' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">O</span>', opts: ['O', 'Ô', 'Ơ'], ans: 'O' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Ô</span>', opts: ['O', 'Ô', 'Ơ'], ans: 'Ô' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Ơ</span>', opts: ['Ô', 'Ơ', 'Ư'], ans: 'Ơ' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">P</span>', opts: ['P', 'R', 'B'], ans: 'P' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Q</span>', opts: ['Q', 'O', 'C'], ans: 'Q' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">R</span>', opts: ['R', 'P', 'S'], ans: 'R' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">S</span>', opts: ['S', 'X', 'R'], ans: 'S' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">T</span>', opts: ['T', 'Y', 'X'], ans: 'T' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">U</span>', opts: ['U', 'Ư', 'V'], ans: 'U' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Ư</span>', opts: ['U', 'Ư', 'Ơ'], ans: 'Ư' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">V</span>', opts: ['V', 'Y', 'X'], ans: 'V' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">X</span>', opts: ['X', 'S', 'T'], ans: 'X' },
+        { html: 'Bé tìm chữ:<br><span class="highlight-word">Y</span>', opts: ['Y', 'I', 'V'], ans: 'Y' }
+    ],
+    "5t_b": [
+        { html: '<span class="highlight-word">Bố</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu sắc', type: 'symbol' },
+        { html: '<span class="highlight-word">Bà</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu huyền', type: 'symbol' },
+        { html: '<span class="highlight-word">Cả</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu hỏi', type: 'symbol' },
+        { html: '<span class="highlight-word">Võ</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu ngã', type: 'symbol' },
+        { html: '<span class="highlight-word">Nụ</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu nặng', type: 'symbol' },
+        { html: '<span class="highlight-word">Lá</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu sắc', type: 'symbol' },
+        { html: '<span class="highlight-word">Gà</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu huyền', type: 'symbol' },
+        { html: '<span class="highlight-word">Tủ</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu hỏi', type: 'symbol' },
+        { html: '<span class="highlight-word">Ngã</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu ngã', type: 'symbol' },
+        { html: '<span class="highlight-word">Cạ</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu nặng', type: 'symbol' },
+        { html: '<span class="highlight-word">Khế</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu sắc', type: 'symbol' },
+        { html: '<span class="highlight-word">Mẹ</span> có dấu gì?', opts: ['Dấu sắc', 'Dấu huyền', 'Dấu hỏi', 'Dấu ngã', 'Dấu nặng'], ans: 'Dấu nặng', type: 'symbol' }
+    ],
+    "5t_c": [
+        { html: 'Ghép âm <span style="color:var(--blue)">Đ</span> + <span style="color:var(--blue)">è</span> được từ nào?', opts: ['đè', 'be', 'xa', 'lo'], ans: 'đè' },
+        { html: 'Ghép âm <span style="color:var(--blue)">K</span> + <span style="color:var(--blue)">ế</span> được từ nào?', opts: ['kế', 'gà', 'nhà', 'cá'], ans: 'kế' },
+        { html: 'Ghép âm <span style="color:var(--blue)">Gh</span> + <span style="color:var(--blue)">ế</span> được từ nào?', opts: ['ghế', 'phở', 'thỏ', 'nhà'], ans: 'ghế' },
+        { html: 'Ghép âm <span style="color:var(--blue)">C</span> + <span style="color:var(--blue)">á</span> được từ nào?', opts: ['cá', 'gà', 'nụ', 'bố'], ans: 'cá' },
+        { html: 'Ghép âm <span style="color:var(--blue)">Nh</span> + <span style="color:var(--blue)">à</span> được từ nào?', opts: ['nhà', 'cá', 'kẻ', 'ghẹ'], ans: 'nhà' },
+        { html: 'Ghép âm <span style="color:var(--blue)">Ph</span> + <span style="color:var(--blue)">ở</span> được từ nào?', opts: ['phở', 'đè', 'cạ', 'bà'], ans: 'phở' },
+        { html: 'Ghép âm <span style="color:var(--blue)">Th</span> + <span style="color:var(--blue)">ỏ</span> được từ nào?', opts: ['thỏ', 'ghế', 'kế', 'nhà'], ans: 'thỏ' },
+        { html: 'Ghép âm <span style="color:var(--blue)">Kh</span> + <span style="color:var(--blue)">ế</span> được từ nào?', opts: ['khế', 'võ', 'nụ', 'mẹ'], ans: 'khế' }
+    ],
+
+    "l1_a": [
+        { html: 'Tiếng nào có vần <span class="highlight-word">an</span>?', opts: ['lan', 'lên', 'lùn', 'lôm'], ans: 'lan' },
+        { html: 'Tiếng nào có vần <span class="highlight-word">at</span>?', opts: ['bát', 'bàn', 'bơi', 'bún'], ans: 'bát' },
+        { html: 'Chọn tiếng có âm đầu <span class="highlight-word">ch</span>.', opts: ['chim', 'tim', 'sim', 'rim'], ans: 'chim' },
+        { html: 'Chọn tiếng có âm đầu <span class="highlight-word">tr</span>.', opts: ['trâu', 'châu', 'rau', 'gạo'], ans: 'trâu' },
+        { html: 'Tiếng nào có vần <span class="highlight-word">iêc</span>?', opts: ['biếc', 'bác', 'bé', 'bơi'], ans: 'biếc' },
+        { html: 'Ghép đúng để thành tiếng có nghĩa: <span class="highlight-word">m + ay</span>', opts: ['may', 'mây', 'mua', 'mơ'], ans: 'may' },
+        { html: 'Chọn tiếng có vần <span class="highlight-word">uôn</span>.', opts: ['muốn', 'mận', 'mưa', 'mời'], ans: 'muốn' },
+        { html: 'Tiếng nào có âm cuối <span class="highlight-word">ng</span>?', opts: ['bàng', 'bà', 'bò', 'bé'], ans: 'bàng' },
+        { html: 'Chọn tiếng viết đúng.', opts: ['nghỉ', 'ngỉ', 'nghĩ', 'ngỉa'], ans: 'nghỉ' },
+        { html: 'Tiếng nào có vần <span class="highlight-word">ươn</span>?', opts: ['lượn', 'làn', 'len', 'lân'], ans: 'lượn' },
+        { html: 'Chọn tiếng có âm đầu <span class="highlight-word">nh</span>.', opts: ['nhà', 'hà', 'na', 'ra'], ans: 'nhà' },
+        { html: 'Chọn tiếng có vần <span class="highlight-word">oa</span>.', opts: ['hoa', 'hè', 'hơ', 'hư'], ans: 'hoa' }
+    ],
+    "l1_b": [
+        { html: 'Từ nào gọi tên <span class="highlight-word">đồ vật</span>?', opts: ['bàn', 'chạy', 'đẹp', 'ngoan'], ans: 'bàn' },
+        { html: 'Từ nào gọi tên <span class="highlight-word">con vật</span>?', opts: ['mèo', 'xanh', 'nhảy', 'cao'], ans: 'mèo' },
+        { html: 'Từ nào gọi tên <span class="highlight-word">người thân</span>?', opts: ['mẹ', 'đỏ', 'hát', 'ngoan'], ans: 'mẹ' },
+        { html: 'Từ nào gọi tên <span class="highlight-word">bộ phận cơ thể</span>?', opts: ['tay', 'ăn', 'vui', 'sạch'], ans: 'tay' },
+        { html: 'Từ nào gọi tên <span class="highlight-word">đồ dùng học tập</span>?', opts: ['bút', 'đọc', 'chăm', 'cao'], ans: 'bút' },
+        { html: 'Từ nào gọi tên <span class="highlight-word">hoa quả</span>?', opts: ['cam', 'đi', 'ngoan', 'đỏ'], ans: 'cam' },
+        { html: 'Từ nào gọi tên <span class="highlight-word">bạn nhỏ</span>?', opts: ['Lan', 'nhảy', 'xanh', 'cao'], ans: 'Lan' },
+        { html: 'Từ nào gọi tên <span class="highlight-word">nơi chốn</span>?', opts: ['trường', 'cười', 'hiền', 'đẹp'], ans: 'trường' }
+    ],
+    "l1_c": [
+        { html: 'Câu nào viết đúng?', opts: ['Em đi học.', 'em đi học', 'Em đi học', 'em đi học.'], ans: 'Em đi học.' },
+        { html: 'Câu nào viết đúng?', opts: ['Mẹ nấu cơm.', 'Mẹ nấu cơm', 'mẹ nấu cơm.', 'mẹ nấu cơm'], ans: 'Mẹ nấu cơm.' },
+        { html: 'Điền dấu thích hợp: “Bé ngủ ngoan__”', opts: ['.', '?', '!', ','], ans: '.' },
+        { html: 'Điền dấu thích hợp: “Ai đến đấy__”', opts: ['?', '.', '!', ','], ans: '?' },
+        { html: 'Điền dấu thích hợp: “Ôi đẹp quá__”', opts: ['!', '.', '?', ','], ans: '!' },
+        { html: 'Từ nào nên viết hoa?', opts: ['Lan', 'bàn', 'mèo', 'cặp'], ans: 'Lan' },
+        { html: 'Câu nào đủ từ để thành câu?', opts: ['Bé đọc sách.', 'Đọc sách.', 'Bé đọc.', 'Sách đẹp.'], ans: 'Bé đọc sách.' },
+        { html: 'Chọn câu đúng trật tự từ.', opts: ['Con mèo đang ngủ.', 'Ngủ mèo con đang.', 'Đang con ngủ mèo.', 'Mèo con ngủ đang.'], ans: 'Con mèo đang ngủ.' }
+    ],
+
+    "l2_a": [
+        { html: 'Từ nào chỉ <span class="highlight-word">sự vật</span>?', opts: ['cây bàng', 'nhảy', 'xanh', 'ngoan'], ans: 'cây bàng' },
+        { html: 'Từ nào chỉ <span class="highlight-word">hoạt động</span>?', opts: ['đọc', 'bàn', 'đẹp', 'sáng'], ans: 'đọc' },
+        { html: 'Từ nào chỉ <span class="highlight-word">đặc điểm</span>?', opts: ['cao', 'viết', 'sân trường', 'bạn nhỏ'], ans: 'cao' },
+        { html: 'Nhóm nào toàn từ chỉ hoạt động?', opts: ['chạy, nhảy, múa', 'bàn, ghế, tủ', 'đỏ, cao, đẹp', 'trường, lớp, sân'], ans: 'chạy, nhảy, múa' },
+        { html: 'Nhóm nào toàn từ chỉ đặc điểm?', opts: ['ngoan, chăm, sạch', 'ăn, ngủ, học', 'mẹ, bố, bà', 'bút, vở, thước'], ans: 'ngoan, chăm, sạch' },
+        { html: 'Từ nào không cùng nhóm?', opts: ['đẹp', 'ngoan', 'học', 'xinh'], ans: 'học' },
+        { html: 'Từ nào gọi tên con vật?', opts: ['chim sẻ', 'bay', 'nhỏ', 'vàng'], ans: 'chim sẻ' },
+        { html: 'Từ nào chỉ hoạt động học tập?', opts: ['viết bài', 'cặp sách', 'siêng năng', 'bảng lớp'], ans: 'viết bài' }
+    ],
+    "l2_b": [
+        { html: 'Câu nào thuộc kiểu <span class="highlight-word">Ai là gì?</span>', opts: ['Lan là lớp trưởng.', 'Lan đang học bài.', 'Lan rất chăm.', 'Lan ơi!'], ans: 'Lan là lớp trưởng.' },
+        { html: 'Câu nào thuộc kiểu <span class="highlight-word">Ai làm gì?</span>', opts: ['Bố tưới cây.', 'Bố là bác sĩ.', 'Bố rất hiền.', 'Bố ơi!'], ans: 'Bố tưới cây.' },
+        { html: 'Câu nào thuộc kiểu <span class="highlight-word">Ai thế nào?</span>', opts: ['Bầu trời rất xanh.', 'Bầu trời là mái nhà chung.', 'Bầu trời có mây.', 'Bầu trời ơi!'], ans: 'Bầu trời rất xanh.' },
+        { html: 'Chọn câu hỏi đúng.', opts: ['Bạn tên là gì?', 'Bạn tên là gì.', 'Bạn tên là gì!', 'Bạn tên là gì,'], ans: 'Bạn tên là gì?' },
+        { html: 'Chọn câu khiến đúng.', opts: ['Em hãy mở cửa.', 'Em mở cửa?', 'Em mở cửa!', 'Em mở cửa,'], ans: 'Em hãy mở cửa.' },
+        { html: 'Câu nào nêu đặc điểm?', opts: ['Con mèo rất nhanh.', 'Con mèo bắt chuột.', 'Con mèo là vật nuôi.', 'Con mèo ơi!'], ans: 'Con mèo rất nhanh.' },
+        { html: 'Điền dấu phù hợp: “Mời bạn vào lớp__”', opts: ['.', '?', '!', ','], ans: '.' },
+        { html: 'Điền dấu phù hợp: “Bạn đi đâu đấy__”', opts: ['?', '.', '!', ','], ans: '?' }
+    ],
+    "l2_c": [
+        { html: 'Sắp xếp thành câu đúng.', opts: ['Em / quét / nhà / giúp / mẹ.', 'Mẹ / em / giúp / nhà / quét.', 'Quét / em / nhà / giúp / mẹ.', 'Giúp / mẹ / nhà / em / quét.'], ans: 'Em / quét / nhà / giúp / mẹ.' },
+        { html: 'Sắp xếp thành câu đúng.', opts: ['Sân trường / rất / sạch đẹp.', 'Rất / sân trường / sạch đẹp.', 'Sạch đẹp / rất / sân trường.', 'Trường sân / đẹp sạch / rất.'], ans: 'Sân trường / rất / sạch đẹp.' },
+        { html: 'Điền dấu phẩy đúng: “Sáng nay em quét nhà tưới cây rửa cốc.”', opts: ['Sáng nay, em quét nhà, tưới cây, rửa cốc.', 'Sáng nay em, quét nhà tưới cây rửa cốc.', 'Sáng nay em quét nhà tưới cây, rửa cốc.', 'Sáng nay, em quét nhà tưới cây rửa cốc.'], ans: 'Sáng nay, em quét nhà, tưới cây, rửa cốc.' },
+        { html: 'Điền từ thích hợp: “Chúng em ___ bài rất chăm.”', opts: ['học', 'bàn', 'xanh', 'sân'], ans: 'học' },
+        { html: 'Điền từ thích hợp: “Bà em rất ___.”', opts: ['hiền', 'chạy', 'bút', 'mưa'], ans: 'hiền' },
+        { html: 'Câu nào dùng dấu chấm đúng?', opts: ['Hoa nở rất đẹp.', 'Hoa nở rất đẹp?', 'Hoa nở rất đẹp!', 'Hoa nở rất đẹp,'], ans: 'Hoa nở rất đẹp.' },
+        { html: 'Điền dấu phẩy: “Lan Mai và Hoa cùng trực nhật.”', opts: ['Lan, Mai và Hoa cùng trực nhật.', 'Lan Mai, và Hoa cùng trực nhật.', 'Lan Mai và, Hoa cùng trực nhật.', 'Lan Mai và Hoa, cùng trực nhật.'], ans: 'Lan, Mai và Hoa cùng trực nhật.' },
+        { html: 'Từ nào điền đúng: “Tiếng trống trường vang lên ___ giờ vào học.”', opts: ['báo', 'ngủ', 'nhỏ', 'xanh'], ans: 'báo' }
+    ],
+
+    "l3_a": [
+        { html: 'Câu nào có hình ảnh <span class="highlight-word">so sánh</span>?', opts: ['Mặt trăng tròn như cái đĩa.', 'Mặt trăng lên cao.', 'Mặt trăng rất sáng.', 'Mặt trăng ở trên trời.'], ans: 'Mặt trăng tròn như cái đĩa.' },
+        { html: 'Từ nào báo hiệu so sánh?', opts: ['như', 'và', 'của', 'với'], ans: 'như' },
+        { html: 'Câu nào so sánh đúng?', opts: ['Tiếng suối trong như tiếng hát xa.', 'Tiếng suối chảy mạnh.', 'Tiếng suối ở đầu nguồn.', 'Tiếng suối nghe rất vui.'], ans: 'Tiếng suối trong như tiếng hát xa.' },
+        { html: 'Vế được so sánh với “mái tóc bà” là gì trong câu: “Mái tóc bà trắng như mây”?', opts: ['mây', 'trắng', 'bà', 'mái tóc'], ans: 'mây' },
+        { html: 'Câu nào không phải so sánh?', opts: ['Hoa phượng đỏ rực.', 'Hoa phượng đỏ như lửa.', 'Tiếng ve như bản nhạc hè.', 'Dòng sông như dải lụa.'], ans: 'Hoa phượng đỏ rực.' },
+        { html: 'Câu nào có so sánh âm thanh?', opts: ['Tiếng mưa rơi rào rào như tiếng trống.', 'Mưa đang rơi.', 'Mưa làm mát sân.', 'Mưa đến rất nhanh.'], ans: 'Tiếng mưa rơi rào rào như tiếng trống.' },
+        { html: 'Từ thích hợp để hoàn thành câu: “Bạn nhỏ nhanh như ___.”', opts: ['gió', 'bàn', 'lá', 'cặp'], ans: 'gió' },
+        { html: 'Câu nào có so sánh màu sắc?', opts: ['Mây trắng như bông.', 'Mây bay trên trời.', 'Mây kéo về nhiều.', 'Mây che nắng.'], ans: 'Mây trắng như bông.' }
+    ],
+    "l3_b": [
+        { html: 'Câu nào có <span class="highlight-word">nhân hóa</span>?', opts: ['Ông mặt trời thức dậy.', 'Mặt trời mọc.', 'Mặt trời rất đỏ.', 'Trời có nắng.'], ans: 'Ông mặt trời thức dậy.' },
+        { html: 'Từ ngữ nào thể hiện nhân hóa?', opts: ['ông', 'đỏ', 'tròn', 'sáng'], ans: 'ông' },
+        { html: 'Câu nào có nhân hóa?', opts: ['Chị gió nhẹ nhàng lướt qua.', 'Gió thổi mạnh.', 'Gió ở ngoài đồng.', 'Gió làm rung lá.'], ans: 'Chị gió nhẹ nhàng lướt qua.' },
+        { html: 'Câu nào không có nhân hóa?', opts: ['Cây bàng ở sân trường.', 'Cây bàng dang tay đón nắng.', 'Bác trống trường gọi học sinh.', 'Những bông hoa cười tươi.'], ans: 'Cây bàng ở sân trường.' },
+        { html: 'Cách gọi nào thường dùng trong nhân hóa?', opts: ['bác', 'cái', 'những', 'một'], ans: 'bác' },
+        { html: 'Câu nào nhân hóa đồ vật?', opts: ['Chiếc đồng hồ chăm chỉ chạy.', 'Đồng hồ treo trên tường.', 'Đồng hồ rất đẹp.', 'Đồng hồ màu vàng.'], ans: 'Chiếc đồng hồ chăm chỉ chạy.' },
+        { html: 'Từ nào làm cho câu có nhân hóa hơn?', opts: ['cười', 'nở', 'đỏ', 'thơm'], ans: 'cười' },
+        { html: 'Câu nào có nhân hóa cây cối?', opts: ['Hàng dừa nghiêng mình soi bóng.', 'Hàng dừa ở ven sông.', 'Hàng dừa rất cao.', 'Hàng dừa xanh tốt.'], ans: 'Hàng dừa nghiêng mình soi bóng.' }
+    ],
+    "l3_c": [
+        { html: 'Câu nào là <span class="highlight-word">câu khiến</span>?', opts: ['Em hãy giữ vệ sinh lớp học.', 'Em giữ vệ sinh lớp học.', 'Em giữ vệ sinh lớp học?', 'Em giữ vệ sinh lớp học!'], ans: 'Em hãy giữ vệ sinh lớp học.' },
+        { html: 'Câu nào là <span class="highlight-word">câu cảm</span>?', opts: ['Ôi, bông hoa đẹp quá!', 'Bông hoa đẹp.', 'Bông hoa đẹp không?', 'Em ngắm bông hoa.'], ans: 'Ôi, bông hoa đẹp quá!' },
+        { html: 'Từ nào thường có trong câu khiến?', opts: ['hãy', 'đã', 'vẫn', 'rất'], ans: 'hãy' },
+        { html: 'Từ nào thường có trong câu cảm?', opts: ['ôi', 'đang', 'vừa', 'sẽ'], ans: 'ôi' },
+        { html: 'Điền dấu thích hợp: “Các em giữ trật tự nào__”', opts: ['!', '.', '?', ','], ans: '!' },
+        { html: 'Điền dấu thích hợp: “Ôi, cảnh biển đẹp quá__”', opts: ['!', '.', '?', ','], ans: '!' },
+        { html: 'Câu nào là lời đề nghị lịch sự?', opts: ['Bạn giúp mình một tay nhé!', 'Bạn giúp mình một tay.', 'Bạn giúp mình một tay?', 'Bạn giúp mình một tay,'], ans: 'Bạn giúp mình một tay nhé!' },
+        { html: 'Câu nào bộc lộ cảm xúc vui mừng?', opts: ['Chao ôi, em được điểm mười rồi!', 'Em được điểm mười.', 'Em được điểm mười à?', 'Em có điểm mười.'], ans: 'Chao ôi, em được điểm mười rồi!' }
+    ],
+
+    "l4_a": [
+        { html: 'Từ nào là <span class="highlight-word">danh từ</span>?', opts: ['học sinh', 'chạy', 'ngoan', 'đẹp'], ans: 'học sinh' },
+        { html: 'Từ nào là <span class="highlight-word">động từ</span>?', opts: ['đọc', 'cây phượng', 'xinh', 'siêng'], ans: 'đọc' },
+        { html: 'Từ nào là <span class="highlight-word">tính từ</span>?', opts: ['chăm chỉ', 'bác sĩ', 'học bài', 'sân trường'], ans: 'chăm chỉ' },
+        { html: 'Nhóm nào toàn danh từ?', opts: ['bảng, lớp, trường', 'đọc, viết, vẽ', 'xanh, đẹp, ngoan', 'học, bàn, đẹp'], ans: 'bảng, lớp, trường' },
+        { html: 'Nhóm nào toàn động từ?', opts: ['nghe, nói, đọc', 'mèo, chó, gà', 'cao, thấp, rộng', 'bút, thước, vở'], ans: 'nghe, nói, đọc' },
+        { html: 'Nhóm nào toàn tính từ?', opts: ['cao, rộng, sạch', 'sông, núi, biển', 'chạy, nhảy, bơi', 'mây, gió, nắng'], ans: 'cao, rộng, sạch' },
+        { html: 'Từ nào không cùng loại với các từ còn lại?', opts: ['đẹp', 'xinh', 'ngoan', 'chạy'], ans: 'chạy' },
+        { html: 'Trong câu “Lan đọc sách”, từ “đọc” là gì?', opts: ['động từ', 'danh từ', 'tính từ', 'đại từ'], ans: 'động từ' }
+    ],
+    "l4_b": [
+        { html: 'Trong câu “Lan chăm học.”, chủ ngữ là gì?', opts: ['Lan', 'chăm học', 'học', 'chăm'], ans: 'Lan' },
+        { html: 'Trong câu “Bố em đang tưới cây.”, vị ngữ là gì?', opts: ['đang tưới cây', 'Bố em', 'cây', 'đang'], ans: 'đang tưới cây' },
+        { html: 'Câu nào có đủ chủ ngữ và vị ngữ?', opts: ['Chim sâu bắt sâu.', 'Bắt sâu.', 'Những cánh đồng.', 'Rất chăm chỉ.'], ans: 'Chim sâu bắt sâu.' },
+        { html: 'Chủ ngữ trong câu “Những bông hoa nở rực rỡ.” là gì?', opts: ['Những bông hoa', 'nở rực rỡ', 'hoa', 'rực rỡ'], ans: 'Những bông hoa' },
+        { html: 'Vị ngữ trong câu “Bầu trời hôm nay rất trong xanh.” là gì?', opts: ['rất trong xanh', 'Bầu trời hôm nay', 'trong xanh', 'hôm nay'], ans: 'rất trong xanh' },
+        { html: 'Câu nào sai vì thiếu vị ngữ?', opts: ['Những chú chim nhỏ.', 'Những chú chim nhỏ bay lượn.', 'Các bạn đang học bài.', 'Cô giáo rất hiền.'], ans: 'Những chú chim nhỏ.' },
+        { html: 'Câu nào sai vì thiếu chủ ngữ?', opts: ['Đang nở rực trước sân.', 'Hoa phượng đang nở rực trước sân.', 'Sân trường rất sạch.', 'Chúng em yêu trường lớp.'], ans: 'Đang nở rực trước sân.' },
+        { html: 'Câu “Mẹ em là bác sĩ.” có vị ngữ là gì?', opts: ['là bác sĩ', 'Mẹ em', 'bác sĩ', 'là'], ans: 'là bác sĩ' }
+    ],
+    "l4_c": [
+        { html: 'Bộ phận in đậm trong câu “<b>Sáng sớm</b>, em tập thể dục.” là gì?', opts: ['trạng ngữ chỉ thời gian', 'chủ ngữ', 'vị ngữ', 'định ngữ'], ans: 'trạng ngữ chỉ thời gian' },
+        { html: 'Bộ phận in đậm trong câu “<b>Ngoài sân</b>, các bạn đang chơi đá cầu.” là gì?', opts: ['trạng ngữ chỉ nơi chốn', 'chủ ngữ', 'vị ngữ', 'bổ ngữ'], ans: 'trạng ngữ chỉ nơi chốn' },
+        { html: 'Bộ phận nào có thể thêm vào đầu câu để chỉ thời gian?', opts: ['Chiều nay', 'Học sinh', 'đang học', 'rất chăm'], ans: 'Chiều nay' },
+        { html: 'Bộ phận nào có thể thêm vào đầu câu để chỉ nơi chốn?', opts: ['Trên cành cây', 'Con chim', 'đang hót', 'ríu rít'], ans: 'Trên cành cây' },
+        { html: 'Câu nào có trạng ngữ?', opts: ['Buổi tối, cả nhà em quây quần bên nhau.', 'Cả nhà em quây quần.', 'Bố mẹ em rất hiền.', 'Em yêu gia đình.'], ans: 'Buổi tối, cả nhà em quây quần bên nhau.' },
+        { html: 'Dấu câu thường dùng sau trạng ngữ đứng đầu câu là gì?', opts: ['dấu phẩy', 'dấu chấm', 'dấu hỏi', 'dấu chấm than'], ans: 'dấu phẩy' },
+        { html: 'Điền đúng: “___, hoa phượng nở đỏ rực.”', opts: ['Mùa hè', 'Hoa phượng', 'đỏ rực', 'sân trường'], ans: 'Mùa hè' },
+        { html: 'Điền đúng: “___, bác bảo vệ đang quét lá.”', opts: ['Trước cổng trường', 'Bác bảo vệ', 'đang quét lá', 'lá rơi'], ans: 'Trước cổng trường' }
+    ],
+
+    "l5_a": [
+        { html: 'Từ nào đồng nghĩa với <span class="highlight-word">chăm chỉ</span>?', opts: ['siêng năng', 'lười biếng', 'nhanh nhảu', 'ồn ào'], ans: 'siêng năng' },
+        { html: 'Từ nào đồng nghĩa với <span class="highlight-word">dũng cảm</span>?', opts: ['can đảm', 'nhút nhát', 'hiền lành', 'vui vẻ'], ans: 'can đảm' },
+        { html: 'Từ nào trái nghĩa với <span class="highlight-word">cao</span>?', opts: ['thấp', 'xa', 'rộng', 'dài'], ans: 'thấp' },
+        { html: 'Từ nào trái nghĩa với <span class="highlight-word">vui</span>?', opts: ['buồn', 'mừng', 'hân hoan', 'phấn khởi'], ans: 'buồn' },
+        { html: 'Cặp từ nào là đồng nghĩa?', opts: ['nhanh - mau', 'nóng - lạnh', 'cao - thấp', 'ngày - đêm'], ans: 'nhanh - mau' },
+        { html: 'Cặp từ nào là trái nghĩa?', opts: ['thật thà - gian dối', 'siêng năng - chăm chỉ', 'nhỏ bé - bé nhỏ', 'vui vẻ - phấn khởi'], ans: 'thật thà - gian dối' },
+        { html: 'Từ nào gần nghĩa với “bảo vệ”?', opts: ['giữ gìn', 'phá hoại', 'bỏ mặc', 'làm rơi'], ans: 'giữ gìn' },
+        { html: 'Từ nào trái nghĩa với “đoàn kết”?', opts: ['chia rẽ', 'gắn bó', 'thương yêu', 'gần gũi'], ans: 'chia rẽ' }
+    ],
+    "l5_b": [
+        { html: 'Trong câu “Bé đi chân đất”, từ “chân” có nghĩa là gì?', opts: ['bộ phận cơ thể', 'chân bàn', 'chân núi', 'chân tường'], ans: 'bộ phận cơ thể' },
+        { html: 'Trong câu “Chân núi phủ đầy mây”, từ “chân” có nghĩa là gì?', opts: ['phần dưới của núi', 'bộ phận cơ thể', 'chân ghế', 'bước đi'], ans: 'phần dưới của núi' },
+        { html: 'Từ nào là <span class="highlight-word">từ nhiều nghĩa</span>?', opts: ['đầu', 'bút chì', 'học sinh', 'bầu trời'], ans: 'đầu' },
+        { html: 'Trong câu “Đầu năm học mới, em rất vui”, từ “đầu” có nghĩa là gì?', opts: ['thời điểm bắt đầu', 'bộ phận cơ thể', 'người đứng đầu', 'đầu bút'], ans: 'thời điểm bắt đầu' },
+        { html: 'Trong câu “Bố em là đầu bếp”, từ “đầu” thuộc trường hợp nào?', opts: ['từ ghép có tiếng đầu mang nghĩa khác', 'chỉ bộ phận cơ thể', 'chỉ thời gian', 'chỉ nơi chốn'], ans: 'từ ghép có tiếng đầu mang nghĩa khác' },
+        { html: 'Trong câu “Lá cờ bay trên đầu sóng”, từ “đầu” có nghĩa gần nhất với gì?', opts: ['phần trên cùng', 'bộ phận cơ thể', 'khởi đầu', 'người lãnh đạo'], ans: 'phần trên cùng' },
+        { html: 'Từ “mắt” trong “mắt lưới” và “mắt em” cho thấy điều gì?', opts: ['từ nhiều nghĩa', 'từ đồng âm', 'từ láy', 'đại từ'], ans: 'từ nhiều nghĩa' },
+        { html: 'Từ nào không phải từ nhiều nghĩa?', opts: ['cặp sách', 'đầu', 'mắt', 'tay'], ans: 'cặp sách' }
+    ],
+    "l5_c": [
+        { html: 'Từ nào là <span class="highlight-word">đại từ</span>?', opts: ['em', 'học sinh', 'chăm chỉ', 'đọc'], ans: 'em' },
+        { html: 'Từ nào là <span class="highlight-word">quan hệ từ</span>?', opts: ['và', 'em', 'học', 'đẹp'], ans: 'và' },
+        { html: 'Điền quan hệ từ thích hợp: “Em và Lan cùng học ___ lớp.”', opts: ['ở', 'rất', 'đang', 'vui'], ans: 'ở' },
+        { html: 'Điền quan hệ từ thích hợp: “Vì trời mưa ___ chúng em ở lại lớp.”', opts: ['nên', 'và', 'của', 'nhưng'], ans: 'nên' },
+        { html: 'Từ nào dùng để thay thế cho “Lan” trong câu sau?', opts: ['bạn ấy', 'cây bút', 'chạy', 'xinh'], ans: 'bạn ấy' },
+        { html: 'Câu nào liên kết tốt hơn?', opts: ['Lan học giỏi. Bạn ấy còn rất chăm.', 'Lan học giỏi. Lan còn rất chăm. Lan được khen.', 'Lan học giỏi. Học giỏi chăm.', 'Lan học giỏi. Còn rất chăm.'], ans: 'Lan học giỏi. Bạn ấy còn rất chăm.' },
+        { html: 'Từ nối phù hợp: “Trời rét, ___ em vẫn đi học đúng giờ.”', opts: ['nhưng', 'và', 'nên', 'của'], ans: 'nhưng' },
+        { html: 'Câu nào dùng đại từ đúng?', opts: ['Nam giúp em, bạn ấy rất tốt.', 'Nam giúp em, cái ấy rất tốt.', 'Nam giúp em, nó là quyển vở.', 'Nam giúp em, này rất tốt.'], ans: 'Nam giúp em, bạn ấy rất tốt.' }
+    ]
+};
+
+const curriculum = {
+    '5t': {
+        name: 'Bé 5 Tuổi',
+        topics: [
+            { id: '5t_a', title: 'Nhận biết chữ cái', count: QUESTION_BANK['5t_a'].length, note: 'Làm quen bảng chữ cái tiếng Việt' },
+            { id: '5t_b', title: 'Nhận biết dấu thanh', count: QUESTION_BANK['5t_b'].length, note: 'Nhận diện 5 dấu thanh cơ bản' },
+            { id: '5t_c', title: 'Tập ghép vần', count: QUESTION_BANK['5t_c'].length, note: 'Ghép âm đầu với vần đơn giản' }
+        ]
+    },
+    'l1': {
+        name: 'Lớp 1',
+        topics: [
+            { id: 'l1_a', title: 'Âm - Vần - Tiếng', count: QUESTION_BANK['l1_a'].length, note: 'Đọc đúng âm, vần, tiếng; nhận diện chính tả đơn giản' },
+            { id: 'l1_b', title: 'Nhận biết từ theo nhóm', count: QUESTION_BANK['l1_b'].length, note: 'Người, vật, con vật, đồ dùng quen thuộc' },
+            { id: 'l1_c', title: 'Câu đơn và dấu câu', count: QUESTION_BANK['l1_c'].length, note: 'Viết câu đúng, viết hoa, dùng . ? !' }
+        ]
+    },
+    'l2': {
+        name: 'Lớp 2',
+        topics: [
+            { id: 'l2_a', title: 'Từ chỉ sự vật - hoạt động - đặc điểm', count: QUESTION_BANK['l2_a'].length, note: 'Nền tảng của Luyện từ và câu' },
+            { id: 'l2_b', title: 'Kiểu câu cơ bản', count: QUESTION_BANK['l2_b'].length, note: 'Ai là gì? Ai làm gì? Ai thế nào?' },
+            { id: 'l2_c', title: 'Sắp xếp câu và dấu phẩy', count: QUESTION_BANK['l2_c'].length, note: 'Rèn câu đúng trật tự và ngắt câu cơ bản' }
+        ]
+    },
+    'l3': {
+        name: 'Lớp 3',
+        topics: [
+            { id: 'l3_a', title: 'Biện pháp so sánh', count: QUESTION_BANK['l3_a'].length, note: 'Nhận biết và dùng hình ảnh so sánh đơn giản' },
+            { id: 'l3_b', title: 'Biện pháp nhân hóa', count: QUESTION_BANK['l3_b'].length, note: 'Nhận biết nhân hóa trong câu văn quen thuộc' },
+            { id: 'l3_c', title: 'Câu khiến - Câu cảm', count: QUESTION_BANK['l3_c'].length, note: 'Phân biệt mục đích nói và dấu câu' }
+        ]
+    },
+    'l4': {
+        name: 'Lớp 4',
+        topics: [
+            { id: 'l4_a', title: 'Danh từ - Động từ - Tính từ', count: QUESTION_BANK['l4_a'].length, note: 'Mạch kiến thức tiếng Việt trọng tâm lớp 4' },
+            { id: 'l4_b', title: 'Chủ ngữ - Vị ngữ', count: QUESTION_BANK['l4_b'].length, note: 'Xác định thành phần chính của câu' },
+            { id: 'l4_c', title: 'Trạng ngữ', count: QUESTION_BANK['l4_c'].length, note: 'Thời gian, nơi chốn và dấu phẩy' }
+        ]
+    },
+    'l5': {
+        name: 'Lớp 5',
+        topics: [
+            { id: 'l5_a', title: 'Từ đồng nghĩa - Trái nghĩa', count: QUESTION_BANK['l5_a'].length, note: 'Mở rộng vốn từ và sắc thái nghĩa' },
+            { id: 'l5_b', title: 'Từ nhiều nghĩa', count: QUESTION_BANK['l5_b'].length, note: 'Phân biệt nghĩa gốc, nghĩa chuyển đơn giản' },
+            { id: 'l5_c', title: 'Đại từ - Quan hệ từ - Liên kết câu', count: QUESTION_BANK['l5_c'].length, note: 'Chuẩn bị nền cho viết đoạn văn' }
+        ]
+    }
+};
+
+function getQuestion(tid, n) {
+    const list = QUESTION_BANK[tid] || [];
+    let shuffle = JSON.parse(localStorage.getItem('shuffle_' + tid) || '[]');
+    let idx = (shuffle.length > 0 && shuffle[n-1] !== undefined) ? shuffle[n-1] : (n - 1);
+    const q = list[idx % list.length];
+    if (!q) return { html: `Bài số ${n}`, opts: ['Đúng', 'Sai'], ans: 'Đúng', type: 'text' };
+    return {
+        html: q.html,
+        opts: q.opts,
+        ans: q.ans,
+        type: q.type || 'text'
+    };
+}
+
+async function setGrade(g) {
+    const sessionID = localStorage.getItem('session_' + g) || '1';
+    const snap = await db.ref('tv_history').orderByChild('kidName').equalTo(kidName).once('value');
+    let history = {};
+    snap.forEach(c => { if (c.val().session === sessionID) history[c.val().exID] = c.val().result; });
+
+    document.getElementById('grade-title').innerText = curriculum[g].name;
+    const area = document.getElementById('content-area');
+    area.innerHTML = curriculum[g].topics.map(t => {
+        let done = 0;
+        const cards = Array.from({ length: t.count }, (_, i) => {
+            const id = `${t.id}_${i+1}`;
+            if (history[id] === 'Correct') done++;
+            const st = history[id] === 'Correct' ? 'status-correct' : (history[id] === 'Wrong' ? 'status-wrong' : '');
+            return `<div class="ex-card ${st}" onclick="startQuiz('${t.id}',${i+1},'${g}')">Bài ${i+1}</div>`;
+        }).join('');
+        return `
+            <div class="topic-header">
+                <div>
+                    <h3 style="margin:0; font-size:18px">${t.title}</h3>
+                    <div class="topic-note">${t.note || ''}</div>
+                </div>
+                ${done === t.count ? `<button class="btn-reset" onclick="resetTopic('${t.id}','${g}')">Đổi bài mới 🔄</button>` : ''}
+            </div>
+            <div class="ex-grid">${cards}</div>
+        `;
+    }).join('');
+}
+
+function startQuiz(tid, n, g) {
+    const data = getQuestion(tid, n);
+    document.getElementById('quiz-overlay').style.display = 'flex';
+    document.getElementById('q-container').innerHTML = data.html;
+    const box = document.getElementById('q-opts');
+    box.innerHTML = '';
+
+    [...new Set([data.ans, ...data.opts])].sort(() => Math.random() - 0.5).forEach(o => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-opt';
+        if (data.type === 'symbol' && symbolMap[o]) {
+            btn.innerHTML = `<span class="symbol-style">${symbolMap[o]}</span>`;
+        } else {
+            btn.innerText = o;
+        }
+        btn.onclick = async () => {
+            await db.ref('tv_history').push({
+                kidName,
+                exID: `${tid}_${n}`,
+                result: (o === data.ans ? 'Correct' : 'Wrong'),
+                session: (localStorage.getItem('session_' + g) || '1')
+            });
+            closeQuiz();
+            setGrade(g);
+        };
+        box.appendChild(btn);
+    });
+}
+
+function resetTopic(tid, g) {
+    localStorage.setItem('session_' + g, Date.now().toString());
+    let count = curriculum[g].topics.find(x => x.id === tid).count;
+    localStorage.setItem('shuffle_' + tid, JSON.stringify(Array.from({ length: count }, (_, i) => i).sort(() => Math.random() - 0.5)));
+    location.reload();
+}
+
+function closeQuiz() {
+    document.getElementById('quiz-overlay').style.display = 'none';
+}
+
+function setActiveMenu(g) {
+    localStorage.setItem('currentGrade', g);
+    document.querySelectorAll('.grade-item').forEach(i => i.classList.remove('active'));
+    if (document.getElementById('btn-' + g)) document.getElementById('btn-' + g).classList.add('active');
+    setGrade(g);
+}
+
+window.onload = () => {
+    document.getElementById('display-name').innerText = kidName;
+    const menu = document.getElementById('grade-menu');
+    menu.innerHTML = Object.keys(curriculum).map(k => `<div class="grade-item" id="btn-${k}" onclick="setActiveMenu('${k}')">${curriculum[k].name}</div>`).join('');
+    setActiveMenu(localStorage.getItem('currentGrade') || '5t');
+};
+</script>
+</body>
+</html>
