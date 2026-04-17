@@ -81,7 +81,7 @@
 </head>
 <body>
   <div class="top-header">
-    <a href="index.html" class="btn-home">🏠 Về trang chủ</a>
+    <a href="index" class="btn-home">🏠 Về trang chủ</a>
     <div class="user">📊 Báo cáo của bé: <span id="display-name" style="color:#1976d2">...</span></div>
   </div>
 
@@ -194,7 +194,7 @@
 
     if (!kidName) {
       alert("Bé hãy đăng nhập trước để xem báo cáo nhé!");
-      window.location.href = "index.html";
+      window.location.href = "index";
     } else {
       document.getElementById("display-name").innerText = kidName;
     }
