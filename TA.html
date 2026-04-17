@@ -8,11 +8,18 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { 
-            --primary: #e91e63; --blue: #2196F3; --orange: #ff9800; 
-            --purple: #9c27b0; --yellow: #ffeb3b; --bg: #e0f7fa; 
+        :root {
+            --primary: #e91e63;
+            --blue: #2196F3;
+            --orange: #ff9800;
+            --purple: #9c27b0;
+            --yellow: #ffeb3b;
+            --bg: #e0f7fa;
             --correct: #2ecc71;
+            --soft: #f7fbff;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -22,80 +29,276 @@
             color: #333;
         }
 
-        /* HEADER VÀNG ĐỒNG BỘ TRANG CHỦ */
-        .top-header { 
-            background: var(--yellow); padding: 10px 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 5px solid #fbc02d; border-radius: 0 0 20px 20px;
+        .top-header {
+            background: var(--yellow);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 5px solid #fbc02d;
+            border-radius: 0 0 20px 20px;
             margin-bottom: 20px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-        .header-info { font-weight: bold; color: #333; }
-        .user-logged { display: flex; align-items: center; gap: 10px; font-weight: bold; color: #c2185b; }
+        .user-logged {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #c2185b;
+        }
 
-        /* NÚT VỀ TRANG CHỦ */
         .btn-home {
-            background: var(--primary); color: white; padding: 10px 20px; 
-            border-radius: 25px; text-decoration: none; font-weight: bold; 
-            box-shadow: 0 4px rgba(0,0,0,0.1); transition: 0.2s;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px rgba(0,0,0,0.1);
+            transition: 0.2s;
         }
         .btn-home:active { transform: translateY(2px); box-shadow: none; }
 
-        /* VÙNG CHỨA NỘI DUNG */
-        .main-box { 
-            background: white; margin: 0 auto 30px; width: 92%; max-width: 900px; 
-            border-radius: 30px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center;
+        .main-box {
+            background: white;
+            margin: 0 auto 30px;
+            width: 94%;
+            max-width: 1180px;
+            border-radius: 30px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        /* MENU CHỦ ĐỀ - DẠNG NÚT BO TRÒN */
-        .menu-container { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .hero-box {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 18px;
+            background: linear-gradient(135deg, #fff8d6, #eef8ff);
+            border-radius: 28px;
+            padding: 22px;
+            margin-bottom: 22px;
+            align-items: center;
+        }
+        .hero-box h2 {
+            color: var(--purple);
+            margin: 0 0 12px 0;
+            font-size: 32px;
+        }
+        .hero-box p {
+            margin: 0;
+            font-size: 17px;
+            line-height: 1.7;
+            font-weight: 600;
+            color: #4f6781;
+        }
+        .hero-art {
+            background: #dff4ff;
+            min-height: 170px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 78px;
+            gap: 8px;
+        }
+
+        .menu-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
         .menu-btn {
-            padding: 10px 20px; border: none; border-radius: 30px; background: #f0f0f0;
-            font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 3px #ddd;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 30px;
+            background: #f0f0f0;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 3px #ddd;
+            font-size: 15px;
         }
-        .menu-btn.active { background: var(--purple); color: white; box-shadow: 0 3px #7b1fa2; }
+        .menu-btn.active {
+            background: var(--purple);
+            color: white;
+            box-shadow: 0 3px #7b1fa2;
+        }
 
-        /* LƯỚI CÂU HỎI */
-        .quiz-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; }
-        .card {
-            background: #fff; border: 2px solid #f0f0f0; border-radius: 25px;
-            padding: 20px; text-align: center; transition: 0.3s;
+        .topic-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            background: var(--soft);
+            padding: 16px 18px;
+            border-radius: 24px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
         }
-        .card:hover { border-color: var(--blue); transform: translateY(-3px); }
+        .topic-head h3 {
+            margin: 0 0 6px 0;
+            color: var(--primary);
+            font-size: 24px;
+        }
+        .topic-head p {
+            margin: 0;
+            color: #60758d;
+            font-weight: 600;
+        }
+        .topic-icon {
+            font-size: 52px;
+            line-height: 1;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            width: 100%;
+        }
+        .card {
+            background: #fff;
+            border: 2px solid #eef1f5;
+            border-radius: 25px;
+            padding: 18px;
+            text-align: center;
+            transition: 0.25s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 340px;
+        }
+        .card:hover {
+            border-color: var(--blue);
+            transform: translateY(-3px);
+        }
 
         .speak-btn {
-            background: var(--blue); color: white; border: none; border-radius: 50%;
-            width: 45px; height: 45px; cursor: pointer; margin-bottom: 10px; font-size: 20px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            margin: 0 auto 10px;
+            font-size: 20px;
             box-shadow: 0 4px #1976D2;
         }
         .speak-btn:active { transform: translateY(2px); box-shadow: none; }
 
-        .card img { width: 110px; height: 110px; object-fit: contain; margin-bottom: 15px; }
+        .image-box {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 12px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, #fffef8, #eef8ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 66px;
+            box-shadow: inset 0 0 0 2px #eef3f8;
+            overflow: hidden;
+        }
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
-        /* LỰA CHỌN VÀ NHẬP LIỆU */
-        .opt-zone { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-        .opt-zone button { 
-            padding: 8px 15px; border-radius: 12px; border: 2px solid #eee; 
-            background: white; cursor: pointer; font-weight: bold; 
+        .word-label {
+            font-size: 14px;
+            font-weight: 800;
+            color: #70859d;
+            margin-bottom: 10px;
+            min-height: 20px;
+        }
+
+        .opt-zone {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .opt-zone button {
+            padding: 8px 15px;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
         }
         .opt-zone button:hover { background: #e3f2fd; border-color: var(--blue); }
 
         .input-zone { display: none; width: 100%; }
         .eng-input {
-            width: 85%; padding: 12px; border: 3px solid #eee; border-radius: 15px;
-            text-align: center; font-size: 18px; font-weight: bold; outline: none;
+            width: 88%;
+            padding: 12px;
+            border: 3px solid #eee;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            outline: none;
         }
         .eng-input.is-correct { border-color: var(--correct); background: #f1fdf5; }
 
-        /* NÚT NỘP BÀI */
+        .example-box {
+            margin-top: 12px;
+            background: #f8fbff;
+            border-radius: 18px;
+            padding: 12px;
+            text-align: left;
+            min-height: 82px;
+        }
+        .example-en {
+            font-weight: 800;
+            color: #2f3e50;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        .example-vi {
+            font-size: 14px;
+            color: #688097;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
         .btn-submit {
-            padding: 15px 60px; border-radius: 50px; border: none;
-            background: #4CAF50; color: white; font-size: 20px; font-weight: bold;
-            cursor: pointer; margin: 30px 0; box-shadow: 0 6px #388E3C;
+            padding: 15px 60px;
+            border-radius: 50px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 28px auto 4px;
+            box-shadow: 0 6px #388E3C;
+            display: block;
         }
         .btn-submit:active { transform: translateY(3px); box-shadow: none; }
 
-        @media (max-width: 600px) { .quiz-grid { grid-template-columns: 1fr; } }
+        .tips {
+            background: #f1fff0;
+            border: 2px solid #c4efbe;
+            border-radius: 22px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-weight: 700;
+            color: #4d6b49;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 760px) {
+            .hero-box { grid-template-columns: 1fr; }
+            .hero-box h2 { font-size: 27px; }
+            .hero-art { min-height: 130px; font-size: 60px; }
+        }
     </style>
 </head>
 <body>
@@ -108,13 +311,29 @@
     </div>
 
     <div class="main-box">
-        <h2 style="color: var(--purple); margin-top: 0;">🔤 Thử Thách Tiếng Anh</h2>
-        
-        <div class="menu-container" id="menu">
-            <button class="menu-btn active" onclick="changeTopic('ANIMALS', this)">🐶 Animals</button>
-            <button class="menu-btn" onclick="changeTopic('FRUITS', this)">🍎 Fruits</button>
-            <button class="menu-btn" onclick="changeTopic('COLORS', this)">🎨 Colors</button>
-            <button class="menu-btn" onclick="changeTopic('NUMBERS', this)">🔢 Numbers</button>
+        <div class="hero-box">
+            <div>
+                <h2>🔤 Tiếng Anh vui nhộn cho bé</h2>
+                <p>
+                    Chọn chủ đề quen thuộc như thời tiết, mùa, màu sắc, đồ vật, vị trí và con người.
+                    Bé nghe phát âm, chọn đáp án đúng rồi gõ lại từ để nhớ thật lâu.
+                </p>
+            </div>
+            <div class="hero-art">🌈 ☁️ 🧸 📘</div>
+        </div>
+
+        <div class="menu-container" id="menu"></div>
+
+        <div class="topic-head">
+            <div>
+                <h3 id="topic-title">🌤️ Weather - Thời tiết</h3>
+                <p id="topic-desc">Học từ vựng tiếng Anh qua hình ảnh vui nhộn, gần gũi với trẻ nhỏ.</p>
+            </div>
+            <div class="topic-icon" id="topic-icon">🌤️</div>
+        </div>
+
+        <div class="tips">
+            <b>Hướng dẫn:</b> Bé bấm nút loa để nghe từ, chọn đáp án đúng, rồi gõ lại từ tiếng Anh vào ô bên dưới. Hoàn thành xong thì bấm nút lưu điểm.
         </div>
 
         <div class="quiz-grid" id="quiz-container"></div>
@@ -134,64 +353,119 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        
+
         const kidName = localStorage.getItem('kidName');
-        let activeTopic = 'ANIMALS';
+        let activeTopic = 'WEATHER';
         let currentState = [];
 
+        const topicMeta = {
+            WEATHER: { label: '🌤️ Weather', full: '🌤️ Weather - Thời tiết', icon: '🌤️', desc: 'Các kiểu thời tiết quen thuộc để bé dùng trong giao tiếp hằng ngày.' },
+            SEASONS: { label: '🌸 Seasons', full: '🌸 Seasons - Mùa', icon: '🌸', desc: 'Học tên các mùa trong năm bằng hình vui nhộn, dễ nhớ.' },
+            COLORS: { label: '🎨 Colors', full: '🎨 Colors - Màu sắc', icon: '🎨', desc: 'Các màu sắc cơ bản, gần gũi với thế giới tuổi thơ.' },
+            OBJECTS: { label: '🧸 Objects', full: '🧸 Objects - Đồ vật', icon: '🧸', desc: 'Các đồ vật quen thuộc trong lớp học và ở nhà.' },
+            POSITIONS: { label: '📍 Positions', full: '📍 Positions - Vị trí', icon: '📍', desc: 'Các từ chỉ vị trí để bé mô tả đồ vật xung quanh.' },
+            PEOPLE: { label: '👨‍👩‍👧‍👦 People', full: '👨‍👩‍👧‍👦 People - Con người', icon: '👨‍👩‍👧‍👦', desc: 'Thành viên gia đình và những người gần gũi với bé.' }
+        };
+
         const dataSet = {
-            ANIMALS: [
-                { img: "https://cdn-icons-png.flaticon.com/512/616/616408.png", ans: "dog", opts: ["cat", "dog", "ant"] },
-                { img: "https://cdn-icons-png.flaticon.com/512/616/616430.png", ans: "cat", opts: ["cat", "bat", "pig"] },
-                { img: "https://i.ibb.co/3mp8d46j/bird.webp", ans: "bird", opts: ["bird", "bee", "owl"] },
-				<!--https://cdn-icons-png.flaticon.com/512/2395/2395796.png-->
-				
-				<!--https://cdn-icons-png.flaticon.com/512/1998/1998627.png-->
-                { img: "https://i.ibb.co/pHWP2Hm/lion.jpg", ans: "lion", opts: ["bear", "lion", "tiger"] }
-				
-				
+            WEATHER: [
+                { emoji: '☀️', ans: 'sunny', opts: ['sunny', 'rainy', 'windy'], sentenceEn: 'It is sunny today.', sentenceVi: 'Hôm nay trời nắng.' },
+                { emoji: '🌧️', ans: 'rainy', opts: ['cloudy', 'rainy', 'snowy'], sentenceEn: 'It is rainy today.', sentenceVi: 'Hôm nay trời mưa.' },
+                { emoji: '☁️', ans: 'cloudy', opts: ['sunny', 'cloudy', 'stormy'], sentenceEn: 'The sky is cloudy.', sentenceVi: 'Bầu trời nhiều mây.' },
+                { emoji: '🌬️', ans: 'windy', opts: ['windy', 'snowy', 'hot'], sentenceEn: 'It is windy outside.', sentenceVi: 'Ngoài trời đang có gió.' },
+                { emoji: '⛈️', ans: 'stormy', opts: ['rainy', 'stormy', 'sunny'], sentenceEn: 'The weather is stormy.', sentenceVi: 'Thời tiết có bão.' },
+                { emoji: '❄️', ans: 'snowy', opts: ['snowy', 'hot', 'windy'], sentenceEn: 'It is snowy in winter.', sentenceVi: 'Mùa đông có tuyết.' }
             ],
-            FRUITS: [
-                { img: "https://cdn-icons-png.flaticon.com/512/415/415733.png", ans: "apple", opts: ["apple", "mango", "banana"] },
-                { img: "https://cdn-icons-png.flaticon.com/512/2909/2909787.png", ans: "banana", opts: ["pear", "banana", "grape"] }
+            SEASONS: [
+                { emoji: '🌸', ans: 'spring', opts: ['spring', 'summer', 'winter'], sentenceEn: 'Spring has many flowers.', sentenceVi: 'Mùa xuân có nhiều hoa.' },
+                { emoji: '🏖️', ans: 'summer', opts: ['autumn', 'summer', 'spring'], sentenceEn: 'Summer is hot.', sentenceVi: 'Mùa hè nóng.' },
+                { emoji: '🍂', ans: 'autumn', opts: ['winter', 'summer', 'autumn'], sentenceEn: 'Autumn has yellow leaves.', sentenceVi: 'Mùa thu có lá vàng.' },
+                { emoji: '⛄', ans: 'winter', opts: ['winter', 'autumn', 'spring'], sentenceEn: 'Winter is cold.', sentenceVi: 'Mùa đông lạnh.' }
             ],
             COLORS: [
-                { img: "https://cdn-icons-png.flaticon.com/512/2911/2911230.png", ans: "red", opts: ["blue", "red", "green"] }
+                { emoji: '🔴', ans: 'red', opts: ['blue', 'red', 'green'], sentenceEn: 'The apple is red.', sentenceVi: 'Quả táo màu đỏ.' },
+                { emoji: '🔵', ans: 'blue', opts: ['yellow', 'blue', 'purple'], sentenceEn: 'The sky is blue.', sentenceVi: 'Bầu trời màu xanh dương.' },
+                { emoji: '🟡', ans: 'yellow', opts: ['yellow', 'orange', 'black'], sentenceEn: 'The sun is yellow.', sentenceVi: 'Mặt trời màu vàng.' },
+                { emoji: '🟢', ans: 'green', opts: ['green', 'red', 'pink'], sentenceEn: 'The leaf is green.', sentenceVi: 'Chiếc lá màu xanh lá.' },
+                { emoji: '🟣', ans: 'purple', opts: ['purple', 'brown', 'white'], sentenceEn: 'The balloon is purple.', sentenceVi: 'Quả bóng màu tím.' },
+                { emoji: '🟠', ans: 'orange', opts: ['orange', 'blue', 'gray'], sentenceEn: 'The orange is orange.', sentenceVi: 'Quả cam màu cam.' }
             ],
-            NUMBERS: [
-                { img: "https://cdn-icons-png.flaticon.com/512/3570/3570095.png", ans: "one", opts: ["one", "two", "three"] }
+            OBJECTS: [
+                { emoji: '📘', ans: 'book', opts: ['book', 'chair', 'bag'], sentenceEn: 'This is my book.', sentenceVi: 'Đây là quyển sách của em.' },
+                { emoji: '✏️', ans: 'pencil', opts: ['eraser', 'pencil', 'desk'], sentenceEn: 'I have a pencil.', sentenceVi: 'Em có một cây bút chì.' },
+                { emoji: '🪑', ans: 'chair', opts: ['table', 'chair', 'book'], sentenceEn: 'The chair is brown.', sentenceVi: 'Cái ghế màu nâu.' },
+                { emoji: '🎒', ans: 'bag', opts: ['bag', 'ball', 'toy'], sentenceEn: 'My bag is new.', sentenceVi: 'Cặp sách của em còn mới.' },
+                { emoji: '🧸', ans: 'toy', opts: ['toy', 'box', 'hat'], sentenceEn: 'The toy is cute.', sentenceVi: 'Đồ chơi rất dễ thương.' },
+                { emoji: '⚽', ans: 'ball', opts: ['ball', 'doll', 'shoe'], sentenceEn: 'The ball is round.', sentenceVi: 'Quả bóng tròn.' }
+            ],
+            POSITIONS: [
+                { emoji: '⬆️', ans: 'on', opts: ['on', 'under', 'behind'], sentenceEn: 'The cat is on the box.', sentenceVi: 'Con mèo ở trên cái hộp.' },
+                { emoji: '⬇️', ans: 'under', opts: ['between', 'under', 'on'], sentenceEn: 'The ball is under the table.', sentenceVi: 'Quả bóng ở dưới cái bàn.' },
+                { emoji: '↔️', ans: 'between', opts: ['in', 'between', 'behind'], sentenceEn: 'The doll is between two boxes.', sentenceVi: 'Búp bê ở giữa hai cái hộp.' },
+                { emoji: '👈', ans: 'behind', opts: ['behind', 'on', 'in'], sentenceEn: 'The ball is behind the box.', sentenceVi: 'Quả bóng ở phía sau cái hộp.' },
+                { emoji: '👉', ans: 'in front of', opts: ['under', 'in front of', 'behind'], sentenceEn: 'The bike is in front of the house.', sentenceVi: 'Xe đạp ở phía trước ngôi nhà.' }
+            ],
+            PEOPLE: [
+                { emoji: '👩', ans: 'mother', opts: ['mother', 'teacher', 'sister'], sentenceEn: 'My mother is kind.', sentenceVi: 'Mẹ của em rất hiền.' },
+                { emoji: '👨', ans: 'father', opts: ['father', 'brother', 'uncle'], sentenceEn: 'My father is strong.', sentenceVi: 'Bố của em rất khỏe.' },
+                { emoji: '👧', ans: 'girl', opts: ['girl', 'boy', 'baby'], sentenceEn: 'The girl is happy.', sentenceVi: 'Bé gái đang vui.' },
+                { emoji: '👦', ans: 'boy', opts: ['boy', 'girl', 'friend'], sentenceEn: 'The boy can run.', sentenceVi: 'Bé trai có thể chạy.' },
+                { emoji: '👵', ans: 'grandmother', opts: ['grandmother', 'mother', 'aunt'], sentenceEn: 'My grandmother is gentle.', sentenceVi: 'Bà của em rất dịu dàng.' },
+                { emoji: '👴', ans: 'grandfather', opts: ['grandfather', 'father', 'teacher'], sentenceEn: 'My grandfather is smiling.', sentenceVi: 'Ông của em đang mỉm cười.' }
             ]
         };
 
         function speak(text) {
+            if (!('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = 'en-US';
+            u.rate = 0.9;
+            u.pitch = 1.05;
             window.speechSynthesis.speak(u);
         }
 
-        function changeTopic(topic, btn) {
+        function renderMenu() {
+            const menu = document.getElementById('menu');
+            menu.innerHTML = Object.keys(topicMeta).map(key => `
+                <button class="menu-btn ${key === activeTopic ? 'active' : ''}" onclick="changeTopic('${key}')">${topicMeta[key].label}</button>
+            `).join('');
+        }
+
+        function updateTopicHeader() {
+            const meta = topicMeta[activeTopic];
+            document.getElementById('topic-title').innerText = meta.full;
+            document.getElementById('topic-desc').innerText = meta.desc;
+            document.getElementById('topic-icon').innerText = meta.icon;
+        }
+
+        function changeTopic(topic) {
             activeTopic = topic;
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            renderMenu();
             render();
         }
 
         function render() {
+            updateTopicHeader();
             const container = document.getElementById('quiz-container');
             const items = dataSet[activeTopic] || [];
             currentState = items.map(() => ({ done: false }));
-            
+
             container.innerHTML = items.map((item, i) => `
                 <div class="card">
-                    <button class="speak-btn" onclick="speak('${item.ans}')">🔊</button>
-                    <br><img src="${item.img}">
+                    <button class="speak-btn" onclick="speak(${JSON.stringify(item.ans)})">🔊</button>
+                    <div class="image-box">${item.img ? `<img src="${item.img}" alt="${item.ans}">` : item.emoji}</div>
+                    <div class="word-label">Chọn từ đúng với hình minh họa</div>
                     <div id="opt-box-${i}" class="opt-zone">
-                        ${item.opts.map(o => `<button onclick="handleChoice(${i}, '${o}', '${item.ans}')">${o}</button>`).join('')}
+                        ${item.opts.map(o => `<button onclick="handleChoice(${i}, ${JSON.stringify(o)}, ${JSON.stringify(item.ans)})">${o}</button>`).join('')}
                     </div>
                     <div id="input-box-${i}" class="input-zone">
-                        <div style="color:var(--correct);font-weight:bold;font-size:14px;margin-bottom:8px">Đúng rồi! Bé hãy gõ lại:</div>
-                        <input type="text" class="eng-input" id="in-${i}" oninput="checkInput(${i}, '${item.ans}')" placeholder="...">
+                        <div style="color:var(--correct);font-weight:bold;font-size:14px;margin-bottom:8px">Đúng rồi! Bé hãy gõ lại từ:</div>
+                        <input type="text" class="eng-input" id="in-${i}" oninput="checkInput(${i}, ${JSON.stringify(item.ans)})" placeholder="Type here...">
+                    </div>
+                    <div class="example-box">
+                        <div class="example-en">${item.sentenceEn}</div>
+                        <div class="example-vi">${item.sentenceVi}</div>
                     </div>
                 </div>
             `).join('');
@@ -202,25 +476,34 @@
                 document.getElementById(`opt-box-${i}`).style.display = 'none';
                 document.getElementById(`input-box-${i}`).style.display = 'block';
                 speak(correct);
-            } else { speak('Try again'); }
+            } else {
+                speak('Try again');
+            }
         }
 
         function checkInput(i, correct) {
             const el = document.getElementById(`in-${i}`);
             const isCorrect = el.value.trim().toLowerCase() === correct.toLowerCase();
             currentState[i].done = isCorrect;
-            if (isCorrect) { el.classList.add('is-correct'); speak("Excellent"); }
-            else { el.classList.remove('is-correct'); }
+            if (isCorrect) {
+                el.classList.add('is-correct');
+                speak('Excellent');
+            } else {
+                el.classList.remove('is-correct');
+            }
         }
 
         async function sendReport() {
-            if(!kidName) { alert("Bé cần đăng nhập ở trang chủ!"); return; }
+            if (!kidName) {
+                alert('Bé cần đăng nhập ở trang chủ!');
+                return;
+            }
             const score = currentState.filter(s => s.done).length;
             const total = dataSet[activeTopic].length;
             const btn = document.getElementById('submitBtn');
 
             btn.disabled = true;
-            btn.innerText = "⏳ Đang lưu...";
+            btn.innerText = '⏳ Đang lưu...';
 
             try {
                 await db.ref('english_history').push({
@@ -230,22 +513,23 @@
                     date: new Date().toLocaleString('vi-VN'),
                     timestamp: Date.now()
                 });
-                alert("Tuyệt vời! Bé " + kidName + " đã hoàn thành bài học.");
-                window.location.href = "index.html";
+                alert(`Tuyệt vời! Bé ${kidName} đã hoàn thành chủ đề ${topicMeta[activeTopic].label}.`);
+                window.location.href = 'index.html';
             } catch (e) {
-                alert("Lỗi lưu điểm: " + e.message);
+                alert('Lỗi lưu điểm: ' + e.message);
                 btn.disabled = false;
-                btn.innerText = "Nộp bài & Lưu Điểm 🚀";
+                btn.innerText = 'Nộp bài & Lưu Điểm 🚀';
             }
         }
 
         window.onload = () => {
             if (!kidName) {
-                alert("Bé hãy quay lại Trang Chủ để đăng nhập nhé!");
-                window.location.href = "index.html";
-            } else {
-                document.getElementById('display-name').innerText = kidName;
+                alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!');
+                window.location.href = 'index.html';
+                return;
             }
+            document.getElementById('display-name').innerText = kidName;
+            renderMenu();
             render();
         };
     </script>
