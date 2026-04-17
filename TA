@@ -61,7 +61,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);margin:0;color
 </head>
 <body>
 <div class="top-header">
-    <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+    <a href="index" class="btn-home">🏠 Về Trang Chủ</a>
     <div class="user-logged">🚀 Bé đang học: <span id="display-name" style="color:var(--blue)">...</span></div>
 </div>
 
@@ -408,7 +408,7 @@ function changeSet(setNo){
 window.onload = () => {
     if(!kidName){
         alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!');
-        window.location.href = 'index.html';
+        window.location.href = 'index';
         return;
     }
     document.getElementById('display-name').innerText = kidName;
