@@ -342,7 +342,7 @@
     </div>
 
     <script>
-      const firebaseConfig = {
+       const firebaseConfig = {
   apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
   authDomain: "bon-bi.firebaseapp.com",
   databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
@@ -351,6 +351,7 @@
   messagingSenderId: "988400970351",
   appId: "1:988400970351:web:21e9181950114225417b9a"
 };
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
@@ -416,12 +417,37 @@
         };
 
         function speak(text) {
-            if (!('speechSynthesis' in window)) return;
+            if (!('speechSynthesis' in window)) {
+                alert("Trình duyệt này chưa hỗ trợ phát âm.");
+                return;
+            }
+
             window.speechSynthesis.cancel();
+
+            const voices = window.speechSynthesis.getVoices() || [];
             const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'en-US';
+
+            const enVoice =
+                voices.find(v => v.lang === 'en-US') ||
+                voices.find(v => v.lang === 'en-GB') ||
+                voices.find(v => (v.lang || '').toLowerCase().startsWith('en')) ||
+                null;
+
+            if (enVoice) {
+                u.voice = enVoice;
+                u.lang = enVoice.lang;
+            } else {
+                u.lang = 'en-US';
+            }
+
             u.rate = 0.9;
-            u.pitch = 1.05;
+            u.pitch = 1.0;
+            u.volume = 1;
+
+            u.onerror = function() {
+                alert("Không phát được âm thanh trên thiết bị này. Bé thử mở bằng Chrome hoặc Edge nhé!");
+            };
+
             window.speechSynthesis.speak(u);
         }
 
@@ -520,6 +546,13 @@
                 btn.disabled = false;
                 btn.innerText = 'Nộp bài & Lưu Điểm 🚀';
             }
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+            setTimeout(() => window.speechSynthesis.getVoices(), 300);
+            document.addEventListener('click', () => window.speechSynthesis.getVoices(), { once: true });
+            document.addEventListener('touchstart', () => window.speechSynthesis.getVoices(), { once: true });
         }
 
         window.onload = () => {
