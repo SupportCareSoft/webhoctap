@@ -56,7 +56,101 @@
         .rank-item { display: flex; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #fff; font-size: 14px; font-weight: bold; }
         
         #error-msg { color: #d32f2f; font-size: 11px; position: absolute; top: 40px; right: 0; font-weight: bold; background: #ffcdd2; padding: 2px 8px; border-radius: 5px; display: none; z-index: 10; }
+    
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; padding: 16px;
+        }
+        .modal-card {
+            width: 100%; max-width: 420px; background: white; border-radius: 24px;
+            padding: 22px 18px 18px; position: relative; box-shadow: 0 14px 40px rgba(0,0,0,0.2);
+        }
+        .modal-card h3 { margin: 0 0 14px; color: #9c27b0; text-align: center; font-size: 28px; }
+        .modal-form { display: grid; gap: 10px; }
+        .modal-form input {
+            padding: 11px 12px; border-radius: 16px; border: 2px solid #e7eef5; outline: none; font-size: 15px;
+        }
+        .modal-form input:focus { border-color: #2196F3; }
+        .modal-form .btn-auth { width: 100%; min-height: 44px; font-size: 14px; }
+        .modal-close {
+            position: absolute; top: 10px; right: 12px; border: none; background: #f3f3f3;
+            width: 34px; height: 34px; border-radius: 999px; cursor: pointer; font-size: 24px; line-height: 1;
+        }
+        .modal-note {
+            margin-top: 12px; background: #fff8e1; border-radius: 16px; padding: 10px 12px;
+            font-size: 13px; line-height: 1.6; font-weight: bold; color: #6d4c41;
+        }
+        .modal-error {
+            margin-top: 10px; background: #ffcdd2; color: #c62828; border-radius: 12px;
+            padding: 8px 10px; font-size: 13px; font-weight: bold; text-align: center;
+        }
+        .auth-choice-box {
+            margin-top: 16px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+        }
+        .auth-choice-box button {
+            min-width: 140px;
+            min-height: 46px;
+            font-size: 15px;
+            border-radius: 16px;
+        }
+        .auth-required-hero {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 14px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #fff8e1, #ffe0f0);
+            border: 2px solid #ffe082;
+            font-size: 44px;
+        }
+        .auth-required-title {
+            text-align: center;
+            color: #8e24aa;
+            font-weight: 800;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .auth-required-text {
+            background: #f8fbff;
+            border-radius: 18px;
+            padding: 14px 14px;
+            line-height: 1.8;
+            font-weight: 700;
+            color: #546e7a;
+            text-align: center;
+        }
+        .auth-required-text b {
+            color: #e65100;
+        }
+
+    <style>
+    @media (max-width: 768px) {
+        .top-header { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px 12px; }
+        .header-info { justify-content: center; text-align: center; }
+        .auth-zone { width: 100%; justify-content: center; }
+        #auth-actions { width: 100%; justify-content: center; }
+        .btn-auth { min-height: 42px; }
+        .nav-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 12px; }
+        .btn-nav { justify-content: center; text-align: center; }
+        .welcome-section { flex-direction: column; text-align: center; }
+        .leaderboard-row { flex-direction: column; }
+        #user-logged { flex-wrap: wrap; justify-content: center; }
+        #user-logged span { text-align: center; }
+    }
+    @media (max-width: 430px) {
+        .nav-container { grid-template-columns: 1fr; }
+        .modal-card { padding: 20px 14px 16px; border-radius: 20px; }
+        .modal-card h3 { font-size: 24px; }
+        .auth-choice-box { flex-direction: column; }
+        .auth-required-title { font-size: 24px; }
+        .auth-required-hero { width: 78px; height: 78px; font-size: 38px; }
+    }
     </style>
+
+</style>
 </head>
 <body>
 
@@ -64,11 +158,9 @@
         <div class="header-info">🏠 Phạm Quốc Đại | 📞 0393125184</div>
         
         <div class="auth-zone">
-            <div id="auth-form" style="display: flex; gap: 5px; align-items: center;">
-                <input type="text" id="username" placeholder="Nhập tên bé...">
-                <button class="btn-auth btn-reg" onclick="handleAuth('register')">Đăng Ký</button>
-                <button class="btn-auth btn-login" onclick="handleAuth('login')">Đăng Nhập</button>
-                <div id="error-msg"></div>
+            <div id="auth-actions" style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn-auth btn-reg" onclick="openModal('registerModal')">Đăng Ký</button>
+                <button class="btn-auth btn-login" onclick="openModal('loginModal')">Đăng Nhập</button>
             </div>
 
             <div id="user-logged" style="display: none; align-items: center; gap: 10px;">
@@ -81,9 +173,58 @@
     <div class="nav-container">
         <a href="index.html" class="btn-nav bg-pink">🏠 Trang chủ</a>
         <a href="toan.html" class="btn-nav bg-blue" onclick="return checkLogin()">🔢 Toán Học</a>
-        <a href="javascript:void(0)" class="btn-nav bg-orange" onclick="checkLogin('Tiếng Việt')">📖 Tiếng Việt</a>
+        <a href="tiengviet.html" class="btn-nav bg-orange" onclick="return checkLogin()">📖 Tiếng Việt</a>
         <a href="TA.html" class="btn-nav bg-purple" onclick="return checkLogin()">🔤 Tiếng Anh</a>
         <a href="EQ.html" class="btn-nav bg-pink" onclick="return checkLogin()">💖 EQ</a>
+    </div>
+
+
+    <div id="registerModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('registerModal')">×</button>
+            <h3>📝 Đăng Ký</h3>
+            <div class="modal-form">
+                <input type="text" id="reg-kidname" placeholder="Tên bé...">
+                <input type="text" id="reg-username" placeholder="Username viết liền không dấu...">
+                <input type="password" id="reg-password" placeholder="Mật khẩu...">
+                <input type="password" id="reg-password-confirm" placeholder="Nhập lại mật khẩu...">
+                <button class="btn-auth btn-reg" onclick="handleAuth('register')">Tạo tài khoản</button>
+            </div>
+            <div class="modal-note">
+                Username: viết liền, không dấu, không khoảng trắng.<br>
+                Mật khẩu: ít nhất 8 ký tự và có ít nhất 1 ký tự đặc biệt.
+            </div>
+            <div id="error-msg-register" class="modal-error" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+            <h3>🔐 Đăng Nhập</h3>
+            <div class="modal-form">
+                <input type="text" id="login-username" placeholder="Tên đăng nhập...">
+                <input type="password" id="login-password" placeholder="Mật khẩu...">
+                <button class="btn-auth btn-login" onclick="handleAuth('login')">Vào học ngay</button>
+            </div>
+            <div id="error-msg-login" class="modal-error" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="authRequiredModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('authRequiredModal')">×</button>
+            <div class="auth-required-hero">🔐</div>
+            <div class="auth-required-title">Bé cần đăng nhập</div>
+            <div class="auth-required-text">
+                Nếu bé <b>đã có tài khoản</b> thì chọn <b>Đăng nhập</b> nhé.<br>
+                Nếu bé <b>chưa có tài khoản</b> thì chọn <b>Đăng ký</b> để cô/chú tạo tài khoản cho bé.
+            </div>
+            <div class="auth-choice-box">
+                <button class="btn-auth btn-reg" onclick="openAuthFromRequired('register')">📝 Đăng Ký</button>
+                <button class="btn-auth btn-login" onclick="openAuthFromRequired('login')">🔐 Đăng Nhập</button>
+            </div>
+        </div>
     </div>
 
     <div class="main-box">
@@ -94,8 +235,8 @@
                 <div style="background: #fff9c4; padding: 15px; border-radius: 20px; font-weight: bold; font-size: 14px; line-height: 1.6;">
                     Bé ơi, hãy lưu ý nhé: ✨<br>
                     1. <b>Vui lòng đăng nhập</b> để bắt đầu học tập.<br>
-                    2. Nếu chưa có tài khoản, bé hãy <b>Đăng ký</b> ở góc phải nhé.<br>
-                    3. Cố gắng đạt điểm cao để có tên trên Bảng Vàng!
+                    2. Nếu đã có tài khoản, bé hãy <b>Đăng nhập</b>; nếu chưa có thì hãy <b>Đăng ký</b> nhé.<br>
+                    3. Khi chưa đăng nhập mà bấm vào môn học, hệ thống sẽ nhắc bé chọn Đăng ký hoặc Đăng nhập!
                 </div>
             </div>
         </div>
@@ -128,66 +269,159 @@
 
         function checkState() {
             const name = localStorage.getItem('kidName');
+            const username = localStorage.getItem('kidUsername');
+
             if (name) {
-                document.getElementById('auth-form').style.display = 'none';
+                document.getElementById('auth-actions').style.display = 'none';
                 document.getElementById('user-logged').style.display = 'flex';
                 document.getElementById('display-name').innerText = name;
             }
+
+            if (username) {
+                database.ref('users/' + username).once('value').then(snapshot => {
+                    if (snapshot.exists()) {
+                        const user = snapshot.val();
+                        if (user.kidName) {
+                            localStorage.setItem('kidName', user.kidName);
+                            document.getElementById('display-name').innerText = user.kidName;
+                        }
+                    }
+                }).catch(() => {});
+            }
+
             loadLeaderboard();
         }
 
-        // CHẶN HỌC CHUI
-        function checkLogin(subjectName) {
+        function checkLogin() {
             const isLogged = localStorage.getItem('kidName');
-            if (!isLogged) {
-                alert("Bé ơi! Vui lòng ĐĂNG NHẬP để vào học nhé.\nNếu chưa có tài khoản, bé hãy chọn ĐĂNG KÝ ở góc phải nha!");
-                return false;
-            }
-            if (subjectName) {
-                alert("Môn " + subjectName + " đang được soạn bài, bé quay lại sau nhé!");
+            if (!isLogged || isLogged.trim() === "") {
+                openModal('authRequiredModal');
                 return false;
             }
             return true;
         }
 
-        // XỬ LÝ ĐĂNG KÝ / ĐĂNG NHẬP
-        function handleAuth(mode) {
-            const nameInput = document.getElementById('username');
-            const name = nameInput.value.trim();
-            if(!name) { showErr("Bé hãy nhập tên nhé!"); return; }
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'flex';
+        }
 
-            database.ref('users/' + name).once('value', snapshot => {
-                const exists = snapshot.exists();
-                if (mode === 'register') {
-                    if (exists) {
-                        showErr("Tên bị trùng rồi bé ơi!");
-                    } else {
-                        database.ref('users/' + name).set({ createdAt: Date.now() }).then(() => loginSuccess(name));
-                    }
-                } else {
-                    if (exists) {
-                        loginSuccess(name);
-                    } else {
-                        showErr("Tên chưa đăng ký bé ơi!");
-                    }
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+            clearErrors();
+        }
+
+        function openAuthFromRequired(mode) {
+            closeModal('authRequiredModal');
+            if (mode === 'register') openModal('registerModal');
+            else openModal('loginModal');
+        }
+
+        function clearErrors() {
+            ['error-msg-register', 'error-msg-login'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.display = 'none';
+                    el.innerText = '';
                 }
             });
         }
 
-        function showErr(msg) {
-            const err = document.getElementById('error-msg');
-            err.innerText = msg;
-            err.style.display = 'block';
-            setTimeout(() => { err.style.display = 'none'; }, 3000);
+        function isValidUsername(username) {
+            return /^[a-z0-9]+$/.test(username);
         }
 
-        function loginSuccess(name) {
-            localStorage.setItem('kidName', name);
+        function isValidPassword(password) {
+            return /^(?=.*[^A-Za-z0-9]).{8,}$/.test(password);
+        }
+
+        function handleAuth(mode) {
+            clearErrors();
+
+            if (mode === 'register') {
+                const kidName = document.getElementById('reg-kidname').value.trim();
+                const username = document.getElementById('reg-username').value.trim().toLowerCase();
+                const password = document.getElementById('reg-password').value;
+                const confirmPassword = document.getElementById('reg-password-confirm').value;
+
+                if (!kidName || !username || !password || !confirmPassword) {
+                    showErr("Bé hãy nhập đầy đủ thông tin đăng ký nhé!", 'register');
+                    return;
+                }
+                if (!isValidUsername(username)) {
+                    showErr("Username phải viết liền, không dấu, không khoảng trắng.", 'register');
+                    return;
+                }
+                if (!isValidPassword(password)) {
+                    showErr("Mật khẩu cần ít nhất 8 ký tự và có 1 ký tự đặc biệt.", 'register');
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    showErr("Mật khẩu nhập lại chưa khớp rồi bé ơi!", 'register');
+                    return;
+                }
+
+                database.ref('users/' + username).once('value').then(snapshot => {
+                    if (snapshot.exists()) {
+                        showErr("Tên đăng nhập đã có rồi bé ơi!", 'register');
+                    } else {
+                        database.ref('users/' + username).set({
+                            kidName: kidName,
+                            username: username,
+                            password: password,
+                            createdAt: Date.now()
+                        }).then(() => {
+                            loginSuccess(kidName, username);
+                        });
+                    }
+                });
+            } else {
+                const username = document.getElementById('login-username').value.trim().toLowerCase();
+                const password = document.getElementById('login-password').value;
+
+                if (!username || !password) {
+                    showErr("Bé hãy nhập tên đăng nhập và mật khẩu nhé!", 'login');
+                    return;
+                }
+
+                database.ref('users/' + username).once('value').then(snapshot => {
+                    if (!snapshot.exists()) {
+                        showErr("Tên đăng nhập chưa đăng ký bé ơi!", 'login');
+                        return;
+                    }
+
+                    const userData = snapshot.val();
+                    if (userData.password !== password) {
+                        showErr("Mật khẩu chưa đúng rồi bé ơi!", 'login');
+                        return;
+                    }
+
+                    loginSuccess(userData.kidName || username, username);
+                });
+            }
+        }
+
+        function showErr(msg, mode) {
+            const id = mode === 'register' ? 'error-msg-register' : 'error-msg-login';
+            const err = document.getElementById(id);
+            if (!err) return;
+            err.innerText = msg;
+            err.style.display = 'block';
+        }
+
+        function loginSuccess(kidName, username) {
+            localStorage.setItem('kidName', kidName);
+            localStorage.setItem('kidUsername', username);
+            closeModal('registerModal');
+            closeModal('loginModal');
+            closeModal('authRequiredModal');
             location.reload();
         }
 
         function logout() {
             localStorage.removeItem('kidName');
+            localStorage.removeItem('kidUsername');
             location.reload();
         }
 
@@ -237,6 +471,13 @@
                 render(30*24*60*60*1000, 'top-month');
             });
         }
+        window.onclick = function(event) {
+            const ids = ['registerModal', 'loginModal', 'authRequiredModal'];
+            ids.forEach(id => {
+                const modal = document.getElementById(id);
+                if (event.target === modal) closeModal(id);
+            });
+        };
         window.onload = checkState;
     </script>
 </body>
