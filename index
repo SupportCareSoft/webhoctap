@@ -171,7 +171,7 @@
     </div>
 
     <div class="nav-container">
-        <a href="index" class="btn-nav bg-pink">🏠 Trang chủ</a>
+        <a href="index.html" class="btn-nav bg-pink">🏠 Trang chủ</a>
         <a href="toan" class="btn-nav bg-blue" onclick="return checkLogin()">🔢 Toán Học</a>
         <a href="tiengviet" class="btn-nav bg-orange" onclick="return checkLogin()">📖 Tiếng Việt</a>
         <a href="TA" class="btn-nav bg-purple" onclick="return checkLogin()">🔤 Tiếng Anh</a>
