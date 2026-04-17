@@ -54,7 +54,7 @@
 
     <div class="nav-bar">
         <div class="nav-row">
-            <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+            <a href="index" class="btn-home">🏠 Về Trang Chủ</a>
             <div id="kid-badge" class="kid-info-box">Bé Bi đang học! 🚀</div>
         </div>
         <select id="level-select" onchange="generateMath()">
