@@ -56,7 +56,114 @@
         .rank-item { display: flex; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #fff; font-size: 14px; font-weight: bold; }
         
         #error-msg { color: #d32f2f; font-size: 11px; position: absolute; top: 40px; right: 0; font-weight: bold; background: #ffcdd2; padding: 2px 8px; border-radius: 5px; display: none; z-index: 10; }
-    </style>
+    
+/* MOBILE OPTIMIZE */
+@media (max-width: 768px) {
+    body { padding-bottom: 18px; }
+    .top-header {
+        padding: 10px 12px;
+        border-radius: 0 0 16px 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .header-info {
+        justify-content: center;
+        text-align: center;
+        font-size: 14px;
+        flex-wrap: wrap;
+    }
+    .auth-zone {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    #auth-form {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px !important;
+    }
+    .auth-zone input {
+        width: 100%;
+        max-width: none;
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+    .btn-auth {
+        width: 100%;
+        min-height: 42px;
+        font-size: 14px;
+    }
+    #user-logged {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    .nav-container {
+        gap: 10px;
+        padding: 14px 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .btn-nav {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+    .main-box {
+        width: calc(100% - 20px);
+        margin: 0 auto 20px;
+        border-radius: 22px;
+        padding: 16px 14px;
+    }
+    .welcome-section {
+        flex-direction: column;
+        gap: 14px;
+        text-align: center;
+        align-items: center;
+    }
+    .welcome-img {
+        width: 150px;
+        max-width: 70%;
+    }
+    .welcome-text h2 {
+        font-size: 24px;
+        line-height: 1.3;
+        margin-top: 0;
+    }
+    .leaderboard-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .board-card {
+        min-height: auto;
+        padding: 12px;
+    }
+    .board-card h3 {
+        font-size: 15px;
+    }
+    .rank-item {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+    #error-msg {
+        position: static;
+        margin-top: 4px;
+        width: 100%;
+        text-align: center;
+    }
+}
+@media (max-width: 430px) {
+    .nav-container { grid-template-columns: 1fr; }
+    .top-header { padding: 8px 10px; }
+    .main-box { width: calc(100% - 12px); padding: 14px 10px; }
+    .welcome-text h2 { font-size: 22px; }
+}
+
+</style>
 </head>
 <body>
 
@@ -81,7 +188,7 @@
     <div class="nav-container">
         <a href="index.html" class="btn-nav bg-pink">🏠 Trang chủ</a>
         <a href="toan.html" class="btn-nav bg-blue" onclick="return checkLogin()">🔢 Toán Học</a>
-        <a href="tiengviet.html" class="btn-nav bg-orange" onclick="return checkLogin()">📖 Tiếng Việt</a>
+        <a href="javascript:void(0)" class="btn-nav bg-orange" onclick="checkLogin('Tiếng Việt')">📖 Tiếng Việt</a>
         <a href="TA.html" class="btn-nav bg-purple" onclick="return checkLogin()">🔤 Tiếng Anh</a>
     </div>
 
@@ -113,16 +220,15 @@
 
     <script>
         // CẤU HÌNH FIREBASE
-       const firebaseConfig = {
-  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
-  authDomain: "bon-bi.firebaseapp.com",
-  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
-  projectId: "bon-bi",
-  storageBucket: "bon-bi.firebasestorage.app",
-  messagingSenderId: "988400970351",
-  appId: "1:988400970351:web:21e9181950114225417b9a"
-};
-
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWBs-QTOaRpylR3ysfKvYvIO38VJpNbKk",
+            authDomain: "toan-bibon.firebaseapp.com",
+            databaseURL: "https://toan-bibon-default-rtdb.firebaseio.com",
+            projectId: "toan-bibon",
+            storageBucket: "toan-bibon.firebasestorage.app",
+            messagingSenderId: "14060225460",
+            appId: "1:14060225460:web:d04073d113e7076f3828e1"
+        };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
@@ -142,10 +248,10 @@
             if (!isLogged) {
                 alert("Bé ơi! Vui lòng ĐĂNG NHẬP để vào học nhé.\nNếu chưa có tài khoản, bé hãy chọn ĐĂNG KÝ ở góc phải nha!");
                 return false;
-            //}
-             //if (subjectName) {
-                //alert("Môn " + subjectName + " đang được soạn bài, bé quay lại sau nhé!");
-               // return false;
+            }
+            if (subjectName) {
+                alert("Môn " + subjectName + " đang được soạn bài, bé quay lại sau nhé!");
+                return false;
             }
             return true;
         }
