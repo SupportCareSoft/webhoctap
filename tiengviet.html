@@ -71,14 +71,15 @@
 <script>
 const kidName = localStorage.getItem('kidName') || "Quốc Anh";
 const firebaseConfig = {
-    apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
-    authDomain: "bon-bi.firebaseapp.com",
-    databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
-    projectId: "bon-bi",
-    storageBucket: "bon-bi.firebasestorage.app",
-    messagingSenderId: "988400970351",
-    appId: "1:988400970351:web:21e9181950114225417b9a"
+  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+  authDomain: "bon-bi.firebaseapp.com",
+  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+  projectId: "bon-bi",
+  storageBucket: "bon-bi.firebasestorage.app",
+  messagingSenderId: "988400970351",
+  appId: "1:988400970351:web:21e9181950114225417b9a"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
