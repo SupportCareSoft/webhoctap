@@ -81,7 +81,7 @@
     <div class="nav-container">
         <a href="index.html" class="btn-nav bg-pink">🏠 Trang chủ</a>
         <a href="toan.html" class="btn-nav bg-blue" onclick="return checkLogin()">🔢 Toán Học</a>
-        <a href="tiengviet.html" class="btn-nav bg-orange" onclick="return checkLogin()">📖 Tiếng Việt</a>
+        <a href="javascript:void(0)" class="btn-nav bg-orange" onclick="checkLogin('Tiếng Việt')">📖 Tiếng Việt</a>
         <a href="TA.html" class="btn-nav bg-purple" onclick="return checkLogin()">🔤 Tiếng Anh</a>
         <a href="EQ.html" class="btn-nav bg-pink" onclick="return checkLogin()">💖 EQ</a>
     </div>
@@ -137,10 +137,14 @@
         }
 
         // CHẶN HỌC CHUI
-        function checkLogin() {
+        function checkLogin(subjectName) {
             const isLogged = localStorage.getItem('kidName');
-            if (!isLogged || isLogged.trim() === "") {
-                alert("Bé ơi! Vui lòng đăng nhập trước nhé!");
+            if (!isLogged) {
+                alert("Bé ơi! Vui lòng ĐĂNG NHẬP để vào học nhé.\nNếu chưa có tài khoản, bé hãy chọn ĐĂNG KÝ ở góc phải nha!");
+                return false;
+            }
+            if (subjectName) {
+                alert("Môn " + subjectName + " đang được soạn bài, bé quay lại sau nhé!");
                 return false;
             }
             return true;
