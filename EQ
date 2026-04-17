@@ -41,7 +41,7 @@
 </head>
 <body>
 <div class="top-header">
-  <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+  <a href="index" class="btn-home">🏠 Về Trang Chủ</a>
   <div class="user-logged">💖 Bé đang học EQ: <span id="display-name" style="color:var(--blue)">...</span></div>
 </div>
 <div class="main-box">
@@ -94,7 +94,7 @@ function isCorrect(q){ return answers[q.id]===q.answer; }
 async function submitSet(){ const unanswered=currentQuestions.filter(q=>!answers[q.id]); if(unanswered.length){ alert('Bé hãy làm hết tất cả 10 câu trước nhé!'); return; } const score=currentQuestions.filter(isCorrect).length; if(score===currentQuestions.length){ markDone(currentAge,currentSet); try{ await db.ref('eq_history').push({ studentName:kidName || 'Bé', ageGroup:currentAge, setNo:currentSet, result:score + '/' + currentQuestions.length, timestamp:Date.now(), date:new Date().toLocaleString('vi-VN') }); }catch(e){ console.log('Lưu điểm EQ lỗi:', e.message); } renderSetTabs(); renderStatus(); if(currentSet<10){ alert('Giỏi lắm! Bé làm đúng hết bộ này rồi, sang bộ tiếp theo nhé!'); currentSet += 1; renderSetTabs(); renderStatus(); renderQuestions(); } else { alert('Tuyệt vời! Bé đã hoàn thành đủ 10 bộ EQ của độ tuổi này.'); } } else { alert('Bé được ' + score + '/10. Bé làm lại để đúng hết nhé!'); renderQuestions(); } }
 function changeAge(age){ currentAge=age; currentSet=1; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); }
 function changeSet(no){ currentSet=no; renderSetTabs(); renderStatus(); renderQuestions(); }
-window.onload = () => { if(!kidName){ alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!'); window.location.href='index.html'; return; } document.getElementById('display-name').innerText=kidName; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); };
+window.onload = () => { if(!kidName){ alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!'); window.location.href='index'; return; } document.getElementById('display-name').innerText=kidName; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); };
 </script>
 </body>
 </html>
