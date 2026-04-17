@@ -113,15 +113,15 @@
 
     <script>
         // CẤU HÌNH FIREBASE
-       const firebaseConfig = {
-    apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
-    authDomain: "bon-bi.firebaseapp.com",
-    databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
-    projectId: "bon-bi",
-    storageBucket: "bon-bi.firebasestorage.app",
-    messagingSenderId: "988400970351",
-    appId: "1:988400970351:web:21e9181950114225417b9a"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWBs-QTOaRpylR3ysfKvYvIO38VJpNbKk",
+            authDomain: "toan-bibon.firebaseapp.com",
+            databaseURL: "https://toan-bibon-default-rtdb.firebaseio.com",
+            projectId: "toan-bibon",
+            storageBucket: "toan-bibon.firebasestorage.app",
+            messagingSenderId: "14060225460",
+            appId: "1:14060225460:web:d04073d113e7076f3828e1"
+        };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
@@ -136,15 +136,11 @@
         }
 
         // CHẶN HỌC CHUI
-        function checkLogin(subjectName) {
+        function checkLogin() {
             const isLogged = localStorage.getItem('kidName');
-            if (!isLogged) {
-                alert("Bé ơi! Vui lòng ĐĂNG NHẬP để vào học nhé.\nNếu chưa có tài khoản, bé hãy chọn ĐĂNG KÝ ở góc phải nha!");
+            if (!isLogged || isLogged.trim() === "") {
+                alert("Bé ơi! Vui lòng đăng nhập trước nhé!");
                 return false;
-            //}
-             //if (subjectName) {
-                //alert("Môn " + subjectName + " đang được soạn bài, bé quay lại sau nhé!");
-               // return false;
             }
             return true;
         }
