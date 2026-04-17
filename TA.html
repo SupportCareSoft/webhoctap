@@ -1,570 +1,422 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bibon English - Học Tiếng Anh Cùng Bé</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
-    <style>
-        :root {
-            --primary: #e91e63;
-            --blue: #2196F3;
-            --orange: #ff9800;
-            --purple: #9c27b0;
-            --yellow: #ffeb3b;
-            --bg: #e0f7fa;
-            --correct: #2ecc71;
-            --soft: #f7fbff;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        .top-header {
-            background: var(--yellow);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 5px solid #fbc02d;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 20px;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .user-logged {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            color: #c2185b;
-        }
-
-        .btn-home {
-            background: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px rgba(0,0,0,0.1);
-            transition: 0.2s;
-        }
-        .btn-home:active { transform: translateY(2px); box-shadow: none; }
-
-        .main-box {
-            background: white;
-            margin: 0 auto 30px;
-            width: 94%;
-            max-width: 1180px;
-            border-radius: 30px;
-            padding: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .hero-box {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 18px;
-            background: linear-gradient(135deg, #fff8d6, #eef8ff);
-            border-radius: 28px;
-            padding: 22px;
-            margin-bottom: 22px;
-            align-items: center;
-        }
-        .hero-box h2 {
-            color: var(--purple);
-            margin: 0 0 12px 0;
-            font-size: 32px;
-        }
-        .hero-box p {
-            margin: 0;
-            font-size: 17px;
-            line-height: 1.7;
-            font-weight: 600;
-            color: #4f6781;
-        }
-        .hero-art {
-            background: #dff4ff;
-            min-height: 170px;
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 78px;
-            gap: 8px;
-        }
-
-        .menu-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 22px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .menu-btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 30px;
-            background: #f0f0f0;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.25s;
-            box-shadow: 0 3px #ddd;
-            font-size: 15px;
-        }
-        .menu-btn.active {
-            background: var(--purple);
-            color: white;
-            box-shadow: 0 3px #7b1fa2;
-        }
-
-        .topic-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-            background: var(--soft);
-            padding: 16px 18px;
-            border-radius: 24px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-        .topic-head h3 {
-            margin: 0 0 6px 0;
-            color: var(--primary);
-            font-size: 24px;
-        }
-        .topic-head p {
-            margin: 0;
-            color: #60758d;
-            font-weight: 600;
-        }
-        .topic-icon {
-            font-size: 52px;
-            line-height: 1;
-        }
-
-        .quiz-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-            width: 100%;
-        }
-        .card {
-            background: #fff;
-            border: 2px solid #eef1f5;
-            border-radius: 25px;
-            padding: 18px;
-            text-align: center;
-            transition: 0.25s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 340px;
-        }
-        .card:hover {
-            border-color: var(--blue);
-            transform: translateY(-3px);
-        }
-
-        .speak-btn {
-            background: var(--blue);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            cursor: pointer;
-            margin: 0 auto 10px;
-            font-size: 20px;
-            box-shadow: 0 4px #1976D2;
-        }
-        .speak-btn:active { transform: translateY(2px); box-shadow: none; }
-
-        .image-box {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 12px;
-            border-radius: 24px;
-            background: linear-gradient(180deg, #fffef8, #eef8ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 66px;
-            box-shadow: inset 0 0 0 2px #eef3f8;
-            overflow: hidden;
-        }
-        .image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .word-label {
-            font-size: 14px;
-            font-weight: 800;
-            color: #70859d;
-            margin-bottom: 10px;
-            min-height: 20px;
-        }
-
-        .opt-zone {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .opt-zone button {
-            padding: 8px 15px;
-            border-radius: 12px;
-            border: 2px solid #eee;
-            background: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .opt-zone button:hover { background: #e3f2fd; border-color: var(--blue); }
-
-        .input-zone { display: none; width: 100%; }
-        .eng-input {
-            width: 88%;
-            padding: 12px;
-            border: 3px solid #eee;
-            border-radius: 15px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            outline: none;
-        }
-        .eng-input.is-correct { border-color: var(--correct); background: #f1fdf5; }
-
-        .example-box {
-            margin-top: 12px;
-            background: #f8fbff;
-            border-radius: 18px;
-            padding: 12px;
-            text-align: left;
-            min-height: 82px;
-        }
-        .example-en {
-            font-weight: 800;
-            color: #2f3e50;
-            margin-bottom: 6px;
-            line-height: 1.5;
-        }
-        .example-vi {
-            font-size: 14px;
-            color: #688097;
-            font-weight: 600;
-            line-height: 1.5;
-        }
-
-        .btn-submit {
-            padding: 15px 60px;
-            border-radius: 50px;
-            border: none;
-            background: #4CAF50;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 28px auto 4px;
-            box-shadow: 0 6px #388E3C;
-            display: block;
-        }
-        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
-
-        .tips {
-            background: #f1fff0;
-            border: 2px solid #c4efbe;
-            border-radius: 22px;
-            padding: 14px 16px;
-            margin-bottom: 18px;
-            font-weight: 700;
-            color: #4d6b49;
-            line-height: 1.7;
-        }
-
-        @media (max-width: 760px) {
-            .hero-box { grid-template-columns: 1fr; }
-            .hero-box h2 { font-size: 27px; }
-            .hero-art { min-height: 130px; font-size: 60px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bibon English - Bản 3</title>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+<style>
+:root{
+    --primary:#e91e63; --blue:#2196F3; --orange:#ff9800; --purple:#9c27b0; --yellow:#ffeb3b;
+    --bg:#e0f7fa; --correct:#2ecc71; --danger:#ef5350; --soft:#fff8e1; --card:#ffffff;
+}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);margin:0;color:#333}
+.top-header{background:var(--yellow);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:5px solid #fbc02d;border-radius:0 0 20px 20px;gap:12px}
+.btn-home{background:var(--primary);color:white;padding:10px 20px;border-radius:25px;text-decoration:none;font-weight:bold;box-shadow:0 4px rgba(0,0,0,.1)}
+.user-logged{font-weight:bold;color:#c2185b}
+.main-box{background:white;margin:18px auto 30px;width:94%;max-width:1240px;border-radius:30px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.05)}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:center;background:linear-gradient(135deg,#fffef8,#eef8ff);border:2px dashed #ffe082;border-radius:24px;padding:16px 18px;margin-bottom:18px}
+.hero h2{margin:0 0 8px;color:var(--purple)}
+.hero p{margin:0;line-height:1.6;font-weight:600;color:#546e7a}
+.status-box{background:#f8f9fa;border-radius:18px;padding:12px 16px;font-weight:bold}
+.topic-tabs,.set-tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.menu-btn,.set-btn{padding:10px 16px;border:none;border-radius:28px;background:#f0f0f0;font-weight:bold;cursor:pointer;box-shadow:0 3px #ddd;transition:.2s}
+.menu-btn.active{background:var(--purple);color:white;box-shadow:0 3px #7b1fa2}
+.set-btn.active{background:var(--orange);color:white;box-shadow:0 3px #e67e22}
+.set-btn.done{background:#e8f5e9;color:#1b5e20;box-shadow:0 3px #a5d6a7}
+.helper{margin:8px 0 16px;font-size:14px;color:#607d8b;font-weight:700;text-align:center}
+.quiz-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;width:100%}
+.card{background:var(--card);border:2px solid #eef2f6;border-radius:24px;padding:18px;transition:.2s}
+.card.done{border-color:var(--correct);background:#f8fff9}
+.type-tag{display:inline-block;background:#fff3cd;color:#8a6d3b;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;margin-bottom:8px}
+.card h4{margin:0 0 10px;color:#5e35b1;font-size:18px}
+.image-box{width:96px;height:96px;margin:10px auto 14px;display:flex;align-items:center;justify-content:center;background:var(--soft);border-radius:22px;font-size:56px;border:2px solid #fff1b8}
+.question-text{font-weight:800;line-height:1.6;margin-bottom:10px}
+.passage,.note-box,.arrange-help,.match-help{background:#f5faff;border-radius:16px;padding:12px;line-height:1.7;color:#455a64;margin-bottom:10px;font-weight:700}
+.opt-zone,.arrange-pool,.arrange-answer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.opt-zone button,.arrange-pool button,.row-options button,.arrange-answer button{
+    padding:8px 14px;border-radius:12px;border:2px solid #eee;background:white;cursor:pointer;font-weight:bold
+}
+.opt-zone button.selected,.arrange-pool button.selected,.row-options button.selected,.arrange-answer button.selected{background:#e3f2fd;border-color:var(--blue)}
+.opt-zone button.correct,.arrange-pool button.correct,.row-options button.correct,.arrange-answer button.correct{background:#e8f5e9;border-color:var(--correct);color:#1b5e20}
+.opt-zone button.wrong,.arrange-pool button.wrong,.row-options button.wrong,.arrange-answer button.wrong{background:#ffebee;border-color:var(--danger);color:#b71c1c}
+.opt-zone button.locked,.row-options button.locked,.arrange-pool button.locked{opacity:.5;pointer-events:none}
+.speak-btn{background:var(--blue);color:white;border:none;border-radius:50%;width:42px;height:42px;cursor:pointer;font-size:18px;box-shadow:0 4px #1976D2}
+.btn-submit{padding:14px 40px;border-radius:50px;border:none;background:#4CAF50;color:white;font-size:20px;font-weight:bold;cursor:pointer;margin:28px auto 10px;box-shadow:0 6px #388E3C;display:block}
+.match-table{display:grid;gap:10px;margin-top:8px}
+.match-line{display:grid;grid-template-columns:88px 1fr;gap:10px;align-items:center;background:#fafafa;border-radius:16px;padding:10px}
+.match-icon{font-size:40px;text-align:center;background:#fff8e1;border-radius:14px;padding:10px;border:2px solid #ffe082}
+.row-options{display:flex;gap:8px;flex-wrap:wrap}
+.row-result{font-size:13px;font-weight:800;margin-top:6px}
+.row-result.ok{color:#1b5e20}
+.row-result.bad{color:#c62828}
+.arrange-answer{background:#fff8e1;border:2px dashed #ffd54f;border-radius:16px;padding:10px;min-height:52px}
+.arrange-note{font-size:13px;color:#78909c;font-weight:700}
+.small-btn{margin-top:10px;border:none;background:#ff7043;color:#fff;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:800}
+@media (max-width:900px){.quiz-grid,.hero{grid-template-columns:1fr}.hero{display:block}.status-box{margin-top:12px}.match-line{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
+<div class="top-header">
+    <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+    <div class="user-logged">🚀 Bé đang học: <span id="display-name" style="color:var(--blue)">...</span></div>
+</div>
 
-    <div class="top-header">
-        <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
-        <div class="user-logged">
-            <span>🚀 Bé đang học: <span id="display-name" style="color: var(--blue);">...</span></span>
+<div class="main-box">
+    <div class="hero">
+        <div>
+            <h2 id="topicTitle">🌤️ Weather - Thời tiết</h2>
+            
+        </div>
+        <div class="status-box">
+            <div>📘 Chủ đề: <span id="statusTopic">Weather</span></div>
+            <div>📝 Đề số: <span id="statusSet">1</span>/5</div>
+            <div>⭐ Hoàn thành: <span id="statusDone">0</span>/5 đề</div>
         </div>
     </div>
 
-    <div class="main-box">
-        <div class="hero-box">
-            <div>
-                <h2>🔤 Tiếng Anh vui nhộn cho bé</h2>
-                <p>
-                    Chọn chủ đề quen thuộc như thời tiết, mùa, màu sắc, đồ vật, vị trí và con người.
-                    Bé nghe phát âm, chọn đáp án đúng rồi gõ lại từ để nhớ thật lâu.
-                </p>
-            </div>
-            <div class="hero-art">🌈 ☁️ 🧸 📘</div>
-        </div>
+    <div class="topic-tabs" id="topicTabs"></div>
+    <div class="set-tabs" id="setTabs"></div>
+    
 
-        <div class="menu-container" id="menu"></div>
+    <div class="quiz-grid" id="quiz-container"></div>
+    <button class="btn-submit" onclick="submitSet()">Nộp đề 🚀</button>
+</div>
 
-        <div class="topic-head">
-            <div>
-                <h3 id="topic-title">🌤️ Weather - Thời tiết</h3>
-                <p id="topic-desc">Học từ vựng tiếng Anh qua hình ảnh vui nhộn, gần gũi với trẻ nhỏ.</p>
-            </div>
-            <div class="topic-icon" id="topic-icon">🌤️</div>
-        </div>
-
-        <div class="tips">
-            <b>Hướng dẫn:</b> Bé bấm nút loa để nghe từ, chọn đáp án đúng, rồi gõ lại từ tiếng Anh vào ô bên dưới. Hoàn thành xong thì bấm nút lưu điểm.
-        </div>
-
-        <div class="quiz-grid" id="quiz-container"></div>
-
-        <button class="btn-submit" id="submitBtn" onclick="sendReport()">Nộp bài & Lưu Điểm 🚀</button>
-    </div>
-
-    <script>
-       const firebaseConfig = {
-  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
-  authDomain: "bon-bi.firebaseapp.com",
-  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
-  projectId: "bon-bi",
-  storageBucket: "bon-bi.firebasestorage.app",
-  messagingSenderId: "988400970351",
-  appId: "1:988400970351:web:21e9181950114225417b9a"
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+    authDomain: "bon-bi.firebaseapp.com",
+    databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+    projectId: "bon-bi",
+    storageBucket: "bon-bi.firebasestorage.app",
+    messagingSenderId: "988400970351",
+    appId: "1:988400970351:web:21e9181950114225417b9a"
 };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+const kidName = localStorage.getItem('kidName');
+const topics = {"WEATHER": {"icon": "🌤️", "label": "Weather", "vn": "Thời tiết", "desc": "Bản 3 có nghe - chọn, điền từ, đọc hiểu, sắp xếp câu và bài nối dễ nhìn hơn.", "words": [{"emoji": "☀️", "en": "sunny", "vi": "trời nắng", "sentence": "It is sunny today."}, {"emoji": "🌧️", "en": "rainy", "vi": "trời mưa", "sentence": "It is rainy today."}, {"emoji": "☁️", "en": "cloudy", "vi": "nhiều mây", "sentence": "The sky is cloudy."}, {"emoji": "🌬️", "en": "windy", "vi": "có gió", "sentence": "It is windy outside."}, {"emoji": "🔥", "en": "hot", "vi": "nóng", "sentence": "It is hot today."}, {"emoji": "🧊", "en": "cold", "vi": "lạnh", "sentence": "It is cold this morning."}, {"emoji": "❄️", "en": "snowy", "vi": "có tuyết", "sentence": "It is snowy in winter."}, {"emoji": "⛈️", "en": "stormy", "vi": "có bão", "sentence": "The weather is stormy."}, {"emoji": "🌫️", "en": "foggy", "vi": "có sương mù", "sentence": "It is foggy now."}, {"emoji": "🌈", "en": "rainbow", "vi": "cầu vồng", "sentence": "I can see a rainbow."}], "passages": [{"text": "Today is sunny and warm. Lan wears a hat and plays in the park. She drinks water because the weather is hot.", "question": "What is the weather like today?", "answer": "sunny", "options": ["sunny", "rainy", "snowy"]}, {"text": "The sky is cloudy. Nam takes an umbrella to school because it may rain soon.", "question": "Why does Nam take an umbrella?", "answer": "It may rain soon.", "options": ["It is snowy.", "It may rain soon.", "It is very windy."]}, {"text": "It is cold in the morning. Mai wears a jacket before school.", "question": "What does Mai wear?", "answer": "a jacket", "options": ["a dress", "a jacket", "a hat"]}, {"text": "After the rain, the children see a rainbow in the sky.", "question": "What do the children see?", "answer": "a rainbow", "options": ["a storm", "a rainbow", "snow"]}, {"text": "The wind is strong today. The kite flies high.", "question": "How is the wind today?", "answer": "strong", "options": ["strong", "quiet", "cold"]}]}, "SEASONS": {"icon": "🌸", "label": "Seasons", "vn": "Mùa", "desc": "Tên mùa, đặc điểm mùa và luyện sắp xếp câu đơn giản.", "words": [{"emoji": "🌸", "en": "spring", "vi": "mùa xuân", "sentence": "Spring has many flowers."}, {"emoji": "☀️", "en": "summer", "vi": "mùa hè", "sentence": "Summer is hot."}, {"emoji": "🍂", "en": "autumn", "vi": "mùa thu", "sentence": "Autumn is cool."}, {"emoji": "⛄", "en": "winter", "vi": "mùa đông", "sentence": "Winter is cold."}, {"emoji": "🌺", "en": "flower", "vi": "hoa", "sentence": "The flower is beautiful."}, {"emoji": "🏖️", "en": "beach", "vi": "bãi biển", "sentence": "We go to the beach in summer."}, {"emoji": "🍁", "en": "leaf", "vi": "lá", "sentence": "The leaf is yellow."}, {"emoji": "🧥", "en": "jacket", "vi": "áo khoác", "sentence": "I wear a jacket in winter."}, {"emoji": "🌦️", "en": "warm", "vi": "ấm", "sentence": "Spring is warm."}, {"emoji": "🥶", "en": "cool", "vi": "mát", "sentence": "Autumn is cool."}], "passages": [{"text": "In spring, the weather is warm. Flowers grow in the garden.", "question": "What grows in the garden?", "answer": "Flowers", "options": ["Snow", "Flowers", "Kites"]}, {"text": "Summer is sunny and hot. The children eat ice cream.", "question": "What do the children eat?", "answer": "ice cream", "options": ["soup", "ice cream", "rice"]}, {"text": "In autumn, the leaves are yellow and orange.", "question": "What color are the leaves?", "answer": "yellow and orange", "options": ["yellow and orange", "blue and green", "red and black"]}, {"text": "Winter is cold. Minh wears a jacket and a scarf.", "question": "What does Minh wear?", "answer": "a jacket and a scarf", "options": ["a jacket and a scarf", "a dress", "shorts"]}, {"text": "Spring, summer, autumn, and winter are the four seasons.", "question": "How many seasons are there?", "answer": "four", "options": ["two", "three", "four"]}]}, "COLORS": {"icon": "🎨", "label": "Colors", "vn": "Màu sắc", "desc": "Màu sắc cơ bản với phản hồi đúng sai ngay khi bé chọn.", "words": [{"emoji": "🔴", "en": "red", "vi": "đỏ", "sentence": "The apple is red."}, {"emoji": "🔵", "en": "blue", "vi": "xanh dương", "sentence": "The sky is blue."}, {"emoji": "🟡", "en": "yellow", "vi": "vàng", "sentence": "The sun is yellow."}, {"emoji": "🟢", "en": "green", "vi": "xanh lá", "sentence": "The leaf is green."}, {"emoji": "🟣", "en": "purple", "vi": "tím", "sentence": "The balloon is purple."}, {"emoji": "🟠", "en": "orange", "vi": "cam", "sentence": "The orange is orange."}, {"emoji": "⚪", "en": "white", "vi": "trắng", "sentence": "The cloud is white."}, {"emoji": "⚫", "en": "black", "vi": "đen", "sentence": "The cat is black."}, {"emoji": "🩷", "en": "pink", "vi": "hồng", "sentence": "The flower is pink."}, {"emoji": "🤎", "en": "brown", "vi": "nâu", "sentence": "The bear is brown."}], "passages": [{"text": "Mai draws a rainbow. She uses red, yellow, green, and blue crayons.", "question": "What does Mai use?", "answer": "crayons", "options": ["books", "crayons", "erasers"]}, {"text": "The sky is blue and the cloud is white.", "question": "What color is the cloud?", "answer": "white", "options": ["white", "green", "pink"]}, {"text": "Tom has a black cat and a brown dog.", "question": "What color is the dog?", "answer": "brown", "options": ["black", "brown", "purple"]}, {"text": "Lan gets a pink balloon and an orange kite.", "question": "What does Lan get?", "answer": "a balloon and a kite", "options": ["a book and a pen", "a balloon and a kite", "a cake and milk"]}, {"text": "Some leaves become yellow and orange in autumn.", "question": "When do leaves become yellow and orange?", "answer": "in autumn", "options": ["in summer", "in autumn", "at night"]}]}, "OBJECTS": {"icon": "🧸", "label": "Objects", "vn": "Đồ vật", "desc": "Đồ vật gần gũi với trẻ nhỏ, giao diện bài nối hàng ngang rõ hơn.", "words": [{"emoji": "📘", "en": "book", "vi": "quyển sách", "sentence": "This is my book."}, {"emoji": "✏️", "en": "pencil", "vi": "bút chì", "sentence": "I have a pencil."}, {"emoji": "🪑", "en": "chair", "vi": "cái ghế", "sentence": "The chair is brown."}, {"emoji": "🎒", "en": "bag", "vi": "cặp sách", "sentence": "My bag is new."}, {"emoji": "⚽", "en": "ball", "vi": "quả bóng", "sentence": "The ball is round."}, {"emoji": "📏", "en": "ruler", "vi": "thước kẻ", "sentence": "The ruler is long."}, {"emoji": "🧽", "en": "eraser", "vi": "cục tẩy", "sentence": "I use an eraser."}, {"emoji": "🧸", "en": "toy", "vi": "đồ chơi", "sentence": "The toy is cute."}, {"emoji": "🛏️", "en": "bed", "vi": "cái giường", "sentence": "The bed is soft."}, {"emoji": "🧴", "en": "bottle", "vi": "chai nước", "sentence": "This is my bottle."}], "passages": [{"text": "In my school bag, I have a book, a pencil, and a ruler.", "question": "What is in the school bag?", "answer": "a book, a pencil, and a ruler", "options": ["a ball and a toy", "a chair and a bed", "a book, a pencil, and a ruler"]}, {"text": "The ball is under the chair.", "question": "Where is the ball?", "answer": "under the chair", "options": ["on the table", "under the chair", "in the bag"]}, {"text": "Linh uses an eraser to clean her notebook.", "question": "What does Linh use?", "answer": "an eraser", "options": ["a ruler", "an eraser", "a bottle"]}, {"text": "Nam sleeps on his bed. His toy bear is next to him.", "question": "Who is next to Nam?", "answer": "his toy bear", "options": ["his teacher", "his toy bear", "his ball"]}, {"text": "Hoa brings a water bottle to school.", "question": "What does Hoa bring?", "answer": "a water bottle", "options": ["a doll", "a water bottle", "a kite"]}]}, "POSITIONS": {"icon": "📍", "label": "Positions", "vn": "Vị trí", "desc": "Từ chỉ vị trí và bài nối theo từng hàng, bé nhìn là biết ghép thế nào.", "words": [{"emoji": "⬆️", "en": "on", "vi": "ở trên", "sentence": "The cat is on the box."}, {"emoji": "⬇️", "en": "under", "vi": "ở dưới", "sentence": "The ball is under the table."}, {"emoji": "↔️", "en": "between", "vi": "ở giữa", "sentence": "The doll is between two boxes."}, {"emoji": "👈", "en": "behind", "vi": "ở phía sau", "sentence": "The dog is behind the chair."}, {"emoji": "👉", "en": "in front of", "vi": "ở phía trước", "sentence": "The bike is in front of the house."}, {"emoji": "📥", "en": "in", "vi": "ở trong", "sentence": "The fish is in the bowl."}, {"emoji": "📤", "en": "out", "vi": "ở ngoài", "sentence": "The bird is out of the cage."}, {"emoji": "⬅️", "en": "next to", "vi": "ở bên cạnh", "sentence": "The book is next to the bag."}, {"emoji": "🔝", "en": "above", "vi": "ở phía trên", "sentence": "The lamp is above the table."}, {"emoji": "🔻", "en": "below", "vi": "ở phía dưới", "sentence": "The shoes are below the bed."}], "passages": [{"text": "The cat is on the chair. The ball is under the chair.", "question": "Where is the ball?", "answer": "under the chair", "options": ["on the chair", "under the chair", "behind the chair"]}, {"text": "The doll is between two boxes.", "question": "What is between two boxes?", "answer": "the doll", "options": ["the doll", "the car", "the cat"]}, {"text": "The bike is in front of the house. The tree is behind the house.", "question": "Where is the tree?", "answer": "behind the house", "options": ["in front of the house", "behind the house", "under the house"]}, {"text": "The fish is in the bowl.", "question": "Where is the fish?", "answer": "in the bowl", "options": ["out of the cage", "in the bowl", "under the bowl"]}, {"text": "The lamp is above the desk.", "question": "What is above the desk?", "answer": "the lamp", "options": ["the lamp", "the bag", "the ruler"]}]}, "VEHICLES": {"icon": "🚗", "label": "Vehicles", "vn": "Phương tiện", "desc": "Học các phương tiện quen thuộc như ô tô, xe buýt, xe đạp, tàu hỏa.", "words": [{"emoji": "🚗", "en": "car", "vi": "ô tô", "sentence": "This is a car."}, {"emoji": "🚌", "en": "bus", "vi": "xe buýt", "sentence": "The bus is big."}, {"emoji": "🚲", "en": "bike", "vi": "xe đạp", "sentence": "I ride a bike."}, {"emoji": "🏍️", "en": "motorbike", "vi": "xe máy", "sentence": "My father has a motorbike."}, {"emoji": "🚆", "en": "train", "vi": "tàu hỏa", "sentence": "The train is long."}, {"emoji": "✈️", "en": "plane", "vi": "máy bay", "sentence": "The plane is in the sky."}, {"emoji": "🚢", "en": "ship", "vi": "con tàu", "sentence": "The ship is on the sea."}, {"emoji": "🚕", "en": "taxi", "vi": "xe taxi", "sentence": "The taxi is yellow."}, {"emoji": "🚚", "en": "truck", "vi": "xe tải", "sentence": "The truck carries boxes."}, {"emoji": "🚜", "en": "tractor", "vi": "máy kéo", "sentence": "The tractor works on a farm."}], "passages": [{"text": "Nam goes to school by bus every morning.", "question": "How does Nam go to school?", "answer": "by bus", "options": ["by bus", "by bike", "by train"]}, {"text": "The plane flies high in the sky.", "question": "Where does the plane fly?", "answer": "in the sky", "options": ["on the road", "in the sky", "under the sea"]}, {"text": "My father drives a car to work.", "question": "What does father drive?", "answer": "a car", "options": ["a car", "a ship", "a bike"]}, {"text": "The train is long and fast.", "question": "How is the train?", "answer": "long and fast", "options": ["small and slow", "long and fast", "red and soft"]}, {"text": "The ship is on the sea with many people.", "question": "Where is the ship?", "answer": "on the sea", "options": ["on the sea", "in the forest", "in the classroom"]}]}, "HOUSE": {"icon": "🏠", "label": "House", "vn": "Nhà cửa", "desc": "Học các phần quen thuộc của ngôi nhà và đồ dùng trong nhà.", "words": [{"emoji": "🏠", "en": "house", "vi": "ngôi nhà", "sentence": "This is my house."}, {"emoji": "🚪", "en": "door", "vi": "cánh cửa", "sentence": "Open the door, please."}, {"emoji": "🪟", "en": "window", "vi": "cửa sổ", "sentence": "The window is open."}, {"emoji": "🛏️", "en": "bed", "vi": "cái giường", "sentence": "The bed is soft."}, {"emoji": "🪑", "en": "chair", "vi": "cái ghế", "sentence": "The chair is brown."}, {"emoji": "🛋️", "en": "sofa", "vi": "ghế sô pha", "sentence": "The sofa is in the living room."}, {"emoji": "🛁", "en": "bathroom", "vi": "phòng tắm", "sentence": "The bathroom is clean."}, {"emoji": "🍳", "en": "kitchen", "vi": "nhà bếp", "sentence": "My mother is in the kitchen."}, {"emoji": "🪴", "en": "living room", "vi": "phòng khách", "sentence": "We sit in the living room."}, {"emoji": "🛌", "en": "bedroom", "vi": "phòng ngủ", "sentence": "I sleep in the bedroom."}], "passages": [{"text": "There is a sofa in the living room.", "question": "What is in the living room?", "answer": "a sofa", "options": ["a sofa", "a bus", "a tree"]}, {"text": "I sleep in my bedroom at night.", "question": "Where do I sleep?", "answer": "in my bedroom", "options": ["in my bedroom", "in the kitchen", "in the garden"]}, {"text": "My mother cooks in the kitchen.", "question": "Where does mother cook?", "answer": "in the kitchen", "options": ["in the kitchen", "in the bathroom", "in the bus"]}, {"text": "The window is next to the door.", "question": "What is next to the door?", "answer": "the window", "options": ["the window", "the ship", "the table"]}, {"text": "The bathroom is small but clean.", "question": "How is the bathroom?", "answer": "small but clean", "options": ["long and fast", "small but clean", "red and yellow"]}]}, "PEOPLE": {"icon": "👨‍👩‍👧‍👦", "label": "People", "vn": "Con người", "desc": "Gia đình, nghề nghiệp và các bộ phận cơ thể quen thuộc.", "words": [{"emoji": "👩", "en": "mother", "vi": "mẹ", "sentence": "My mother is kind."}, {"emoji": "👨", "en": "father", "vi": "bố", "sentence": "My father is strong."}, {"emoji": "👧", "en": "girl", "vi": "bé gái", "sentence": "The girl is happy."}, {"emoji": "👦", "en": "boy", "vi": "bé trai", "sentence": "The boy can run."}, {"emoji": "👵", "en": "grandmother", "vi": "bà", "sentence": "My grandmother is gentle."}, {"emoji": "👴", "en": "grandfather", "vi": "ông", "sentence": "My grandfather is smiling."}, {"emoji": "👩‍🏫", "en": "teacher", "vi": "giáo viên", "sentence": "The teacher is nice."}, {"emoji": "👮", "en": "policeman", "vi": "chú công an", "sentence": "The policeman helps people."}, {"emoji": "🧑‍⚕️", "en": "doctor", "vi": "bác sĩ", "sentence": "The doctor works at a hospital."}, {"emoji": "👶", "en": "baby", "vi": "em bé", "sentence": "The baby is sleeping."}, {"emoji": "👀", "en": "eyes", "vi": "đôi mắt", "sentence": "I have two eyes."}, {"emoji": "👂", "en": "ears", "vi": "đôi tai", "sentence": "I have two ears."}, {"emoji": "👃", "en": "nose", "vi": "cái mũi", "sentence": "This is my nose."}, {"emoji": "👄", "en": "mouth", "vi": "cái miệng", "sentence": "Open your mouth."}, {"emoji": "🖐️", "en": "hand", "vi": "bàn tay", "sentence": "Raise your hand."}, {"emoji": "🦶", "en": "foot", "vi": "bàn chân", "sentence": "My foot is small."}, {"emoji": "💇", "en": "hair", "vi": "tóc", "sentence": "Her hair is long."}, {"emoji": "🦵", "en": "leg", "vi": "chân", "sentence": "The boy has strong legs."}, {"emoji": "💪", "en": "arm", "vi": "cánh tay", "sentence": "My arm is strong."}, {"emoji": "🦷", "en": "teeth", "vi": "răng", "sentence": "Brush your teeth every day."}], "passages": [{"text": "My mother cooks dinner and my father sets the table.", "question": "Who cooks dinner?", "answer": "my mother", "options": ["my mother", "my father", "my grandmother"]}, {"text": "The teacher reads a story in class.", "question": "Who reads a story?", "answer": "the teacher", "options": ["the doctor", "the teacher", "the policeman"]}, {"text": "The doctor helps sick people. She works in a hospital.", "question": "Where does the doctor work?", "answer": "in a hospital", "options": ["in a school", "in a hospital", "in a park"]}, {"text": "My grandfather tells funny stories.", "question": "Who tells funny stories?", "answer": "my grandfather", "options": ["my mother", "my grandfather", "my sister"]}, {"text": "The boy plays with the baby. The girl laughs.", "question": "Who laughs?", "answer": "the girl", "options": ["the boy", "the girl", "the baby"]}]}};
+let currentTopic = 'WEATHER';
+let currentSet = 1;
+let currentQuestions = [];
+let answers = {};
 
-        const kidName = localStorage.getItem('kidName');
-        let activeTopic = 'WEATHER';
-        let currentState = [];
+function speak(text){
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    window.speechSynthesis.speak(u);
+}
+function shuffle(arr){
+    const a = [...arr];
+    for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+}
+function progressKey(topic){ return 'english_v3_progress_' + topic; }
+function getTopicProgress(topic){ return JSON.parse(localStorage.getItem(progressKey(topic)) || '{"doneSets":[]}'); }
+function markDone(topic,setNo){
+    const p = getTopicProgress(topic);
+    if(!p.doneSets.includes(setNo)) p.doneSets.push(setNo);
+    localStorage.setItem(progressKey(topic), JSON.stringify(p));
+}
+function buildChoice(word, idx){
+    const pool = topics[currentTopic].words.filter(w=>w.en!==word.en).map(w=>w.en);
+    return {id:'q'+idx,type:'choice',tag:'Chọn đáp án',image:word.emoji,speak:word.en,prompt:'Chọn từ đúng với hình minh họa',answer:word.en,options:shuffle([word.en,...shuffle(pool).slice(0,2)])};
+}
+function buildListening(word, idx){
+    const pool = topics[currentTopic].words.filter(w=>w.en!==word.en).map(w=>w.en);
+    return {id:'q'+idx,type:'listening',tag:'Nghe và chọn',speak:word.en,prompt:'Bấm loa rồi chọn từ bé nghe được',answer:word.en,options:shuffle([word.en,...shuffle(pool).slice(0,2)])};
+}
+function buildFill(word, idx){
+    const pool = topics[currentTopic].words.filter(w=>w.en!==word.en).map(w=>w.en);
+    return {id:'q'+idx,type:'fill',tag:'Điền từ còn thiếu',image:word.emoji,speak:word.en,prompt:word.sentence.replace(word.en,'_____'),answer:word.en,options:shuffle([word.en,...shuffle(pool).slice(0,2)])};
+}
+function buildPassage(passage, idx){
+    return {id:'q'+idx,type:'passage',tag:'Đọc hiểu',passage:passage.text,prompt:passage.question,answer:passage.answer,options:passage.options};
+}
+function buildArrange(word, idx){
+    const sentence = word.sentence.replace('.','');
+    return {id:'q'+idx,type:'arrange',tag:'Sắp xếp câu',prompt:'Bấm các từ theo đúng thứ tự để tạo thành câu hoàn chỉnh.',answer:sentence,pieces:shuffle(sentence.split(' '))};
+}
+function buildMatchRows(words, idx){
+    return {
+        id:'q'+idx,type:'match_rows',tag:'Nối hình với từ',
+        rows: words.map(w=>{
+            const others = words.filter(x=>x.en!==w.en).map(x=>x.en);
+            return {emoji:w.emoji, answer:w.en, options:shuffle([w.en,...shuffle(others).slice(0,2)])};
+        })
+    };
+}
+function buildSet(topicKey, setNo){
+    const t = topics[topicKey];
+    const s = (setNo-1)*2;
+    const w0=t.words[(s)%10], w1=t.words[(s+1)%10], w2=t.words[(s+2)%10], w3=t.words[(s+3)%10], w4=t.words[(s+4)%10], w5=t.words[(s+5)%10], w6=t.words[(s+6)%10], w7=t.words[(s+7)%10];
+    return [
+        buildChoice(w0,1),
+        buildChoice(w1,2),
+        buildListening(w2,3),
+        buildFill(w3,4),
+        buildPassage(t.passages[(setNo-1)%t.passages.length],5),
+        buildPassage(t.passages[(setNo)%t.passages.length],6),
+        buildArrange(w4,7),
+        buildListening(w5,8),
+        buildMatchRows([w0,w1,w6],9),
+        buildFill(w7,10)
+    ];
+}
+function renderTopicTabs(){
+    document.getElementById('topicTabs').innerHTML = Object.keys(topics).map(key=>{
+        const t = topics[key];
+        return '<button class="menu-btn ' + (key===currentTopic?'active':'') + '" onclick="changeTopic(\'' + key + '\')">' + t.icon + ' ' + t.label + '</button>';
+    }).join('');
+}
+function renderSetTabs(){
+    const p = getTopicProgress(currentTopic);
+    document.getElementById('setTabs').innerHTML = Array.from({length:5},(_,i)=>i+1).map(no=>{
+        let cls = 'set-btn';
+        if(no===currentSet) cls += ' active';
+        if(p.doneSets.includes(no)) cls += ' done';
+        return '<button class="' + cls + '" onclick="changeSet(' + no + ')">Đề ' + no + '</button>';
+    }).join('');
+}
+function renderStatus(){
+    const t = topics[currentTopic];
+    document.getElementById('topicTitle').innerText = t.icon + ' ' + t.label + ' - ' + t.vn;
+    document.getElementById('statusTopic').innerText = t.label;
+    document.getElementById('statusSet').innerText = currentSet;
+    document.getElementById('statusDone').innerText = getTopicProgress(currentTopic).doneSets.length;
+}
+function chooseImmediate(qid, value){
+    const q = currentQuestions.find(x=>x.id===qid);
+    if(!q) return;
+    answers[qid] = value;
 
-        const topicMeta = {
-            WEATHER: { label: '🌤️ Weather', full: '🌤️ Weather - Thời tiết', icon: '🌤️', desc: 'Các kiểu thời tiết quen thuộc để bé dùng trong giao tiếp hằng ngày.' },
-            SEASONS: { label: '🌸 Seasons', full: '🌸 Seasons - Mùa', icon: '🌸', desc: 'Học tên các mùa trong năm bằng hình vui nhộn, dễ nhớ.' },
-            COLORS: { label: '🎨 Colors', full: '🎨 Colors - Màu sắc', icon: '🎨', desc: 'Các màu sắc cơ bản, gần gũi với thế giới tuổi thơ.' },
-            OBJECTS: { label: '🧸 Objects', full: '🧸 Objects - Đồ vật', icon: '🧸', desc: 'Các đồ vật quen thuộc trong lớp học và ở nhà.' },
-            POSITIONS: { label: '📍 Positions', full: '📍 Positions - Vị trí', icon: '📍', desc: 'Các từ chỉ vị trí để bé mô tả đồ vật xung quanh.' },
-            PEOPLE: { label: '👨‍👩‍👧‍👦 People', full: '👨‍👩‍👧‍👦 People - Con người', icon: '👨‍👩‍👧‍👦', desc: 'Thành viên gia đình và những người gần gũi với bé.' }
-        };
+    q.options.forEach(opt=>{
+        const btn = document.getElementById(qid + '_' + encodeURIComponent(opt));
+        if(btn) btn.classList.remove('selected', 'correct', 'wrong', 'locked');
+    });
 
-        const dataSet = {
-            WEATHER: [
-                { emoji: '☀️', ans: 'sunny', opts: ['sunny', 'rainy', 'windy'], sentenceEn: 'It is sunny today.', sentenceVi: 'Hôm nay trời nắng.' },
-                { emoji: '🌧️', ans: 'rainy', opts: ['cloudy', 'rainy', 'snowy'], sentenceEn: 'It is rainy today.', sentenceVi: 'Hôm nay trời mưa.' },
-                { emoji: '☁️', ans: 'cloudy', opts: ['sunny', 'cloudy', 'stormy'], sentenceEn: 'The sky is cloudy.', sentenceVi: 'Bầu trời nhiều mây.' },
-                { emoji: '🌬️', ans: 'windy', opts: ['windy', 'snowy', 'hot'], sentenceEn: 'It is windy outside.', sentenceVi: 'Ngoài trời đang có gió.' },
-                { emoji: '⛈️', ans: 'stormy', opts: ['rainy', 'stormy', 'sunny'], sentenceEn: 'The weather is stormy.', sentenceVi: 'Thời tiết có bão.' },
-                { emoji: '❄️', ans: 'snowy', opts: ['snowy', 'hot', 'windy'], sentenceEn: 'It is snowy in winter.', sentenceVi: 'Mùa đông có tuyết.' }
-            ],
-            SEASONS: [
-                { emoji: '🌸', ans: 'spring', opts: ['spring', 'summer', 'winter'], sentenceEn: 'Spring has many flowers.', sentenceVi: 'Mùa xuân có nhiều hoa.' },
-                { emoji: '🏖️', ans: 'summer', opts: ['autumn', 'summer', 'spring'], sentenceEn: 'Summer is hot.', sentenceVi: 'Mùa hè nóng.' },
-                { emoji: '🍂', ans: 'autumn', opts: ['winter', 'summer', 'autumn'], sentenceEn: 'Autumn has yellow leaves.', sentenceVi: 'Mùa thu có lá vàng.' },
-                { emoji: '⛄', ans: 'winter', opts: ['winter', 'autumn', 'spring'], sentenceEn: 'Winter is cold.', sentenceVi: 'Mùa đông lạnh.' }
-            ],
-            COLORS: [
-                { emoji: '🔴', ans: 'red', opts: ['blue', 'red', 'green'], sentenceEn: 'The apple is red.', sentenceVi: 'Quả táo màu đỏ.' },
-                { emoji: '🔵', ans: 'blue', opts: ['yellow', 'blue', 'purple'], sentenceEn: 'The sky is blue.', sentenceVi: 'Bầu trời màu xanh dương.' },
-                { emoji: '🟡', ans: 'yellow', opts: ['yellow', 'orange', 'black'], sentenceEn: 'The sun is yellow.', sentenceVi: 'Mặt trời màu vàng.' },
-                { emoji: '🟢', ans: 'green', opts: ['green', 'red', 'pink'], sentenceEn: 'The leaf is green.', sentenceVi: 'Chiếc lá màu xanh lá.' },
-                { emoji: '🟣', ans: 'purple', opts: ['purple', 'brown', 'white'], sentenceEn: 'The balloon is purple.', sentenceVi: 'Quả bóng màu tím.' },
-                { emoji: '🟠', ans: 'orange', opts: ['orange', 'blue', 'gray'], sentenceEn: 'The orange is orange.', sentenceVi: 'Quả cam màu cam.' }
-            ],
-            OBJECTS: [
-                { emoji: '📘', ans: 'book', opts: ['book', 'chair', 'bag'], sentenceEn: 'This is my book.', sentenceVi: 'Đây là quyển sách của em.' },
-                { emoji: '✏️', ans: 'pencil', opts: ['eraser', 'pencil', 'desk'], sentenceEn: 'I have a pencil.', sentenceVi: 'Em có một cây bút chì.' },
-                { emoji: '🪑', ans: 'chair', opts: ['table', 'chair', 'book'], sentenceEn: 'The chair is brown.', sentenceVi: 'Cái ghế màu nâu.' },
-                { emoji: '🎒', ans: 'bag', opts: ['bag', 'ball', 'toy'], sentenceEn: 'My bag is new.', sentenceVi: 'Cặp sách của em còn mới.' },
-                { emoji: '🧸', ans: 'toy', opts: ['toy', 'box', 'hat'], sentenceEn: 'The toy is cute.', sentenceVi: 'Đồ chơi rất dễ thương.' },
-                { emoji: '⚽', ans: 'ball', opts: ['ball', 'doll', 'shoe'], sentenceEn: 'The ball is round.', sentenceVi: 'Quả bóng tròn.' }
-            ],
-            POSITIONS: [
-                { emoji: '⬆️', ans: 'on', opts: ['on', 'under', 'behind'], sentenceEn: 'The cat is on the box.', sentenceVi: 'Con mèo ở trên cái hộp.' },
-                { emoji: '⬇️', ans: 'under', opts: ['between', 'under', 'on'], sentenceEn: 'The ball is under the table.', sentenceVi: 'Quả bóng ở dưới cái bàn.' },
-                { emoji: '↔️', ans: 'between', opts: ['in', 'between', 'behind'], sentenceEn: 'The doll is between two boxes.', sentenceVi: 'Búp bê ở giữa hai cái hộp.' },
-                { emoji: '👈', ans: 'behind', opts: ['behind', 'on', 'in'], sentenceEn: 'The ball is behind the box.', sentenceVi: 'Quả bóng ở phía sau cái hộp.' },
-                { emoji: '👉', ans: 'in front of', opts: ['under', 'in front of', 'behind'], sentenceEn: 'The bike is in front of the house.', sentenceVi: 'Xe đạp ở phía trước ngôi nhà.' }
-            ],
-            PEOPLE: [
-                { emoji: '👩', ans: 'mother', opts: ['mother', 'teacher', 'sister'], sentenceEn: 'My mother is kind.', sentenceVi: 'Mẹ của em rất hiền.' },
-                { emoji: '👨', ans: 'father', opts: ['father', 'brother', 'uncle'], sentenceEn: 'My father is strong.', sentenceVi: 'Bố của em rất khỏe.' },
-                { emoji: '👧', ans: 'girl', opts: ['girl', 'boy', 'baby'], sentenceEn: 'The girl is happy.', sentenceVi: 'Bé gái đang vui.' },
-                { emoji: '👦', ans: 'boy', opts: ['boy', 'girl', 'friend'], sentenceEn: 'The boy can run.', sentenceVi: 'Bé trai có thể chạy.' },
-                { emoji: '👵', ans: 'grandmother', opts: ['grandmother', 'mother', 'aunt'], sentenceEn: 'My grandmother is gentle.', sentenceVi: 'Bà của em rất dịu dàng.' },
-                { emoji: '👴', ans: 'grandfather', opts: ['grandfather', 'father', 'teacher'], sentenceEn: 'My grandfather is smiling.', sentenceVi: 'Ông của em đang mỉm cười.' }
-            ]
-        };
+    const chosenBtn = document.getElementById(qid + '_' + encodeURIComponent(value));
+    const card = document.getElementById('card_' + qid);
+    if(card) card.classList.remove('done');
 
-        function speak(text) {
-            if (!('speechSynthesis' in window)) {
-                alert("Trình duyệt này chưa hỗ trợ phát âm.");
-                return;
-            }
+    if(value === q.answer){
+        if(chosenBtn) chosenBtn.classList.add('correct');
+        if(card) card.classList.add('done');
+    } else {
+        if(chosenBtn) chosenBtn.classList.add('wrong');
+    }
+}
+function addArrangeWord(qid, word){
+    const q = currentQuestions.find(x=>x.id===qid);
+    answers[qid] = answers[qid] || [];
+    if((answers[qid] || []).length >= q.answer.split(' ').length) return;
+    answers[qid].push(word);
+    renderArrange(qid);
+}
+function removeLastArrange(qid){
+    if(!answers[qid] || !answers[qid].length) return;
+    answers[qid].pop();
+    renderArrange(qid);
+}
+function renderArrange(qid){
+    const q = currentQuestions.find(x=>x.id===qid);
+    const ans = answers[qid] || [];
+    const answerBox = document.getElementById(qid + '_answer');
+    if(answerBox){
+        answerBox.innerHTML = ans.map((w,i)=>'<button type="button">' + w + '</button>').join('');
+    }
+    const pool = document.getElementById(qid + '_pool');
+    if(pool){
+        const remaining = [...q.pieces];
+        ans.forEach(w=>{
+            const idx = remaining.indexOf(w);
+            if(idx > -1) remaining.splice(idx,1);
+        });
+        pool.innerHTML = remaining.map(w=>'<button onclick="addArrangeWord(\'' + qid + '\', \''
+            + String(w).replace(/'/g,"\\'") + '\')">' + w + '</button>').join('');
+    }
+}
+function checkArrangeNow(qid){
+    const q = currentQuestions.find(x=>x.id===qid);
+    const ans = (answers[qid] || []).join(' ');
+    const answerWords = q.answer.split(' ').length;
+    if((answers[qid] || []).length < answerWords){
+        alert('Bé hãy xếp đủ các từ trước nhé!');
+        return;
+    }
+    const box = document.getElementById(qid + '_answerWrap');
+    const card = document.getElementById('card_' + qid);
+    if(box){
+        box.classList.remove('correct', 'wrong');
+        const oldMsg = box.querySelector('.row-result');
+        if(oldMsg) oldMsg.remove();
+    }
+    if(card) card.classList.remove('done');
 
-            window.speechSynthesis.cancel();
-
-            const voices = window.speechSynthesis.getVoices() || [];
-            const u = new SpeechSynthesisUtterance(text);
-
-            const enVoice =
-                voices.find(v => v.lang === 'en-US') ||
-                voices.find(v => v.lang === 'en-GB') ||
-                voices.find(v => (v.lang || '').toLowerCase().startsWith('en')) ||
-                null;
-
-            if (enVoice) {
-                u.voice = enVoice;
-                u.lang = enVoice.lang;
-            } else {
-                u.lang = 'en-US';
-            }
-
-            u.rate = 0.9;
-            u.pitch = 1.0;
-            u.volume = 1;
-
-            u.onerror = function() {
-                alert("Không phát được âm thanh trên thiết bị này. Bé thử mở bằng Chrome hoặc Edge nhé!");
-            };
-
-            window.speechSynthesis.speak(u);
+    if(ans === q.answer){
+        if(box) box.classList.add('correct');
+        if(card) card.classList.add('done');
+    } else {
+        if(box){
+            box.classList.add('wrong');
+            box.innerHTML += '<div class="row-result bad">Sai rồi. Bé sắp xếp lại nhé!</div>';
         }
+    }
+    renderArrange(qid);
+}
+function chooseMatchRow(qid, rowIndex, value){
+    const q = currentQuestions.find(x=>x.id===qid);
+    answers[qid] = answers[qid] || {};
+    answers[qid][rowIndex] = value;
 
-        function renderMenu() {
-            const menu = document.getElementById('menu');
-            menu.innerHTML = Object.keys(topicMeta).map(key => `
-                <button class="menu-btn ${key === activeTopic ? 'active' : ''}" onclick="changeTopic('${key}')">${topicMeta[key].label}</button>
-            `).join('');
+    const row = q.rows[rowIndex];
+    row.options.forEach(opt=>{
+        const btn = document.getElementById(qid + '_r' + rowIndex + '_' + encodeURIComponent(opt));
+        if(btn) btn.classList.remove('selected', 'correct', 'wrong', 'locked');
+    });
+
+    const chosenBtn = document.getElementById(qid + '_r' + rowIndex + '_' + encodeURIComponent(value));
+    const result = document.getElementById(qid + '_result_' + rowIndex);
+
+    if(value === row.answer){
+        if(chosenBtn) chosenBtn.classList.add('correct');
+        if(result){ result.className = 'row-result ok'; result.innerText = 'Đúng rồi!'; }
+    } else {
+        if(chosenBtn) chosenBtn.classList.add('wrong');
+        if(result){ result.className = 'row-result bad'; result.innerText = 'Sai rồi. Bé chọn lại nhé!'; }
+    }
+
+    const allCorrect = q.rows.every((r,i)=>answers[qid] && answers[qid][i] === r.answer);
+    const card = document.getElementById('card_' + qid);
+    if(card){
+        card.classList.toggle('done', allCorrect);
+    }
+}
+function renderQuestions(){
+    currentQuestions = buildSet(currentTopic, currentSet);
+    answers = {};
+    document.getElementById('quiz-container').innerHTML = currentQuestions.map((q, i)=>{
+        let body = '';
+        if(q.type === 'arrange'){
+            body = '<div class="arrange-help">Bé bấm các từ theo đúng thứ tự để tạo thành câu.</div>'
+                + '<div class="question-text">' + q.prompt + '</div>'
+                + '<div id="' + q.id + '_answerWrap"><div class="arrange-answer" id="' + q.id + '_answer"></div></div>'
+                + '<div class="arrange-pool" id="' + q.id + '_pool"></div>'
+                + '<div class="arrange-note">Xếp xong thì bấm kiểm tra.</div>'
+                + '<button class="small-btn" onclick="removeLastArrange(\'' + q.id + '\')">Xoá từ cuối</button> '
+                + '<button class="small-btn" onclick="checkArrangeNow(\'' + q.id + '\')">Kiểm tra</button>';
+        } else if(q.type === 'match_rows'){
+            body = '<div class="match-help">Mỗi hàng là một câu nhỏ riêng. Bé nhìn hình rồi chọn đúng một từ. Sai sẽ đỏ ngay, đúng sẽ xanh ngay.</div>'
+                + '<div class="match-table">'
+                + q.rows.map((row, idx)=>'<div class="match-line"><div class="match-icon">' + row.emoji + '</div><div><div class="row-options">'
+                    + row.options.map(opt=>'<button id="' + q.id + '_r' + idx + '_' + encodeURIComponent(opt) + '" onclick="chooseMatchRow(\'' + q.id + '\',' + idx + ',\'' + String(opt).replace(/'/g,"\\'") + '\')">' + opt + '</button>').join('')
+                    + '</div><div class="row-result" id="' + q.id + '_result_' + idx + '"></div></div></div>').join('')
+                + '</div>';
+        } else {
+            const speakBtn = q.speak ? '<button class="speak-btn" onclick="speak(\'' + q.speak + '\')">🔊</button>' : '';
+            const imageBox = q.image ? '<div class="image-box">' + q.image + '</div>' : '';
+            const passage = q.passage ? '<div class="passage">' + q.passage + '</div>' : '';
+            const note = q.type === 'listening' ? '<div class="note-box">Bé bấm loa rồi chọn từ bé nghe được.</div>' : '';
+            body = speakBtn + imageBox + passage + note
+                + '<div class="question-text">' + q.prompt + '</div>'
+                + '<div class="opt-zone">'
+                + q.options.map(opt=>'<button id="' + q.id + '_' + encodeURIComponent(opt) + '" onclick="chooseImmediate(\'' + q.id + '\',\'' + String(opt).replace(/'/g,"\\'") + '\')">' + opt + '</button>').join('')
+                + '</div>';
         }
-
-        function updateTopicHeader() {
-            const meta = topicMeta[activeTopic];
-            document.getElementById('topic-title').innerText = meta.full;
-            document.getElementById('topic-desc').innerText = meta.desc;
-            document.getElementById('topic-icon').innerText = meta.icon;
+        return '<div class="card" id="card_' + q.id + '"><div class="type-tag">' + q.tag + '</div><h4>Câu ' + (i+1) + '</h4>' + body + '</div>';
+    }).join('');
+    currentQuestions.filter(q=>q.type==='arrange').forEach(q=>renderArrange(q.id));
+}
+function isQuestionCorrect(q){
+    if(q.type === 'match_rows'){
+        return q.rows.every((row, idx)=>answers[q.id] && answers[q.id][idx] === row.answer);
+    }
+    if(q.type === 'arrange'){
+        return (answers[q.id] || []).join(' ') === q.answer;
+    }
+    return answers[q.id] === q.answer;
+}
+async function submitSet(){
+    const unanswered = currentQuestions.filter(q=>{
+        if(q.type === 'match_rows'){
+            return !answers[q.id] || Object.keys(answers[q.id]).length < q.rows.length;
         }
-
-        function changeTopic(topic) {
-            activeTopic = topic;
-            renderMenu();
-            render();
+        if(q.type === 'arrange'){
+            return !(answers[q.id] || []).length;
         }
-
-        function render() {
-            updateTopicHeader();
-            const container = document.getElementById('quiz-container');
-            const items = dataSet[activeTopic] || [];
-            currentState = items.map(() => ({ done: false }));
-
-            container.innerHTML = items.map((item, i) => `
-                <div class="card">
-                    <button class="speak-btn" onclick="speak(${JSON.stringify(item.ans)})">🔊</button>
-                    <div class="image-box">${item.img ? `<img src="${item.img}" alt="${item.ans}">` : item.emoji}</div>
-                    <div class="word-label">Chọn từ đúng với hình minh họa</div>
-                    <div id="opt-box-${i}" class="opt-zone">
-                        ${item.opts.map(o => `<button onclick="handleChoice(${i}, ${JSON.stringify(o)}, ${JSON.stringify(item.ans)})">${o}</button>`).join('')}
-                    </div>
-                    <div id="input-box-${i}" class="input-zone">
-                        <div style="color:var(--correct);font-weight:bold;font-size:14px;margin-bottom:8px">Đúng rồi! Bé hãy gõ lại từ:</div>
-                        <input type="text" class="eng-input" id="in-${i}" oninput="checkInput(${i}, ${JSON.stringify(item.ans)})" placeholder="Type here...">
-                    </div>
-                    <div class="example-box">
-                        <div class="example-en">${item.sentenceEn}</div>
-                        <div class="example-vi">${item.sentenceVi}</div>
-                    </div>
-                </div>
-            `).join('');
+        return !answers[q.id];
+    });
+    if(unanswered.length){
+        alert('Bé hãy làm hết tất cả 10 câu trước nhé!');
+        return;
+    }
+    const score = currentQuestions.filter(isQuestionCorrect).length;
+    if(score === currentQuestions.length){
+        markDone(currentTopic, currentSet);
+        try{
+            await db.ref('english_history').push({
+                studentName: kidName || 'Bé',
+                topic: currentTopic,
+                setNo: currentSet,
+                version: 'v3',
+                result: score + '/' + currentQuestions.length,
+                date: new Date().toLocaleString('vi-VN'),
+                timestamp: Date.now()
+            });
+        }catch(e){
+            console.log('Lưu điểm lỗi:', e.message);
         }
-
-        function handleChoice(i, chosen, correct) {
-            if (chosen === correct) {
-                document.getElementById(`opt-box-${i}`).style.display = 'none';
-                document.getElementById(`input-box-${i}`).style.display = 'block';
-                speak(correct);
-            } else {
-                speak('Try again');
-            }
+        renderSetTabs();
+        renderStatus();
+        if(currentSet < 5){
+            alert('Xuất sắc! Bé đúng hết 10/10. Hệ thống sẽ chuyển sang đề tiếp theo.');
+            currentSet += 1;
+            renderSetTabs();
+            renderStatus();
+            renderQuestions();
+        } else {
+            alert('Tuyệt vời! Bé đã hoàn thành đủ 5 đề của chủ đề này.');
         }
-
-        function checkInput(i, correct) {
-            const el = document.getElementById(`in-${i}`);
-            const isCorrect = el.value.trim().toLowerCase() === correct.toLowerCase();
-            currentState[i].done = isCorrect;
-            if (isCorrect) {
-                el.classList.add('is-correct');
-                speak('Excellent');
-            } else {
-                el.classList.remove('is-correct');
-            }
-        }
-
-        async function sendReport() {
-            if (!kidName) {
-                alert('Bé cần đăng nhập ở trang chủ!');
-                return;
-            }
-            const score = currentState.filter(s => s.done).length;
-            const total = dataSet[activeTopic].length;
-            const btn = document.getElementById('submitBtn');
-
-            btn.disabled = true;
-            btn.innerText = '⏳ Đang lưu...';
-
-            try {
-                await db.ref('english_history').push({
-                    studentName: kidName,
-                    topic: activeTopic,
-                    result: `${score}/${total}`,
-                    date: new Date().toLocaleString('vi-VN'),
-                    timestamp: Date.now()
-                });
-                alert(`Tuyệt vời! Bé ${kidName} đã hoàn thành chủ đề ${topicMeta[activeTopic].label}.`);
-                window.location.href = 'index.html';
-            } catch (e) {
-                alert('Lỗi lưu điểm: ' + e.message);
-                btn.disabled = false;
-                btn.innerText = 'Nộp bài & Lưu Điểm 🚀';
-            }
-        }
-
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-            setTimeout(() => window.speechSynthesis.getVoices(), 300);
-            document.addEventListener('click', () => window.speechSynthesis.getVoices(), { once: true });
-            document.addEventListener('touchstart', () => window.speechSynthesis.getVoices(), { once: true });
-        }
-
-        window.onload = () => {
-            if (!kidName) {
-                alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!');
-                window.location.href = 'index.html';
-                return;
-            }
-            document.getElementById('display-name').innerText = kidName;
-            renderMenu();
-            render();
-        };
-    </script>
+    } else {
+        alert('Bé được ' + score + '/10. Bé làm lại đề này nhé! Phải đúng hết mới được đổi đề.');
+        renderQuestions();
+    }
+}
+function changeTopic(topicKey){
+    currentTopic = topicKey;
+    currentSet = 1;
+    renderTopicTabs();
+    renderSetTabs();
+    renderStatus();
+    renderQuestions();
+}
+function changeSet(setNo){
+    currentSet = setNo;
+    renderSetTabs();
+    renderStatus();
+    renderQuestions();
+}
+window.onload = () => {
+    if(!kidName){
+        alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!');
+        window.location.href = 'index.html';
+        return;
+    }
+    document.getElementById('display-name').innerText = kidName;
+    renderTopicTabs();
+    renderSetTabs();
+    renderStatus();
+    renderQuestions();
+};
+</script>
 </body>
 </html>
