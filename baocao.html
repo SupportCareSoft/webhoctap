@@ -43,7 +43,6 @@
       border:2px solid #f3f6fb;margin-bottom:16px;
     }
     .card h2{margin:0 0 6px;color:#7b1fa2;font-size:22px}
-    .desc{margin:0 0 14px;color:#607d8b;font-weight:700;line-height:1.7}
     .mini-table{width:100%;border-collapse:collapse}
     .mini-table th,.mini-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:14px;vertical-align:top}
     .mini-table th{color:#607d8b;font-size:13px}
@@ -58,7 +57,6 @@
     .subject-item{display:flex;justify-content:space-between;align-items:center;background:#fafcff;border-radius:16px;padding:12px 14px;border:1px solid #edf2f8}
     .subject-item .left{font-weight:800}
     .subject-item .right{font-size:13px;color:#607d8b;font-weight:700;text-align:right}
-    .footer-note{margin-top:10px;background:#fff8e1;border-radius:18px;padding:12px 14px;color:#6d4c41;font-weight:700;line-height:1.7}
     .empty{
       background:#fff8e1;border:2px dashed #ffd54f;border-radius:22px;padding:18px;text-align:center;
       color:#6d4c41;font-weight:700;line-height:1.8
@@ -81,14 +79,14 @@
 </head>
 <body>
   <div class="top-header">
-    <a href="index" class="btn-home">🏠 Về trang chủ</a>
+    <a href="index.html" class="btn-home">🏠 Về trang chủ</a>
     <div class="user">📊 Báo cáo của bé: <span id="display-name" style="color:#1976d2">...</span></div>
   </div>
 
   <div class="wrap">
     <div class="hero">
       <h1>📈 Báo cáo học tập theo tài khoản</h1>
-      
+      <p>Trang này chỉ hiển thị dữ liệu của đúng bé đang đăng nhập, giúp phụ huynh theo dõi nhanh kết quả trong ngày, kết quả theo từng môn, mức độ tiến bộ và phần cần luyện thêm.</p>
     </div>
 
     <div id="reportContent" style="display:none;">
@@ -123,14 +121,11 @@
         <div>
           <div class="card">
             <h2>1. Tổng quan</h2>
-            <p class="desc">Phần này giúp phụ huynh nhìn nhanh tổng số bài đã làm, tổng câu đúng và bức tranh chung của tài khoản hiện tại.</p>
             <div class="chart-box"><canvas id="todayOverviewChart"></canvas></div>
-            <div class="footer-note" id="todaySummaryText"></div>
           </div>
 
           <div class="card">
             <h2>2. Kết quả theo từng môn</h2>
-            <p class="desc">Báo cáo riêng theo Toán, Tiếng Việt, Tiếng Anh và EQ để biết môn nào đang là điểm mạnh, môn nào cần luyện thêm.</p>
             <div class="two-col">
               <div class="chart-box"><canvas id="subjectScoreChart"></canvas></div>
               <div class="subject-list" id="subjectList"></div>
@@ -139,16 +134,13 @@
 
           <div class="card">
             <h2>3. Tiến bộ 7 ngày gần nhất</h2>
-            <p class="desc">Tổng hợp theo ngày để phụ huynh thấy bé có học đều và có đang tiến bộ dần hay không.</p>
             <div class="chart-box"><canvas id="weeklyProgressChart"></canvas></div>
-            <div class="footer-note" id="weeklyText"></div>
           </div>
         </div>
 
         <div>
           <div class="card">
             <h2>4. Điểm mạnh và phần cần luyện thêm</h2>
-            <p class="desc">Viết theo cách tích cực, dễ hiểu, giúp phụ huynh biết nên khích lệ bé ở đâu và cần hỗ trợ phần nào.</p>
             <table class="mini-table">
               <thead>
                 <tr>
@@ -163,7 +155,6 @@
 
           <div class="card">
             <h2>5. Gợi ý cho phụ huynh ngày mai</h2>
-            <p class="desc">Đề xuất ngắn gọn, thực tế, dễ làm: nên ôn gì, học môn nào trước, thời lượng bao lâu là vừa.</p>
             <div id="parentTips"></div>
           </div>
         </div>
@@ -177,7 +168,7 @@
   </div>
 
   <script>
-    const firebaseConfig = {
+  const firebaseConfig = {
   apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
   authDomain: "bon-bi.firebaseapp.com",
   databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
@@ -194,7 +185,7 @@
 
     if (!kidName) {
       alert("Bé hãy đăng nhập trước để xem báo cáo nhé!");
-      window.location.href = "index";
+      window.location.href = "index.html";
     } else {
       document.getElementById("display-name").innerText = kidName;
     }
@@ -309,10 +300,7 @@
       document.getElementById("totalCorrect").innerText = `${totalCorrect}/${totalQuestions}`;
       document.getElementById("subjectCount").innerText = subjects.length;
       document.getElementById("bestSubject").innerText = bestSubject;
-      document.getElementById("todaySummaryText").innerHTML =
-        `Tài khoản của bé hiện đã có <b>${totalLessons} lượt làm bài</b>, đúng <b>${totalCorrect}/${totalQuestions} câu</b>. Môn có kết quả nổi bật nhất hiện tại là <b>${bestSubject}</b>.`;
-
-      document.getElementById("subjectList").innerHTML = subjects.map(s => `
+document.getElementById("subjectList").innerHTML = subjects.map(s => `
         <div class="subject-item">
           <div class="left">${s.name}</div>
           <div class="right">
@@ -379,12 +367,7 @@
       const lastScore = weeklyData[weeklyData.length - 1].score;
       const startScore = firstNonZero ? firstNonZero.score : 0;
       const diff = lastScore - startScore;
-      document.getElementById("weeklyText").innerHTML =
-        diff >= 0
-          ? `So với những ngày đầu trong 7 ngày gần nhất, kết quả hiện tại đang tăng khoảng <b>${diff}%</b>.`
-          : `So với những ngày đầu trong 7 ngày gần nhất, kết quả hiện tại đang giảm khoảng <b>${Math.abs(diff)}%</b>.`;
-
-      new Chart(document.getElementById("todayOverviewChart"), {
+new Chart(document.getElementById("todayOverviewChart"), {
         type: "bar",
         data: {
           labels: ["Lượt làm bài", "Câu đúng", "Tổng câu", "Số môn"],
