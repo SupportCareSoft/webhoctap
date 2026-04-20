@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Toán Học Thông Minh - Bé Bi Học Tập</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
@@ -14,16 +14,19 @@
             --blue: #2196F3;
             --green: #4CAF50;
             --purple: #9c27b0;
+            --orange: #ff9800;
+            --shadow: 0 8px 18px rgba(0,0,0,.08);
         }
 
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background-color: var(--bg-light);
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
+            color: #333;
         }
 
         .top-header {
@@ -45,7 +48,7 @@
             border-bottom: 4px solid #fbc02d;
             border-radius: 0 0 24px 24px;
             gap: 12px;
-            box-shadow: 0 8px 18px rgba(0,0,0,.06);
+            box-shadow: var(--shadow);
         }
 
         .header-left, .header-right {
@@ -55,10 +58,26 @@
             flex-wrap: wrap;
         }
 
-        .header-info {
-            font-weight: bold;
-            font-size: 14px;
-            color: #333;
+        .btn-home {
+            background: var(--primary);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 800;
+            box-shadow: 0 4px #ad1457;
+            white-space: nowrap;
+        }
+
+        .kid-info-box {
+            background: white;
+            border: 2px solid var(--blue);
+            padding: 9px 18px;
+            border-radius: 999px;
+            color: var(--blue);
+            font-weight: 800;
+            font-size: 16px;
+            white-space: nowrap;
         }
 
         .donate-btn {
@@ -67,8 +86,6 @@
             cursor: pointer;
             background: linear-gradient(135deg, #ff5fa2, #e91e63);
             color: #fff;
-            font-size: 14px;
-            font-weight: 700;
             box-shadow: 0 8px 18px rgba(233,30,99,.30);
             display: flex;
             align-items: center;
@@ -101,6 +118,7 @@
             align-items: center;
             justify-content: center;
             font-size: 14px;
+            flex: 0 0 24px;
         }
 
         .donate-text-strong {
@@ -108,7 +126,7 @@
             flex-direction: column;
             align-items: flex-start;
             line-height: 1.15;
-            letter-spacing: 0;
+            text-align: left;
         }
 
         .donate-text-strong strong {
@@ -119,7 +137,6 @@
         .donate-text-strong small {
             font-size: 12px;
             font-weight: 600;
-            opacity: 1;
         }
 
         .nav-bar {
@@ -144,35 +161,16 @@
             flex-wrap: wrap;
         }
 
-        .btn-home {
-            background: var(--primary);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px #ad1457;
-        }
-
-        .kid-info-box {
-            background: white;
-            border: 2px solid var(--blue);
-            padding: 8px 25px;
-            border-radius: 25px;
-            color: var(--blue);
-            font-weight: bold;
-            font-size: 18px;
-        }
-
         select {
             padding: 12px 20px;
             border-radius: 15px;
             border: 3px solid var(--blue);
             font-weight: bold;
             font-size: 18px;
-            width: 450px;
-            outline: none;
+            width: 480px;
             max-width: 100%;
+            outline: none;
+            background: white;
         }
 
         .main-wrapper {
@@ -181,7 +179,6 @@
             align-items: flex-start;
             padding: 20px;
             gap: 15px;
-            flex-grow: 1;
         }
 
         .chibi-side {
@@ -194,11 +191,12 @@
         .chibi-side img { width: 100%; }
 
         .exercise-area {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.55);
             padding: 30px;
             border-radius: 35px;
             max-width: 1100px;
             width: 100%;
+            box-shadow: 0 4px 14px rgba(0,0,0,.04);
         }
 
         .math-grid {
@@ -244,14 +242,19 @@
         .ans-input.wrong { border-color: var(--primary) !important; background: #ffebee; }
 
         .action-footer {
-            padding: 40px;
+            padding: 26px 20px 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
         }
 
-        .btn-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
         .btn-footer {
             padding: 15px 30px;
@@ -261,6 +264,7 @@
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
+            box-shadow: 0 6px rgba(0,0,0,0.08);
         }
 
         #history-section {
@@ -270,7 +274,7 @@
             background: white;
             border-radius: 25px;
             padding: 20px;
-            margin-top: 20px;
+            margin-top: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border: 2px solid var(--purple);
         }
@@ -278,7 +282,7 @@
         .history-table { width: 100%; border-collapse: collapse; }
         .history-table th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
 
-        .donate-modal {
+        .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -289,7 +293,7 @@
             padding: 16px;
         }
 
-        .donate-card {
+        .modal-card {
             max-width: 430px;
             width: 100%;
             position: relative;
@@ -300,7 +304,7 @@
             box-shadow: 0 18px 40px rgba(0,0,0,.18);
         }
 
-        .donate-close {
+        .modal-close {
             position: absolute;
             top: 10px;
             right: 12px;
@@ -313,7 +317,7 @@
             font-size: 24px;
         }
 
-        .donate-hero {
+        .modal-hero {
             width: 88px;
             height: 88px;
             border-radius: 24px;
@@ -352,7 +356,67 @@
             line-height: 1.7;
         }
 
-        @media (max-width: 1100px) { .chibi-side { display: none; } }
+        .feedback-fab {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 2500;
+            border: none;
+            background: linear-gradient(135deg, #7c4dff, #512da8);
+            color: white;
+            border-radius: 999px;
+            padding: 13px 18px;
+            font-size: 15px;
+            font-weight: 800;
+            box-shadow: 0 10px 22px rgba(81,45,168,.28);
+            cursor: pointer;
+        }
+
+        .feedback-form {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .feedback-form input,
+        .feedback-form textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e6eef7;
+            border-radius: 16px;
+            font-size: 15px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .feedback-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .feedback-submit {
+            border: none;
+            border-radius: 16px;
+            background: var(--purple);
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 12px 14px;
+            cursor: pointer;
+        }
+
+        .feedback-msg {
+            margin-top: 10px;
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 700;
+            display: none;
+        }
+
+        @media (max-width: 1100px) {
+            .chibi-side { display: none; }
+        }
 
         @media (max-width: 768px) {
             .top-header { padding: 8px 8px 0; }
@@ -367,15 +431,25 @@
                 justify-content: center;
                 flex-wrap: wrap;
             }
-            .btn-home { width: 100%; text-align: center; }
-            .donate-btn { width: 100%; justify-content: center; }
+            .btn-home,
+            .kid-info-box,
+            .donate-btn {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
             .donate-text-strong { align-items: center; text-align: center; }
-            .kid-info-box { text-align: center; width: 100%; font-size: 16px; }
             .nav-row { flex-direction: column; }
             select { width: 100%; max-width: 100%; font-size: 16px; }
             .main-wrapper { padding: 12px; }
             .btn-group { flex-direction: column; width: 100%; }
             .btn-footer { width: 100%; }
+            .feedback-fab {
+                right: 12px;
+                bottom: 12px;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -384,7 +458,10 @@
     <div class="top-header">
         <div class="header-shell">
             <div class="header-left">
-                <div class="header-info"><b></b>🏠 THẾ GIỚI HỌC TẬP CỦA BÉ</b></div>
+                <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+                <div id="kid-badge" class="kid-info-box">Bé Bi đang học! 🚀</div>
+            </div>
+            <div class="header-right">
                 <button class="donate-btn" onclick="openDonateModal()">
                     <span class="donate-heart">💝</span>
                     <span class="donate-text-strong">
@@ -393,47 +470,66 @@
                     </span>
                 </button>
             </div>
-            <div class="header-right"></div>
         </div>
     </div>
 
-    <div id="donateModal" class="donate-modal">
-        <div class="donate-card">
-            <button class="donate-close" onclick="closeDonateModal()">×</button>
-            <div class="donate-hero">💝</div>
+    <div id="donateModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeDonateModal()">×</button>
+            <div class="modal-hero">💝</div>
             <h2 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h2>
             <div style="background:#f5faff;border-radius:16px;padding:12px;line-height:1.8;color:#455a64;font-weight:700;font-size:14px;">
                 Mỗi lượt ủng hộ là một lời động viên để tiếp tục phát triển thêm nhiều bài học Toán, Tiếng Việt, Tiếng Anh, EQ và IQ hấp dẫn hơn cho bé mỗi ngày.
             </div>
             <div class="qr-wrap">
                 <img src="https://i.ibb.co/Xkpp8mBR/z6943077872275-b45da59ac0e58f1cc73a0d8846b1d3c8.jpg" alt="QR cảm ơn">
-                <div class="qr-note">Quét mã để nhận lời cảm ơn và tiếp sức cho việc phát triển thêm nội dung học tập cho bé.</div>
+                <div class="qr-note">Quét mã để tiếp sức cho việc phát triển thêm nội dung học tập cho bé.</div>
             </div>
         </div>
     </div>
 
+    <div id="feedbackModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeFeedbackModal()">×</button>
+            <div class="modal-hero" style="background:linear-gradient(135deg,#eef4ff,#f3e5f5); border-color:#c5cae9;">💬</div>
+            <h2 style="margin:0 0 8px;color:#5e35b1;font-size:28px;">Góp ý cho trang Toán</h2>
+            <div style="background:#f5faff;border-radius:16px;padding:12px;line-height:1.8;color:#455a64;font-weight:700;font-size:14px;">
+                Phụ huynh có thể gửi góp ý, lỗi hiển thị hoặc đề xuất thêm nội dung để website ngày càng tốt hơn.
+            </div>
+
+            <div class="feedback-form">
+                <input type="text" id="fb-parent-name" placeholder="Tên phụ huynh...">
+                <input type="text" id="fb-phone" placeholder="Số điện thoại...">
+                <textarea id="fb-content" placeholder="Nhập nội dung góp ý..."></textarea>
+                <button class="feedback-submit" onclick="submitFeedback()">Gửi góp ý</button>
+            </div>
+
+            <div id="feedback-msg" class="feedback-msg"></div>
+        </div>
+    </div>
+
+    <button class="feedback-fab" onclick="openFeedbackModal()">💬 Góp ý</button>
+
     <div class="nav-bar">
         <div class="nav-row">
-            <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
-            <div id="kid-badge" class="kid-info-box">Bé Bi đang học! 🚀</div>
+            <select id="level-select" onchange="generateMath()">
+                <option value="kid5">Bé 5 tuổi: Phạm vi 10</option>
+                <option value="l1-easy">Lớp 1: Cộng trừ KHÔNG NHỚ</option>
+                <option value="l1-hard">Lớp 1: Cộng trừ CÓ NHỚ</option>
+                <option value="l2">Lớp 2: Nhân/Chia bảng 2, 3, 4, 5</option>
+                <option value="l3">Lớp 3: Nhân/Chia nâng cao</option>
+                <option value="l4">Lớp 4: Đổi đơn vị (kg, m, km)</option>
+                <option value="l5">Lớp 5: Số thập phân</option>
+            </select>
         </div>
-        <select id="level-select" onchange="generateMath()">
-            <option value="kid5">Bé 5 tuổi: Phạm vi 10</option>
-            <option value="l1-easy">Lớp 1: Cộng trừ KHÔNG NHỚ</option>
-            <option value="l1-hard">Lớp 1: Cộng trừ CÓ NHỚ</option>
-            <option value="l2">Lớp 2: Nhân/Chia bảng 2, 3, 4, 5</option>
-            <option value="l3">Lớp 3: Nhân/Chia nâng cao</option>
-            <option value="l4">Lớp 4: Đổi đơn vị (kg, m, km)</option>
-            <option value="l5">Lớp 5: Số thập phân</option>
-        </select>
     </div>
 
     <div class="main-wrapper">
-        <div class="chibi-side"><img src="https://i.ibb.co/TB3TPsD5/anh3.png"></div>
+        <div class="chibi-side"><img src="https://i.ibb.co/TB3TPsD5/anh3.png" alt="chibi"></div>
         <div class="exercise-area">
             <div id="container" class="math-grid"></div>
         </div>
-        <div class="chibi-side"><img src="https://i.ibb.co/wZ9Yz65T/anh2.png"></div>
+        <div class="chibi-side"><img src="https://i.ibb.co/wZ9Yz65T/anh2.png" alt="chibi"></div>
     </div>
 
     <div class="action-footer">
@@ -467,6 +563,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const kidName = localStorage.getItem('kidName') || "Bi";
+        const kidUsername = localStorage.getItem('kidUsername') || "";
         document.getElementById('kid-badge').innerText = `Bé ${kidName} đang học! 🚀`;
 
         function openDonateModal() {
@@ -479,9 +576,64 @@
             if (el) el.style.display = 'none';
         }
 
+        function openFeedbackModal() {
+            const el = document.getElementById('feedbackModal');
+            if (el) el.style.display = 'flex';
+        }
+
+        function closeFeedbackModal() {
+            const el = document.getElementById('feedbackModal');
+            if (el) el.style.display = 'none';
+        }
+
+        async function submitFeedback() {
+            const parentName = document.getElementById('fb-parent-name').value.trim();
+            const phone = document.getElementById('fb-phone').value.trim();
+            const content = document.getElementById('fb-content').value.trim();
+            const box = document.getElementById('feedback-msg');
+
+            if (!parentName || !phone || !content) {
+                box.style.display = 'block';
+                box.style.background = '#ffebee';
+                box.style.color = '#c62828';
+                box.innerText = 'Phụ huynh vui lòng nhập đầy đủ thông tin góp ý.';
+                return;
+            }
+
+            try {
+                await database.ref('feedback').push({
+                    page: 'toan.html',
+                    parentName,
+                    phone,
+                    content,
+                    kidName,
+                    kidUsername,
+                    createdAt: Date.now(),
+                    date: new Date().toLocaleString('vi-VN')
+                });
+
+                box.style.display = 'block';
+                box.style.background = '#e8f5e9';
+                box.style.color = '#2e7d32';
+                box.innerText = 'Đã gửi góp ý thành công. Cảm ơn phụ huynh!';
+
+                document.getElementById('fb-parent-name').value = '';
+                document.getElementById('fb-phone').value = '';
+                document.getElementById('fb-content').value = '';
+            } catch (e) {
+                box.style.display = 'block';
+                box.style.background = '#ffebee';
+                box.style.color = '#c62828';
+                box.innerText = 'Gửi góp ý chưa thành công, vui lòng thử lại.';
+                console.log(e);
+            }
+        }
+
         window.addEventListener('click', function(event) {
-            const modal = document.getElementById('donateModal');
-            if (event.target === modal) closeDonateModal();
+            const donateModal = document.getElementById('donateModal');
+            const feedbackModal = document.getElementById('feedbackModal');
+            if (event.target === donateModal) closeDonateModal();
+            if (event.target === feedbackModal) closeFeedbackModal();
         });
 
         function generateMath() {
@@ -490,7 +642,7 @@
             container.innerHTML = "";
             let count = 0;
 
-            while(count < 20) {
+            while (count < 20) {
                 let n1, n2, op, ans, html = "";
 
                 if (level === 'l2') {
@@ -515,38 +667,40 @@
                     ans = (op === '+') ? n1 + n2 : n1 - n2;
                 } else if (level === 'l3') {
                     op = Math.random() > 0.5 ? 'x' : ':';
-                    if (op === 'x') { 
-                        n1 = Math.floor(Math.random() * 150) + 10; 
-                        n2 = Math.floor(Math.random() * 7) + 2; 
-                        ans = n1 * n2; 
-                    } else { 
-                        n2 = Math.floor(Math.random() * 8) + 2; 
-                        ans = Math.floor(Math.random() * 100) + 10; 
-                        n1 = ans * n2; 
+                    if (op === 'x') {
+                        n1 = Math.floor(Math.random() * 150) + 10;
+                        n2 = Math.floor(Math.random() * 7) + 2;
+                        ans = n1 * n2;
+                    } else {
+                        n2 = Math.floor(Math.random() * 8) + 2;
+                        ans = Math.floor(Math.random() * 100) + 10;
+                        n1 = ans * n2;
                     }
                 } else if (level === 'l5') {
-                    n1 = (Math.random() * 50 + 5).toFixed(1); 
+                    n1 = (Math.random() * 50 + 5).toFixed(1);
                     n2 = (Math.random() * 40 + 5).toFixed(1);
                     op = Math.random() > 0.5 ? '+' : '-';
-                    ans = (op === '+') ? (parseFloat(n1) + parseFloat(n2)).toFixed(1) : (parseFloat(n1) - parseFloat(n2)).toFixed(1);
+                    ans = (op === '+')
+                        ? (parseFloat(n1) + parseFloat(n2)).toFixed(1)
+                        : (parseFloat(n1) - parseFloat(n2)).toFixed(1);
                 } else if (level === 'l4') {
                     let u = [{f:'kg',t:'g',r:1000},{f:'m',t:'cm',r:100},{f:'km',t:'m',r:1000}][Math.floor(Math.random()*3)];
                     n1 = Math.floor(Math.random()*89)+10;
                     html = `<span class="num-box">${n1}</span> <b>${u.f}</b> = <input type="number" class="ans-input" data-ans="${n1*u.r}"> <b>${u.t}</b>`;
                     container.innerHTML += `<div class="math-card">${html}</div>`;
-                    count++; 
+                    count++;
                     continue;
                 } else if (level === 'kid5') {
-                    n1 = Math.floor(Math.random()*9)+1; 
-                    n2 = Math.floor(Math.random()*(10-n1)); 
-                    op = '+'; 
-                    ans = n1+n2;
+                    n1 = Math.floor(Math.random()*9)+1;
+                    n2 = Math.floor(Math.random()*(10-n1));
+                    op = '+';
+                    ans = n1 + n2;
                 } else {
-                    n1 = Math.floor(Math.random()*80)+10; 
-                    op = Math.random()>0.5?'+':'-'; 
-                    let u1=n1%10; 
-                    n2=op==='+'?Math.floor(Math.random()*(10-u1)):Math.floor(Math.random()*(u1+1)); 
-                    ans=op==='+'?n1+n2:n1-n2;
+                    n1 = Math.floor(Math.random()*80)+10;
+                    op = Math.random()>0.5 ? '+' : '-';
+                    let u1 = n1 % 10;
+                    n2 = op==='+' ? Math.floor(Math.random()*(10-u1)) : Math.floor(Math.random()*(u1+1));
+                    ans = op==='+' ? n1+n2 : n1-n2;
                 }
 
                 html = `<span class="num-box">${n1}</span> <b class="math-op">${op}</b> <span class="num-box">${n2}</span> <b class="math-op">=</b> <input type="text" class="ans-input" data-ans="${ans}">`;
@@ -559,33 +713,41 @@
             let score = 0;
             document.querySelectorAll('.ans-input').forEach(i => {
                 i.classList.remove('correct', 'wrong');
-                if(parseFloat(i.value) === parseFloat(i.dataset.ans)) { 
-                    i.classList.add('correct'); 
-                    score++; 
+                if (parseFloat(i.value) === parseFloat(i.dataset.ans)) {
+                    i.classList.add('correct');
+                    score++;
                 } else {
                     i.classList.add('wrong');
                 }
             });
-            database.ref('results').push({ 
-                name: kidName, 
-                score: score, 
-                level: document.getElementById('level-select').selectedOptions[0].text, 
-                time: Date.now() 
+
+            database.ref('results').push({
+                name: kidName,
+                kidUsername: kidUsername,
+                score: score,
+                level: document.getElementById('level-select').selectedOptions[0].text,
+                time: Date.now()
             });
+
             alert(`Bé ${kidName} đạt ${score}/20 điểm!`);
         }
 
         function toggleHistory() {
             const section = document.getElementById('history-section');
             section.style.display = section.style.display === 'block' ? 'none' : 'block';
-            if(section.style.display === 'block') {
+
+            if (section.style.display === 'block') {
                 const body = document.getElementById('history-body');
                 body.innerHTML = "Đang tải...";
                 const monthAgo = Date.now() - (30*24*60*60*1000);
+
                 database.ref('results').orderByChild('time').startAt(monthAgo).once('value', snapshot => {
                     body.innerHTML = "";
                     let results = [];
-                    snapshot.forEach(c => { if(c.val().name === kidName) results.unshift(c.val()); });
+                    snapshot.forEach(c => {
+                        const v = c.val() || {};
+                        if (v.name === kidName) results.unshift(v);
+                    });
                     results.forEach(r => {
                         const d = new Date(r.time).toLocaleDateString('vi-VN');
                         body.innerHTML += `<tr><td>${d}</td><td>${r.level}</td><td>${r.score}/20</td></tr>`;
