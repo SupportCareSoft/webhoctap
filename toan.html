@@ -501,7 +501,7 @@
                 <input type="text" id="fb-parent-name" placeholder="Tên phụ huynh...">
                 <input type="text" id="fb-phone" placeholder="Số điện thoại...">
                 <textarea id="fb-content" placeholder="Nhập nội dung góp ý..."></textarea>
-                <button class="feedback-submit" onclick="submitFeedback()">Gửi góp ý</button>
+                <button class="feedback-submit" onclick="submitFeedbackToTelegram()">Gửi góp ý</button>
             </div>
 
             <div id="feedback-msg" class="feedback-msg"></div>
@@ -566,6 +566,10 @@
         const kidUsername = localStorage.getItem('kidUsername') || "";
         document.getElementById('kid-badge').innerText = `Bé ${kidName} đang học! 🚀`;
 
+        // THAY 2 GIÁ TRỊ DƯỚI ĐÂY BẰNG TELEGRAM THẬT
+        const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
+        const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
+
         function openDonateModal() {
             const el = document.getElementById('donateModal');
             if (el) el.style.display = 'flex';
@@ -586,7 +590,7 @@
             if (el) el.style.display = 'none';
         }
 
-        async function submitFeedback() {
+        async function submitFeedbackToTelegram() {
             const parentName = document.getElementById('fb-parent-name').value.trim();
             const phone = document.getElementById('fb-phone').value.trim();
             const content = document.getElementById('fb-content').value.trim();
@@ -600,31 +604,59 @@
                 return;
             }
 
+            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === '8692523139:AAEV1A1lA5xO1bUfnBY7Gj3KKODBIjArHNI' || !TELEGRAM_CHAT_ID || TELEGRAM_CHAT_ID === '567048046') {
+                box.style.display = 'block';
+                box.style.background = '#fff8e1';
+                box.style.color = '#e65100';
+                box.innerText = 'Chưa cấu hình TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID.';
+                return;
+            }
+
+            const message =
+`💬 GÓP Ý MỚI TỪ TRANG TOÁN
+
+👨‍👩‍👧 Phụ huynh: ${parentName}
+📞 SĐT: ${phone}
+👶 Bé: ${kidName}
+🆔 Username: ${kidUsername}
+🌐 Trang: toan.html
+
+📝 Nội dung góp ý:
+${content}`;
+
             try {
-                await database.ref('feedback').push({
-                    page: 'toan.html',
-                    parentName,
-                    phone,
-                    content,
-                    kidName,
-                    kidUsername,
-                    createdAt: Date.now(),
-                    date: new Date().toLocaleString('vi-VN')
+                const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message
+                    })
                 });
 
-                box.style.display = 'block';
-                box.style.background = '#e8f5e9';
-                box.style.color = '#2e7d32';
-                box.innerText = 'Đã gửi góp ý thành công. Cảm ơn phụ huynh!';
+                const data = await res.json();
 
-                document.getElementById('fb-parent-name').value = '';
-                document.getElementById('fb-phone').value = '';
-                document.getElementById('fb-content').value = '';
+                if (data.ok) {
+                    box.style.display = 'block';
+                    box.style.background = '#e8f5e9';
+                    box.style.color = '#2e7d32';
+                    box.innerText = 'Đã gửi góp ý thành công. Cảm ơn phụ huynh!';
+
+                    document.getElementById('fb-parent-name').value = '';
+                    document.getElementById('fb-phone').value = '';
+                    document.getElementById('fb-content').value = '';
+                } else {
+                    box.style.display = 'block';
+                    box.style.background = '#ffebee';
+                    box.style.color = '#c62828';
+                    box.innerText = 'Gửi Telegram thất bại. Kiểm tra lại bot token hoặc chat id.';
+                    console.log(data);
+                }
             } catch (e) {
                 box.style.display = 'block';
                 box.style.background = '#ffebee';
                 box.style.color = '#c62828';
-                box.innerText = 'Gửi góp ý chưa thành công, vui lòng thử lại.';
+                box.innerText = 'Có lỗi khi gửi góp ý tới Telegram.';
                 console.log(e);
             }
         }
@@ -739,7 +771,8 @@
             if (section.style.display === 'block') {
                 const body = document.getElementById('history-body');
                 body.innerHTML = "Đang tải...";
-                const monthAgo = Date.now() - (30*24*60*60*1000);
+
+                const monthAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
 
                 database.ref('results').orderByChild('time').startAt(monthAgo).once('value', snapshot => {
                     body.innerHTML = "";
@@ -748,6 +781,7 @@
                         const v = c.val() || {};
                         if (v.name === kidName) results.unshift(v);
                     });
+
                     results.forEach(r => {
                         const d = new Date(r.time).toLocaleDateString('vi-VN');
                         body.innerHTML += `<tr><td>${d}</td><td>${r.level}</td><td>${r.score}/20</td></tr>`;
