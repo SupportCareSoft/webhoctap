@@ -7,93 +7,329 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --primary: #e91e63; --blue: #2196F3; --orange: #ff9800; --purple: #9c27b0; --yellow: #ffeb3b; --bg: #e0f7fa; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; }
-
-        /* HEADER VÀNG NHƯ ẢNH */
-        .top-header { 
-            background: var(--yellow); padding: 10px 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 5px solid #fbc02d; border-radius: 0 0 20px 20px;
+        :root {
+            --primary: #e91e63;
+            --blue: #2196F3;
+            --orange: #ff9800;
+            --purple: #9c27b0;
+            --yellow: #ffeb3b;
+            --bg: #e0f7fa;
         }
-        .header-info { font-weight: bold; color: #333; display: flex; align-items: center; gap: 5px; }
-        
-        /* CỤM ĐĂNG KÝ / ĐĂNG NHẬP GÓC PHẢI */
-        .auth-zone { display: flex; align-items: center; gap: 8px; position: relative; }
-        .auth-zone input { padding: 8px 12px; border-radius: 15px; border: 2px solid #fff; outline: none; width: 140px; font-size: 13px; }
-        .btn-auth { padding: 7px 12px; border-radius: 12px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-header {
+            background: transparent;
+            padding: 10px 12px 0;
+        }
+
+        .header-shell {
+            width: min(1000px, 92%);
+            margin: 0 auto;
+            background: linear-gradient(135deg, #fff59d, #ffe082);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 5px solid #fbc02d;
+            border-radius: 0 0 24px 24px;
+            gap: 12px;
+            box-shadow: 0 8px 18px rgba(0,0,0,.06);
+        }
+
+        .header-left,
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-info {
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .auth-zone {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .btn-auth {
+            padding: 7px 12px;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
         .btn-reg { background: var(--blue); }
         .btn-login { background: #4CAF50; }
         .btn-out { background: #f44336; }
-        .btn-auth:hover { opacity: 0.9; transform: scale(1.05); }
 
-        /* NAVIGATION BUTTONS (HỒNG, LAM, CAM, TÍM) */
-        .nav-container { display: flex; justify-content: center; gap: 15px; padding: 20px; flex-wrap: wrap; }
-        .btn-nav { 
-            padding: 12px 25px; border-radius: 30px; text-decoration: none; 
-            color: white; font-weight: bold; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 5px rgba(0,0,0,0.1); transition: 0.2s; cursor: pointer;
+        .btn-auth:hover {
+            opacity: 0.95;
+            transform: scale(1.04);
         }
+
+        .donate-btn {
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff5fa2, #e91e63);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 800;
+            box-shadow: 0 8px 18px rgba(233,30,99,.30);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 16px;
+            min-height: 46px;
+            position: relative;
+        }
+
+        .donate-btn::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border: 3px solid #ff4081;
+            border-radius: 50%;
+        }
+
+        .donate-heart {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .donate-text-strong {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.1;
+        }
+
+        .donate-text-strong small {
+            font-size: 11px;
+            font-weight: 700;
+            opacity: .92;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav {
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
         .bg-pink { background: var(--primary); }
         .bg-blue { background: var(--blue); }
         .bg-orange { background: var(--orange); }
         .bg-purple { background: var(--purple); }
 
-        /* MAIN BOX */
-        .main-box { 
-            background: white; margin: 0 auto 30px; width: 92%; max-width: 1000px; 
-            border-radius: 30px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center;
+        .main-box {
+            background: white;
+            margin: 0 auto 30px;
+            width: 92%;
+            max-width: 1000px;
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .welcome-section { display: flex; align-items: center; gap: 30px; margin-bottom: 10px; width: 100%; justify-content: center; }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
         .welcome-img { width: 220px; }
-        .welcome-text h2 { color: var(--primary); margin-bottom: 10px; }
-        
-        /* VINH DANH GỌN GÀNG */
-        .leaderboard-row { display: flex; gap: 20px; width: 100%; margin-top: 20px; border-top: 2px dashed #eee; padding-top: 20px; }
-        .board-card { flex: 1; background: #fffde7; border-radius: 20px; padding: 15px; border: 2px solid #fff59d; min-height: 150px; }
-        .board-card h3 { margin: 0 0 10px 0; font-size: 16px; text-align: center; color: #d84315; }
-        .rank-item { display: flex; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #fff; font-size: 14px; font-weight: bold; }
-        
-        #error-msg { color: #d32f2f; font-size: 11px; position: absolute; top: 40px; right: 0; font-weight: bold; background: #ffcdd2; padding: 2px 8px; border-radius: 5px; display: none; z-index: 10; }
-    
+
+        .welcome-text h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+            border-top: 2px dashed #eee;
+            padding-top: 20px;
+        }
+
+        .board-card {
+            flex: 1;
+            background: #fffde7;
+            border-radius: 20px;
+            padding: 15px;
+            border: 2px solid #fff59d;
+            min-height: 150px;
+        }
+
+        .board-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            text-align: center;
+            color: #d84315;
+        }
+
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            border-bottom: 1px solid #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; padding: 16px;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 16px;
         }
+
         .modal-card {
-            width: 100%; max-width: 420px; background: white; border-radius: 24px;
-            padding: 22px 18px 18px; position: relative; box-shadow: 0 14px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 24px;
+            padding: 22px 18px 18px;
+            position: relative;
+            box-shadow: 0 14px 40px rgba(0,0,0,0.2);
         }
-        .modal-card h3 { margin: 0 0 14px; color: #9c27b0; text-align: center; font-size: 28px; }
-        .modal-form { display: grid; gap: 10px; }
+
+        .modal-card h3 {
+            margin: 0 0 14px;
+            color: #9c27b0;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .modal-form {
+            display: grid;
+            gap: 10px;
+        }
+
         .modal-form input {
-            padding: 11px 12px; border-radius: 16px; border: 2px solid #e7eef5; outline: none; font-size: 15px;
+            padding: 11px 12px;
+            border-radius: 16px;
+            border: 2px solid #e7eef5;
+            outline: none;
+            font-size: 15px;
         }
-        .modal-form input:focus { border-color: #2196F3; }
-        .modal-form .btn-auth { width: 100%; min-height: 44px; font-size: 14px; }
+
+        .modal-form input:focus {
+            border-color: #2196F3;
+        }
+
+        .modal-form .btn-auth {
+            width: 100%;
+            min-height: 44px;
+            font-size: 14px;
+        }
+
         .modal-close {
-            position: absolute; top: 10px; right: 12px; border: none; background: #f3f3f3;
-            width: 34px; height: 34px; border-radius: 999px; cursor: pointer; font-size: 24px; line-height: 1;
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            border: none;
+            background: #f3f3f3;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
         }
+
         .modal-note {
-            margin-top: 12px; background: #fff8e1; border-radius: 16px; padding: 10px 12px;
-            font-size: 13px; line-height: 1.6; font-weight: bold; color: #6d4c41;
+            margin-top: 12px;
+            background: #fff8e1;
+            border-radius: 16px;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            font-weight: bold;
+            color: #6d4c41;
         }
+
         .modal-error {
-            margin-top: 10px; background: #ffcdd2; color: #c62828; border-radius: 12px;
-            padding: 8px 10px; font-size: 13px; font-weight: bold; text-align: center;
+            margin-top: 10px;
+            background: #ffcdd2;
+            color: #c62828;
+            border-radius: 12px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
         }
+
         .auth-choice-box {
-            margin-top: 16px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
+
         .auth-choice-box button {
             min-width: 140px;
             min-height: 46px;
             font-size: 15px;
             border-radius: 16px;
         }
+
         .auth-required-hero {
             display: flex;
             justify-content: center;
@@ -106,6 +342,7 @@
             border: 2px solid #ffe082;
             font-size: 44px;
         }
+
         .auth-required-title {
             text-align: center;
             color: #8e24aa;
@@ -113,6 +350,7 @@
             font-size: 28px;
             margin-bottom: 10px;
         }
+
         .auth-required-text {
             background: #f8fbff;
             border-radius: 18px;
@@ -122,50 +360,120 @@
             color: #546e7a;
             text-align: center;
         }
-        .auth-required-text b {
-            color: #e65100;
+
+        .auth-required-text b { color: #e65100; }
+
+        .donate-hero {
+            width: 88px;
+            height: 88px;
+            border-radius: 24px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg,#fff0f6,#fff8e1);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:42px;
+            border:2px solid #ffd1e1;
         }
 
-    <style>
-    @media (max-width: 768px) {
-        .top-header { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px 12px; }
-        .header-info { justify-content: center; text-align: center; }
-        .auth-zone { width: 100%; justify-content: center; }
-        #auth-actions { width: 100%; justify-content: center; }
-        .btn-auth { min-height: 42px; }
-        .nav-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 12px; }
-        .btn-nav { justify-content: center; text-align: center; }
-        .welcome-section { flex-direction: column; text-align: center; }
-        .leaderboard-row { flex-direction: column; }
-        #user-logged { flex-wrap: wrap; justify-content: center; }
-        #user-logged span { text-align: center; }
-    }
-    @media (max-width: 430px) {
-        .nav-container { grid-template-columns: 1fr; }
-        .modal-card { padding: 20px 14px 16px; border-radius: 20px; }
-        .modal-card h3 { font-size: 24px; }
-        .auth-choice-box { flex-direction: column; }
-        .auth-required-title { font-size: 24px; }
-        .auth-required-hero { width: 78px; height: 78px; font-size: 38px; }
-    }
-    </style>
+        .qr-wrap {
+            background: linear-gradient(135deg,#fdfdfd,#f7fbff);
+            border: 2px dashed #b3e5fc;
+            border-radius: 22px;
+            padding: 14px;
+            margin-top: 14px;
+            text-align: center;
+        }
 
-</style>
+        .qr-wrap img {
+            width: 220px;
+            max-width: 100%;
+            border-radius: 16px;
+            background: #fff;
+            padding: 10px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.06);
+        }
+
+        .qr-note {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #607d8b;
+            font-weight: 700;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .top-header { padding: 8px 8px 0; }
+            .header-shell {
+                width: calc(100% - 4px);
+                padding: 10px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-left, .header-right {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .header-info { justify-content: center; text-align: center; }
+            .auth-zone { width: 100%; justify-content: center; }
+            #auth-actions { width: 100%; justify-content: center; }
+            .btn-auth { min-height: 42px; }
+            .donate-btn { width: 100%; justify-content: center; }
+            .donate-text-strong { align-items: center; }
+            .nav-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding: 14px 12px;
+            }
+            .btn-nav { justify-content: center; text-align: center; }
+            .welcome-section { flex-direction: column; text-align: center; }
+            .leaderboard-row { flex-direction: column; }
+            #user-logged {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            #user-logged span { text-align: center; }
+        }
+
+        @media (max-width: 430px) {
+            .nav-container { grid-template-columns: 1fr; }
+            .modal-card { padding: 20px 14px 16px; border-radius: 20px; }
+            .modal-card h3 { font-size: 24px; }
+            .auth-choice-box { flex-direction: column; }
+            .auth-required-title { font-size: 24px; }
+            .auth-required-hero { width: 78px; height: 78px; font-size: 38px; }
+        }
+    </style>
 </head>
 <body>
 
     <div class="top-header">
-        <div class="header-info">🏠 Phạm Quốc Đại | 📞 0393125184</div>
-        
-        <div class="auth-zone">
-            <div id="auth-actions" style="display: flex; gap: 8px; align-items: center;">
-                <button class="btn-auth btn-reg" onclick="openModal('registerModal')">Đăng Ký</button>
-                <button class="btn-auth btn-login" onclick="openModal('loginModal')">Đăng Nhập</button>
+        <div class="header-shell">
+            <div class="header-left">
+                <div class="header-info">🏠 Phạm Quốc Đại | 📞 0393125184</div>
+                <button class="donate-btn" onclick="openDonateModal()">
+                    <span class="donate-heart">💝</span>
+                    <span class="donate-text-strong">
+                        Ủng hộ phát triển
+                        <small>Quét QR để tiếp sức cho trang học của bé</small>
+                    </span>
+                </button>
             </div>
 
-            <div id="user-logged" style="display: none; align-items: center; gap: 10px;">
-                <span style="font-weight: bold; color: #c2185b;">Chào mừng bé: <span id="display-name" style="color: #1976D2;"></span>! ✨</span>
-                <button class="btn-auth btn-out" onclick="logout()">Thoát</button>
+            <div class="header-right">
+                <div class="auth-zone">
+                    <div id="auth-actions" style="display: flex; gap: 8px; align-items: center;">
+                        <button class="btn-auth btn-reg" onclick="openModal('registerModal')">Đăng Ký</button>
+                        <button class="btn-auth btn-login" onclick="openModal('loginModal')">Đăng Nhập</button>
+                    </div>
+
+                    <div id="user-logged" style="display: none; align-items: center; gap: 10px;">
+                        <span style="font-weight: bold; color: #c2185b;">Chào mừng bé: <span id="display-name" style="color: #1976D2;"></span>! ✨</span>
+                        <button class="btn-auth btn-out" onclick="logout()">Thoát</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -180,7 +488,6 @@
         <a href="baocao.html" class="btn-nav bg-purple" onclick="return checkLogin()">📊 Báo cáo</a>
     </div>
 
-
     <div id="registerModal" class="modal-overlay" style="display:none;">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal('registerModal')">×</button>
@@ -194,7 +501,7 @@
             </div>
             <div class="modal-note">
                 Username: viết liền, không dấu, không khoảng trắng.<br>
-                Mật khẩu: ít nhất 8 ký tự và có ít nhất 1 ký tự đặc biệt.
+                Mật khẩu: ít nhất 8 ký tự và có 1 ký tự đặc biệt.
             </div>
             <div id="error-msg-register" class="modal-error" style="display:none;"></div>
         </div>
@@ -229,15 +536,33 @@
         </div>
     </div>
 
-     <div class="main-box">
+    <div id="donateModal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeDonateModal()">×</button>
+            <div class="donate-hero">💝</div>
+            <h3>Cảm ơn bố mẹ và bé</h3>
+            <div class="auth-required-text">
+                Mỗi lượt ủng hộ là một lời động viên để tiếp tục phát triển thêm nhiều bài học,
+                bài IQ, EQ, Toán, Tiếng Việt và Tiếng Anh hấp dẫn hơn cho bé mỗi ngày.
+            </div>
+            <div class="qr-wrap">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=%F0%9F%92%9D%20Cam%20on%20bo%20me%20da%20ung%20ho%20de%20phat%20trien%20them%20noi%20dung%20cho%20trang%20hoc%20tap%20cua%20be." alt="QR cảm ơn">
+                <div class="qr-note">
+                    Quét mã để nhận lời cảm ơn và tiếp sức cho việc phát triển thêm nội dung học tập cho bé.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-box">
         <div class="welcome-section">
             <img src="https://i.ibb.co/wNgDKjCL/anh2.png" class="welcome-img">
             <div class="welcome-text">
                 <h2>Chào mừng bé yêu đến với Thế Giới Học Tập!</h2>
-                                <div style="background: linear-gradient(135deg, #fff9c4, #fff3e0); padding: 18px; border-radius: 22px; font-weight: bold; font-size: 14px; line-height: 1.8; color: #5d4037; border: 2px dashed #ffd54f; box-shadow: 0 6px 16px rgba(255, 193, 7, 0.15);">
+                <div style="background: linear-gradient(135deg, #fff9c4, #fff3e0); padding: 18px; border-radius: 22px; font-weight: bold; font-size: 14px; line-height: 1.8; color: #5d4037; border: 2px dashed #ffd54f; box-shadow: 0 6px 16px rgba(255, 193, 7, 0.15);">
                     <div style="font-size: 18px; color: #d81b60; margin-bottom: 10px;">💛 Gửi bố mẹ và bé yêu</div>
                     Mỗi em bé đều có một cách tiếp thu riêng, và điều quan trọng nhất là con được học trong cảm giác <b>vui vẻ, tự tin và được khích lệ mỗi ngày</b>.<br>
-                    Website này được tạo ra để giúp bé làm quen và luyện tập <b>Toán, Tiếng Việt, Tiếng Anh và EQ</b> theo cách nhẹ nhàng, dễ hiểu, sinh động và phù hợp với lứa tuổi.<br>
+                    Website này được tạo ra để giúp bé làm quen và luyện tập <b>Toán, Tiếng Việt, Tiếng Anh, EQ và IQ</b> theo cách nhẹ nhàng, dễ hiểu, sinh động và phù hợp với lứa tuổi.<br>
                     Khi tham gia học đều đặn, bé sẽ có thêm cơ hội rèn <b>tư duy, sự tập trung, thói quen tự học</b> và mạnh dạn hơn khi làm bài.<br>
                     Bố mẹ cũng có thể đồng hành cùng con dễ hơn vì hệ thống có lưu kết quả, giúp theo dõi quá trình tiến bộ của bé qua từng bài học.<br>
                     <div style="margin-top: 10px; background: rgba(255,255,255,0.55); padding: 10px 12px; border-radius: 16px;">
@@ -261,7 +586,6 @@
     </div>
 
     <script>
-        // CẤU HÌNH FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAWBs-QTOaRpylR3ysfKvYvIO38VJpNbKk",
             authDomain: "toan-bibon.firebaseapp.com",
@@ -317,6 +641,16 @@
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
             clearErrors();
+        }
+
+        function openDonateModal() {
+            const el = document.getElementById('donateModal');
+            if (el) el.style.display = 'flex';
+        }
+
+        function closeDonateModal() {
+            const el = document.getElementById('donateModal');
+            if (el) el.style.display = 'none';
         }
 
         function openAuthFromRequired(mode) {
@@ -432,24 +766,21 @@
             location.reload();
         }
 
-        // TỔNG HỢP DỮ LIỆU TOÁN + TIẾNG ANH LÊN BẢNG VÀNG
         function loadLeaderboard() {
             const mathRef = database.ref('results').once('value');
             const englishRef = database.ref('english_history').once('value');
 
             Promise.all([mathRef, englishRef]).then(snapshots => {
                 let allData = [];
-                
-                // Gom dữ liệu môn Toán
+
                 snapshots[0].forEach(c => {
                     let val = c.val();
-                    if(val.name && val.score) allData.push({ name: val.name, score: parseInt(val.score), time: val.time || 0 });
+                    if (val.name && val.score) allData.push({ name: val.name, score: parseInt(val.score), time: val.time || 0 });
                 });
 
-                // Gom dữ liệu môn Tiếng Anh
                 snapshots[1].forEach(c => {
                     let val = c.val();
-                    if(val.studentName && val.result) {
+                    if (val.studentName && val.result) {
                         let scoreValue = parseInt(val.result.split('/')[0]) || 0;
                         allData.push({ name: val.studentName, score: scoreValue, time: val.timestamp || 0 });
                     }
@@ -459,15 +790,15 @@
                 const render = (period, elementId) => {
                     let filtered = allData.filter(r => (now - r.time) < period);
                     let best = {};
-                    filtered.forEach(r => { 
-                        if(!best[r.name] || r.score > best[r.name]) best[r.name] = r.score; 
+                    filtered.forEach(r => {
+                        if (!best[r.name] || r.score > best[r.name]) best[r.name] = r.score;
                     });
-                    
-                    let sorted = Object.keys(best).map(n => ({n, s: best[n]}))
-                                 .sort((a,b) => b.s - a.s).slice(0, 5);
-                    
+
+                    let sorted = Object.keys(best).map(n => ({ n, s: best[n] }))
+                                 .sort((a, b) => b.s - a.s).slice(0, 5);
+
                     let html = "";
-                    const m = ["🥇","🥈","🥉","4","5"];
+                    const m = ["🥇", "🥈", "🥉", "4", "5"];
                     sorted.forEach((it, i) => {
                         html += `<div class="rank-item"><span>${m[i]} ${it.n}</span><span style="color:#e91e63">${it.s}đ</span></div>`;
                     });
@@ -478,13 +809,17 @@
                 render(30*24*60*60*1000, 'top-month');
             });
         }
+
         window.onclick = function(event) {
-            const ids = ['registerModal', 'loginModal', 'authRequiredModal'];
-            ids.forEach(id => {
+            ['registerModal', 'loginModal', 'authRequiredModal'].forEach(id => {
                 const modal = document.getElementById(id);
                 if (event.target === modal) closeModal(id);
             });
+
+            const donateModal = document.getElementById('donateModal');
+            if (event.target === donateModal) closeDonateModal();
         };
+
         window.onload = checkState;
     </script>
 </body>
