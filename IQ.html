@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bibon IQ</title>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+<style>
+:root{
+  --primary:#e91e63; --blue:#2196f3; --orange:#ff9800; --purple:#9c27b0;
+  --yellow:#ffeb3b; --green:#2ecc71; --bg:#e0f7fa; --danger:#ef5350;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#333}
+.top-header{background:var(--yellow);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:5px solid #fbc02d;border-radius:0 0 20px 20px;gap:10px}
+.btn-home{background:var(--primary);color:#fff;text-decoration:none;padding:10px 18px;border-radius:24px;font-weight:700}
+.user-logged{font-weight:700;color:#c2185b}
+.main-box{background:#fff;margin:18px auto 28px;width:94%;max-width:1200px;border-radius:30px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.05)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:center;background:linear-gradient(135deg,#fffef8,#eef8ff);border:2px dashed #ffe082;border-radius:24px;padding:16px 18px;margin-bottom:18px}
+.hero h2{margin:0 0 8px;color:var(--purple)}
+.hero p{margin:0;line-height:1.7;font-weight:600;color:#546e7a}
+.status-box{background:#f8f9fa;border-radius:18px;padding:12px 16px;font-weight:700}
+.age-tabs,.topic-tabs,.set-tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.menu-btn,.topic-btn,.set-btn{padding:10px 16px;border:none;border-radius:28px;background:#f0f0f0;font-weight:700;cursor:pointer;box-shadow:0 3px #ddd}
+.menu-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px #7b1fa2}
+.topic-btn.active{background:var(--blue);color:#fff;box-shadow:0 3px #1976d2}
+.set-btn.active{background:var(--orange);color:#fff;box-shadow:0 3px #e67e22}
+.set-btn.done{background:#e8f5e9;color:#1b5e20;box-shadow:0 3px #a5d6a7}
+.quiz-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:#fff;border:2px solid #eef2f6;border-radius:24px;padding:16px}
+.card.done{border-color:var(--green);background:#f8fff9}
+.type-tag{display:inline-block;background:#fff3cd;color:#8a6d3b;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;margin-bottom:8px}
+.card h4{margin:0 0 10px;color:#5e35b1;font-size:18px}
+.figure-box{min-height:92px;display:flex;align-items:center;justify-content:center;background:#fff8e1;border:2px solid #ffe082;border-radius:20px;font-size:32px;margin:8px auto 12px;padding:12px;text-align:center;line-height:1.4;font-weight:800;color:#5d4037}
+.question-text{font-weight:800;line-height:1.6;margin-bottom:10px}
+.note-box{background:#f5faff;border-radius:16px;padding:12px;line-height:1.7;color:#455a64;margin-bottom:10px;font-weight:700}
+.opt-zone{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.opt-zone button{padding:8px 14px;border-radius:12px;border:2px solid #eee;background:white;cursor:pointer;font-weight:bold}
+.opt-zone button.correct{background:#e8f5e9;border-color:var(--green);color:#1b5e20}
+.opt-zone button.wrong{background:#ffebee;border-color:var(--danger);color:#b71c1c}
+.btn-submit{padding:14px 40px;border-radius:50px;border:none;background:#4CAF50;color:white;font-size:20px;font-weight:bold;cursor:pointer;margin:24px auto 8px;box-shadow:0 6px #388E3C;display:block}
+.helper{text-align:center;font-size:14px;color:#607d8b;font-weight:700;margin:8px 0 16px}
+@media (max-width:900px){.hero,.quiz-grid{grid-template-columns:1fr}}
+@media (max-width:768px){
+  .top-header{padding:10px 12px;flex-direction:column;align-items:stretch}
+  .btn-home{width:100%;text-align:center}
+  .user-logged{text-align:center;font-size:14px}
+  .main-box{width:calc(100% - 12px);padding:14px 8px;border-radius:24px}
+  .hero{padding:14px 12px;border-radius:20px}
+  .hero h2{font-size:23px;text-align:center}
+  .status-box{font-size:14px}
+  .age-tabs,.topic-tabs,.set-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .age-tabs::-webkit-scrollbar,.topic-tabs::-webkit-scrollbar,.set-tabs::-webkit-scrollbar{display:none}
+  .menu-btn,.topic-btn,.set-btn{flex:0 0 auto;white-space:nowrap;font-size:13px;padding:10px 14px}
+  .quiz-grid{grid-template-columns:1fr;gap:12px}
+  .card{padding:14px 10px;border-radius:20px}
+  .question-text{font-size:18px}
+  .btn-submit{width:100%;font-size:18px;padding:14px 16px}
+}
+</style>
+</head>
+<body>
+<div class="top-header">
+  <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+  <div class="user-logged">🧠 Bé đang học IQ: <span id="display-name" style="color:var(--blue)">...</span></div>
+</div>
+
+<div class="main-box">
+  <div class="hero">
+    <div>
+      <h2 id="ageTitle">🧩 IQ bé 5 tuổi</h2>
+      <p id="ageDesc"></p>
+    </div>
+    <div class="status-box">
+      <div>🎯 Độ tuổi/lớp: <span id="statusAge">Bé 5 tuổi</span></div>
+      <div>📘 Chủ đề: <span id="statusTopic">Mẫu hình</span></div>
+      <div>📝 Bộ câu hỏi: <span id="statusSet">1</span>/10</div>
+      <div>⭐ Hoàn thành: <span id="statusDone">0</span>/10</div>
+    </div>
+  </div>
+
+  <div class="age-tabs" id="ageTabs"></div>
+  <div class="topic-tabs" id="topicTabs"></div>
+  <div class="set-tabs" id="setTabs"></div>
+  <div class="helper">Mỗi chủ đề có khoảng 100 câu, chia thành 10 bộ. Bé làm đúng hết một bộ thì mới mở sang bộ tiếp theo nhé.</div>
+
+  <div class="quiz-grid" id="quizContainer"></div>
+  <button class="btn-submit" onclick="submitSet()">Nộp bài IQ 🚀</button>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+  authDomain: "bon-bi.firebaseapp.com",
+  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+  projectId: "bon-bi",
+  storageBucket: "bon-bi.firebasestorage.app",
+  messagingSenderId: "988400970351",
+  appId: "1:988400970351:web:21e9181950114225417b9a"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const kidName = localStorage.getItem('kidName');
+const kidUsername = localStorage.getItem('kidUsername');
+
+function currentMonthKey() {
+  const now = new Date();
+  return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+}
+let studySessionStarted = null;
+function startStudySessionTracking() {
+  const username = localStorage.getItem('kidUsername');
+  if (!username) return;
+  if (studySessionStarted) return;
+  const stored = parseInt(localStorage.getItem('studySessionStarted') || 0);
+  studySessionStarted = stored || Date.now();
+  localStorage.setItem('studySessionStarted', String(studySessionStarted));
+}
+function flushStudySession() {
+  const username = localStorage.getItem('kidUsername');
+  const kidNameLocal = localStorage.getItem('kidName');
+  const started = parseInt(localStorage.getItem('studySessionStarted') || studySessionStarted || 0);
+  if (!username || !started) return Promise.resolve();
+  const duration = Date.now() - started;
+  localStorage.removeItem('studySessionStarted');
+  studySessionStarted = null;
+  if (duration < 5000) return Promise.resolve();
+  const monthKey = currentMonthKey();
+  return db.ref('users/' + username).transaction(user => {
+      user = user || {};
+      user.kidName = user.kidName || kidNameLocal || username;
+      user.username = user.username || username;
+      if (user.monthStudyKey !== monthKey) {
+          user.monthStudyKey = monthKey;
+          user.monthStudyMs = 0;
+      }
+      user.totalStudyMs = (parseInt(user.totalStudyMs || 0) + duration);
+      user.monthStudyMs = (parseInt(user.monthStudyMs || 0) + duration);
+      user.lastActiveAt = Date.now();
+      return user;
+  });
+}
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) flushStudySession();
+  else startStudySessionTracking();
+});
+window.addEventListener('pagehide', function() { flushStudySession(); });
+window.addEventListener('beforeunload', function() { flushStudySession(); });
+
+const AGE_BANKS = {
+  k5: { label: "Bé 5 tuổi", icon: "🧩", desc: "Luyện tư duy cơ bản: nhận ra mẫu hình, tìm đồ vật khác nhóm, sắp xếp thứ tự và định hướng không gian đơn giản.", topics: { pattern:{label:"Mẫu hình", tag:"Mẫu hình lặp lại"}, classify:{label:"Phân loại", tag:"Chọn khác nhóm"}, sequence:{label:"Thứ tự", tag:"Sắp xếp logic"}, spatial:{label:"Không gian", tag:"Vị trí và hướng"} } },
+  l1: { label: "Lớp 1", icon: "🌟", desc: "Tăng dần khả năng quan sát, so sánh, đếm quy luật, suy luận đơn giản và nhìn hình học cơ bản.", topics: { pattern:{label:"Quy luật số & hình", tag:"Tìm quy luật"}, classify:{label:"Phân nhóm", tag:"So sánh và phân loại"}, sequence:{label:"Chuỗi logic", tag:"Chọn tiếp theo"}, spatial:{label:"Hình & vị trí", tag:"Tư duy không gian"} } },
+  l2: { label: "Lớp 2", icon: "🚀", desc: "Tập suy luận theo chuỗi, loại trừ đáp án sai, tìm quan hệ giữa hình, số và đồ vật quen thuộc.", topics: { pattern:{label:"Quy luật nâng cao", tag:"Quy luật"}, classify:{label:"Phân tích nhóm", tag:"Khác biệt"}, sequence:{label:"Suy luận chuỗi", tag:"Chuỗi tiếp theo"}, logic:{label:"Logic đời sống", tag:"Tìm đáp án hợp lý"} } },
+  l3: { label: "Lớp 3", icon: "🧠", desc: "Phát triển tư duy suy luận, nhìn quan hệ nguyên nhân - kết quả, bảng quy tắc, dãy số và hình học đơn giản.", topics: { pattern:{label:"Dãy số - quy tắc", tag:"Số & quy luật"}, classify:{label:"Bảng phân loại", tag:"Nhận diện nhóm"}, sequence:{label:"Chuỗi suy luận", tag:"Logic tiếp diễn"}, logic:{label:"Suy luận ngắn", tag:"Tư duy logic"} } },
+  l4: { label: "Lớp 4", icon: "🔎", desc: "Luyện tư duy tổ hợp đơn giản, loại trừ, quan hệ điều kiện và các bài logic nhiều bước hơn.", topics: { pattern:{label:"Quy luật nhiều bước", tag:"Nối quy luật"}, classify:{label:"Phân tích thuộc tính", tag:"Nhóm đặc điểm"}, sequence:{label:"Sắp xếp có điều kiện", tag:"Tìm thứ tự"}, logic:{label:"Suy luận điều kiện", tag:"Nếu - thì"} } },
+  l5: { label: "Lớp 5", icon: "🎯", desc: "Tập trung vào suy luận có điều kiện, logic số, bảng quy tắc và các câu hỏi đòi hỏi quan sát kỹ hơn.", topics: { pattern:{label:"Quy luật tổng hợp", tag:"Tư duy quy luật"}, classify:{label:"Phân loại sâu", tag:"So sánh đặc điểm"}, sequence:{label:"Chuỗi logic nâng cao", tag:"Tìm mắt xích"}, logic:{label:"Suy luận nâng cao", tag:"Loại trừ - kết luận"} } }
+};
+
+let currentAge = 'k5';
+let currentTopic = 'pattern';
+let currentSet = 1;
+let currentQuestions = [];
+let answers = {};
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function progressKey(age, topic){ return 'iq_progress_' + age + '_' + topic; }
+function getProgress(age, topic){ return JSON.parse(localStorage.getItem(progressKey(age, topic)) || '{"doneSets":[]}'); }
+function markDone(age, topic, setNo){
+  const p = getProgress(age, topic);
+  if(!p.doneSets.includes(setNo)) p.doneSets.push(setNo);
+  localStorage.setItem(progressKey(age, topic), JSON.stringify(p));
+}
+
+const shapeSet = ["🔺","🔵","🟩","⭐","🟠","🟪","🟨","🟥"];
+const animalSet = ["🐶","🐱","🐰","🦁","🐯","🐸","🐼","🐻"];
+const fruitSet = ["🍎","🍌","🍇","🍊","🍉","🍓","🍍","🥝"];
+const vehicleSet = ["🚗","🚌","🚲","🚂","✈️","🚢","🚜","🚕"];
+const objectSet = ["📘","✏️","🪑","🎒","⚽","📏","🧸","🕰️"];
+const directionPrompts = [
+  {text:"Hình ở bên trái của ⭐ là gì?", type:"leftOf"},
+  {text:"Hình ở bên phải của 🔵 là gì?", type:"rightOf"},
+  {text:"Hình ở giữa là gì?", type:"middle"},
+  {text:"Hình đứng đầu hàng là gì?", type:"first"},
+  {text:"Hình đứng cuối hàng là gì?", type:"last"}
+];
+
+function setByAge(age){
+  if(age==='k5') return [shapeSet, animalSet, fruitSet];
+  if(age==='l1') return [shapeSet, fruitSet, objectSet];
+  if(age==='l2') return [shapeSet, objectSet, vehicleSet];
+  if(age==='l3') return [shapeSet, objectSet, animalSet];
+  if(age==='l4') return [shapeSet, fruitSet, vehicleSet];
+  return [shapeSet, objectSet, fruitSet];
+}
+
+function buildPatternQuestion(age, idx){
+  const pools = setByAge(age);
+  const pool = pools[idx % pools.length];
+  const a = pool[(idx*2) % pool.length];
+  const b = pool[(idx*2 + 1) % pool.length];
+  const c = pool[(idx*2 + 2) % pool.length];
+  const mode = idx % 5;
+  let seq = [], answer = "";
+  if(mode===0){ seq=[a,b,a,b,a,"?"]; answer=b; }
+  else if(mode===1){ seq=[a,a,b,a,a,b,a,a,"?"]; answer=b; }
+  else if(mode===2){ seq=[a,b,c,a,b,c,a,b,"?"]; answer=c; }
+  else if(mode===3){ seq=[a,b,b,a,b,b,a,"?"]; answer=b; }
+  else { seq=[a,b,c,c,a,b,c,c,a,b,"?"]; answer=c; }
+  const options = shuffle([answer, ...shuffle(pool.filter(x=>x!==answer)).slice(0,2)]);
+  return { id: 'q'+idx, type:'choice', tag: AGE_BANKS[age].topics.pattern.tag, figure: seq.join('  '), prompt: 'Bé chọn hình/câu trả lời tiếp theo của mẫu hình.', answer, options };
+}
+
+function buildClassifyQuestion(age, idx){
+  const pools = setByAge(age);
+  const goodPool = pools[idx % pools.length];
+  const otherPool = pools[(idx+1) % pools.length];
+  const options = shuffle([ goodPool[(idx+0)%goodPool.length], goodPool[(idx+1)%goodPool.length], goodPool[(idx+2)%goodPool.length], otherPool[(idx+3)%otherPool.length] ]);
+  const answer = options.find(x => !goodPool.includes(x));
+  return { id:'q'+idx, type:'choice', tag: AGE_BANKS[age].topics.classify.tag, figure: options.join('  '), prompt:'Trong 4 hình này, hình nào khác nhóm với 3 hình còn lại?', answer, options: shuffle([...options]) };
+}
+
+function buildSequenceQuestion(age, idx){
+  if(age==='k5' || age==='l1'){
+    const start = (idx % 5) + 1;
+    const seq = [start, start+1, start+2, '?'];
+    const answer = String(start+3);
+    return { id:'q'+idx, type:'choice', tag: AGE_BANKS[age].topics.sequence.tag, figure: seq.join('  '), prompt:'Số tiếp theo là số nào?', answer, options: shuffle([answer, String(start+2), String(start+4)]) };
+  }
+  if(age==='l2'){
+    const start = (idx % 4) + 2;
+    const seq = [start, start+2, start+4, '?'];
+    const answer = String(start+6);
+    return {id:'q'+idx,type:'choice',tag:AGE_BANKS[age].topics.sequence.tag,figure:seq.join('  '),prompt:'Số tiếp theo là số nào?',answer,options:shuffle([answer,String(start+5),String(start+8)])};
+  }
+  if(age==='l3'){
+    const start = (idx % 3) + 3;
+    const seq = [start, start*2, start*3, '?'];
+    const answer = String(start*4);
+    return {id:'q'+idx,type:'choice',tag:AGE_BANKS[age].topics.sequence.tag,figure:seq.join('  '),prompt:'Quy luật nhân tiếp theo cho ra số nào?',answer,options:shuffle([answer,String(start*5),String(start*4+1)])};
+  }
+  if(age==='l4'){
+    const start = (idx % 4) + 5;
+    const seq = [start, start+3, start+6, start+9, '?'];
+    const answer = String(start+12);
+    return {id:'q'+idx,type:'choice',tag:AGE_BANKS[age].topics.sequence.tag,figure:seq.join('  '),prompt:'Số còn thiếu là số nào?',answer,options:shuffle([answer,String(start+11),String(start+15)])};
+  }
+  const start = (idx % 4) + 2;
+  const seq = [start, start+2, start+6, start+12, '?'];
+  const answer = String(start+20);
+  return {id:'q'+idx,type:'choice',tag:AGE_BANKS[age].topics.sequence.tag,figure:seq.join('  '),prompt:'Mỗi bước tăng thêm lớn hơn bước trước. Số tiếp theo là?',answer,options:shuffle([answer,String(start+18),String(start+22)])};
+}
+
+function buildSpatialQuestion(age, idx){
+  const pool = shapeSet;
+  const items = [pool[idx%pool.length], pool[(idx+1)%pool.length], pool[(idx+2)%pool.length]];
+  const q = directionPrompts[idx % directionPrompts.length];
+  let answer = "";
+  if(q.type==='leftOf') answer = items[0];
+  if(q.type==='rightOf') answer = items[2];
+  if(q.type==='middle') answer = items[1];
+  if(q.type==='first') answer = items[0];
+  if(q.type==='last') answer = items[2];
+  let display = '';
+  if(q.type==='leftOf') display = items[0] + '  ⭐  ' + items[2];
+  else if(q.type==='rightOf') display = items[0] + '  🔵  ' + items[2];
+  else display = items.join('  ');
+  return { id:'q'+idx, type:'choice', tag: AGE_BANKS[age].topics.spatial ? AGE_BANKS[age].topics.spatial.tag : AGE_BANKS[age].topics.logic.tag, figure: display, prompt: q.text, answer, options: shuffle([answer, ...shuffle(pool.filter(x=>x!==answer)).slice(0,2)]) };
+}
+
+function buildLogicQuestion(age, idx){
+  const bank = [
+    ["Nếu trời mưa thì cần mang gì?", "ô", ["ô","kính","bóng"]],
+    ["Con vật nào sống dưới nước?", "cá", ["cá","gà","mèo"]],
+    ["Nếu muốn cắt giấy, bé dùng gì?", "kéo", ["kéo","gối","thìa"]],
+    ["Cái nào dùng để xem giờ?", "đồng hồ", ["đồng hồ","bàn","cốc"]],
+    ["Nếu đi xa trên trời, ta đi bằng gì?", "máy bay", ["máy bay","xe đạp","thuyền"]],
+    ["Muốn viết bài, bé cần gì?", "bút", ["bút","gối","mũ"]],
+    ["Thứ nào to hơn thường chở nhiều người hơn?", "xe buýt", ["xe buýt","bút chì","quả táo"]],
+    ["Nếu trời tối, bé cần bật gì?", "đèn", ["đèn","cây","bóng"]]
+  ];
+  const item = bank[idx % bank.length];
+  return { id:'q'+idx, type:'choice', tag: AGE_BANKS[age].topics.logic.tag, figure: "💡", prompt: item[0], answer: item[1], options: item[2] };
+}
+
+function buildSet(age, topic, setNo){
+  const start = (setNo - 1) * 10;
+  const arr = [];
+  for(let i=0;i<10;i++){
+    const idx = start + i + 1;
+    if(topic==='pattern') arr.push(buildPatternQuestion(age, idx));
+    else if(topic==='classify') arr.push(buildClassifyQuestion(age, idx));
+    else if(topic==='sequence') arr.push(buildSequenceQuestion(age, idx));
+    else if(topic==='spatial') arr.push(buildSpatialQuestion(age, idx));
+    else arr.push(buildLogicQuestion(age, idx));
+  }
+  return arr;
+}
+
+function renderAgeTabs(){
+  document.getElementById('ageTabs').innerHTML = Object.keys(AGE_BANKS).map(key=>{
+    const t=AGE_BANKS[key];
+    return '<button class="menu-btn ' + (key===currentAge?'active':'') + '" onclick="changeAge(\'' + key + '\')">' + t.icon + ' ' + t.label + '</button>';
+  }).join('');
+}
+function renderTopicTabs(){
+  const topics = AGE_BANKS[currentAge].topics;
+  document.getElementById('topicTabs').innerHTML = Object.keys(topics).map(key=>{
+    return '<button class="topic-btn ' + (key===currentTopic?'active':'') + '" onclick="changeTopic(\'' + key + '\')">' + topics[key].label + '</button>';
+  }).join('');
+}
+function renderSetTabs(){
+  const p=getProgress(currentAge,currentTopic);
+  document.getElementById('setTabs').innerHTML = Array.from({length:10},(_,i)=>i+1).map(no=>{
+    let cls='set-btn';
+    if(no===currentSet) cls+=' active';
+    if(p.doneSets.includes(no)) cls+=' done';
+    return '<button class="' + cls + '" onclick="changeSet(' + no + ')">Bộ ' + no + '</button>';
+  }).join('');
+}
+function renderStatus(){
+  const ageObj = AGE_BANKS[currentAge];
+  document.getElementById('ageTitle').innerText = ageObj.icon + ' IQ ' + ageObj.label;
+  document.getElementById('ageDesc').innerText = ageObj.desc;
+  document.getElementById('statusAge').innerText = ageObj.label;
+  document.getElementById('statusTopic').innerText = ageObj.topics[currentTopic].label;
+  document.getElementById('statusSet').innerText = currentSet;
+  document.getElementById('statusDone').innerText = getProgress(currentAge,currentTopic).doneSets.length;
+}
+function choose(qid,value){
+  const q=currentQuestions.find(x=>x.id===qid);
+  if(!q) return;
+  answers[qid]=value;
+  q.options.forEach(opt=>{
+    const btn=document.getElementById(qid + '_' + encodeURIComponent(opt));
+    if(btn) btn.classList.remove('correct','wrong');
+  });
+  const chosen=document.getElementById(qid + '_' + encodeURIComponent(value));
+  const card=document.getElementById('card_' + qid);
+  if(card) card.classList.remove('done');
+  if(value===q.answer){
+    if(chosen) chosen.classList.add('correct');
+    if(card) card.classList.add('done');
+  } else {
+    if(chosen) chosen.classList.add('wrong');
+  }
+}
+function renderQuestions(){
+  currentQuestions=buildSet(currentAge,currentTopic,currentSet);
+  answers={};
+  document.getElementById('quizContainer').innerHTML = currentQuestions.map((q,i)=>{
+    return '<div class="card" id="card_' + q.id + '">'
+      + '<div class="type-tag">' + q.tag + '</div>'
+      + '<h4>Câu ' + (i+1) + '</h4>'
+      + '<div class="figure-box">' + q.figure + '</div>'
+      + '<div class="note-box">Bé quan sát kỹ rồi chọn đáp án đúng nhất nhé.</div>'
+      + '<div class="question-text">' + q.prompt + '</div>'
+      + '<div class="opt-zone">'
+      + q.options.map(opt=>'<button id="' + q.id + '_' + encodeURIComponent(opt) + '" onclick="choose(\'' + q.id + '\', \'' + String(opt).replace(/'/g,"\\'") + '\')">' + opt + '</button>').join('')
+      + '</div></div>';
+  }).join('');
+}
+function isCorrect(q){ return answers[q.id]===q.answer; }
+async function submitSet(){
+  const unanswered=currentQuestions.filter(q=>!answers[q.id]);
+  if(unanswered.length){
+    alert('Bé hãy làm hết tất cả 10 câu trước nhé!');
+    return;
+  }
+  const score=currentQuestions.filter(isCorrect).length;
+  if(score===currentQuestions.length){
+    markDone(currentAge,currentTopic,currentSet);
+    try{
+      await db.ref('iq_history').push({
+        studentName:kidName || 'Bé',
+        kidUsername:kidUsername || '',
+        ageGroup:currentAge,
+        topic:currentTopic,
+        setNo:currentSet,
+        result:score + '/' + currentQuestions.length,
+        timestamp:Date.now(),
+        date:new Date().toLocaleString('vi-VN')
+      });
+    }catch(e){
+      console.log('Lưu điểm IQ lỗi:', e.message);
+    }
+    renderSetTabs();
+    renderStatus();
+    if(currentSet<10){
+      alert('Giỏi lắm! Bé làm đúng hết bộ này rồi, sang bộ tiếp theo nhé!');
+      currentSet += 1;
+      renderSetTabs();
+      renderStatus();
+      renderQuestions();
+    } else {
+      alert('Tuyệt vời! Bé đã hoàn thành đủ 10 bộ của chủ đề này.');
+    }
+  } else {
+    alert('Bé được ' + score + '/10. Bé làm lại để đúng hết nhé!');
+    renderQuestions();
+  }
+}
+function changeAge(age){
+  currentAge=age;
+  currentTopic=Object.keys(AGE_BANKS[currentAge].topics)[0];
+  currentSet=1;
+  renderAgeTabs();
+  renderTopicTabs();
+  renderSetTabs();
+  renderStatus();
+  renderQuestions();
+}
+function changeTopic(topic){
+  currentTopic=topic;
+  currentSet=1;
+  renderTopicTabs();
+  renderSetTabs();
+  renderStatus();
+  renderQuestions();
+}
+function changeSet(no){
+  currentSet=no;
+  renderSetTabs();
+  renderStatus();
+  renderQuestions();
+}
+window.onload = () => {
+  if(!kidName){
+    alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!');
+    window.location.href='index.html';
+    return;
+  }
+  document.getElementById('display-name').innerText=kidName;
+  startStudySessionTracking();
+  renderAgeTabs();
+  renderTopicTabs();
+  renderSetTabs();
+  renderStatus();
+  renderQuestions();
+};
+</script>
+</body>
+</html>
