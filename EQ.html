@@ -9,9 +9,54 @@
 <style>
 :root{--primary:#e91e63;--blue:#2196f3;--orange:#ff9800;--purple:#9c27b0;--yellow:#ffeb3b;--green:#2ecc71;--bg:#e0f7fa;--danger:#ef5350}
 *{box-sizing:border-box} body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#333}
-.top-header{background:var(--yellow);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:5px solid #fbc02d;border-radius:0 0 20px 20px;gap:10px}
-.btn-home{background:var(--primary);color:#fff;text-decoration:none;padding:10px 18px;border-radius:24px;font-weight:700}
-.user-logged{font-weight:700;color:#c2185b}
+.top-header{
+  background:transparent;
+  padding:10px 12px 0;
+}
+.header-shell{
+  width:min(1180px,94%);
+  margin:0 auto;
+  background:linear-gradient(135deg,#fff59d,#ffe082);
+  padding:10px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:5px solid #fbc02d;
+  border-radius:0 0 24px 24px;
+  gap:12px;
+  box-shadow:0 8px 18px rgba(0,0,0,.06)
+}
+.header-left,.header-right{display:flex;align-items:center;gap:10px}
+.btn-home{background:var(--primary);color:#fff;text-decoration:none;padding:10px 18px;border-radius:24px;font-weight:700;box-shadow:0 4px #c2185b}
+.user-logged{
+  font-weight:800;color:#ad1457;background:rgba(255,255,255,.58);
+  padding:10px 14px;border-radius:18px;border:2px solid rgba(255,255,255,.58);white-space:nowrap
+}
+.donate-btn{
+  border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#ff5fa2,#e91e63);
+  color:#fff;font-size:15px;font-weight:800;box-shadow:0 8px 18px rgba(233,30,99,.30);
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;min-height:46px;position:relative
+}
+.donate-btn::after{
+  content:'';position:absolute;top:-3px;right:-3px;width:12px;height:12px;background:#fff;border:3px solid #ff4081;border-radius:50%
+}
+.donate-heart{
+  width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;font-size:16px
+}
+.donate-text-strong{
+  display:flex;flex-direction:column;align-items:flex-start;line-height:1.1
+}
+.donate-text-strong small{font-size:11px;font-weight:700;opacity:.92}
+.donate-hero{
+  width:88px;height:88px;border-radius:24px;margin:0 auto 12px;background:linear-gradient(135deg,#fff0f6,#fff8e1);
+  display:flex;align-items:center;justify-content:center;font-size:42px;border:2px solid #ffd1e1
+}
+.qr-wrap{
+  background:linear-gradient(135deg,#fdfdfd,#f7fbff);border:2px dashed #b3e5fc;border-radius:22px;padding:14px;margin-top:14px;text-align:center
+}
+.qr-wrap img{width:220px;max-width:100%;border-radius:16px;background:#fff;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.qr-note{margin-top:10px;font-size:13px;color:#607d8b;font-weight:700;line-height:1.7}
 .main-box{background:#fff;margin:18px auto 28px;width:94%;max-width:1180px;border-radius:30px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.05)}
 .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:center;background:linear-gradient(135deg,#fffef8,#eef8ff);border:2px dashed #ffe082;border-radius:24px;padding:16px 18px;margin-bottom:18px}
 .hero h2{margin:0 0 8px;color:var(--purple)} .hero p{margin:0;line-height:1.7;font-weight:600;color:#546e7a}
@@ -36,13 +81,57 @@
 .opt-zone button.wrong{background:#ffebee;border-color:var(--danger);color:#b71c1c}
 .btn-submit{padding:14px 40px;border-radius:50px;border:none;background:#4CAF50;color:white;font-size:20px;font-weight:bold;cursor:pointer;margin:24px auto 8px;box-shadow:0 6px #388E3C;display:block}
 @media (max-width:900px){.hero,.quiz-grid{grid-template-columns:1fr}}
-@media (max-width:768px){.top-header{padding:10px 12px;flex-direction:column;align-items:stretch}.btn-home{width:100%;text-align:center}.user-logged{text-align:center;font-size:14px}.main-box{width:calc(100% - 12px);padding:14px 8px;border-radius:24px}.hero{padding:14px 12px;border-radius:20px}.hero h2{font-size:23px;text-align:center}.status-box{font-size:14px}.age-tabs,.set-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.age-tabs::-webkit-scrollbar,.set-tabs::-webkit-scrollbar{display:none}.menu-btn,.set-btn{flex:0 0 auto;white-space:nowrap;font-size:13px;padding:10px 14px}.quiz-grid{grid-template-columns:1fr;gap:12px}.card{padding:14px 10px;border-radius:20px}.question-text{font-size:18px}.btn-submit{width:100%;font-size:18px;padding:14px 16px}}
+@media (max-width:768px){
+.top-header{padding:8px 8px 0}
+.header-shell{width:calc(100% - 4px);padding:10px;flex-direction:column;align-items:stretch}
+.header-left,.header-right{width:100%;justify-content:center;flex-wrap:wrap}
+.btn-home{width:100%;text-align:center}
+.donate-btn{width:100%;justify-content:center}
+.donate-text-strong{align-items:center}
+.user-logged{text-align:center;font-size:14px;white-space:normal}
+.main-box{width:calc(100% - 12px);padding:14px 8px;border-radius:24px}
+.hero{padding:14px 12px;border-radius:20px}
+.hero h2{font-size:23px;text-align:center}
+.status-box{font-size:14px}
+.age-tabs,.set-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.age-tabs::-webkit-scrollbar,.set-tabs::-webkit-scrollbar{display:none}
+.menu-btn,.set-btn{flex:0 0 auto;white-space:nowrap;font-size:13px;padding:10px 14px}
+.quiz-grid{grid-template-columns:1fr;gap:12px}
+.card{padding:14px 10px;border-radius:20px}
+.question-text{font-size:18px}
+.btn-submit{width:100%;font-size:18px;padding:14px 16px}
+}
 </style>
 </head>
 <body>
 <div class="top-header">
-  <a href="index" class="btn-home">🏠 Về Trang Chủ</a>
-  <div class="user-logged">💖 Bé đang học EQ: <span id="display-name" style="color:var(--blue)">...</span></div>
+  <div class="header-shell">
+    <div class="header-left">
+      <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+      <button class="donate-btn" onclick="openDonateModal()">
+        <span class="donate-heart">💝</span>
+        <span class="donate-text-strong">Ủng hộ phát triển<small>Quét QR để tiếp sức cho trang học của bé</small></span>
+      </button>
+    </div>
+    <div class="header-right">
+      <div class="user-logged">💖 Bé đang học EQ: <span id="display-name" style="color:var(--blue)">...</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="donateModal" class="modal-overlay" style="display:none;">
+  <div class="modal-card" style="text-align:center; max-width:430px;">
+    <button class="modal-close" onclick="closeDonateModal()">×</button>
+    <div class="donate-hero">💝</div>
+    <h3 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h3>
+    <div class="note-box" style="margin-bottom:0;">
+      Mỗi lượt ủng hộ là một lời động viên để tiếp tục phát triển thêm nhiều bài học EQ, IQ, Toán, Tiếng Việt và Tiếng Anh hấp dẫn hơn cho bé mỗi ngày.
+    </div>
+    <div class="qr-wrap">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=%F0%9F%92%9D%20Cam%20on%20bo%20me%20da%20ung%20ho%20de%20phat%20trien%20them%20noi%20dung%20cho%20trang%20hoc%20tap%20cua%20be." alt="QR cảm ơn">
+      <div class="qr-note">Quét mã để nhận lời cảm ơn và tiếp sức cho việc phát triển thêm nội dung học tập cho bé.</div>
+    </div>
+  </div>
 </div>
 <div class="main-box">
   <div class="hero">
@@ -94,7 +183,21 @@ function isCorrect(q){ return answers[q.id]===q.answer; }
 async function submitSet(){ const unanswered=currentQuestions.filter(q=>!answers[q.id]); if(unanswered.length){ alert('Bé hãy làm hết tất cả 10 câu trước nhé!'); return; } const score=currentQuestions.filter(isCorrect).length; if(score===currentQuestions.length){ markDone(currentAge,currentSet); try{ await db.ref('eq_history').push({ studentName:kidName || 'Bé', ageGroup:currentAge, setNo:currentSet, result:score + '/' + currentQuestions.length, timestamp:Date.now(), date:new Date().toLocaleString('vi-VN') }); }catch(e){ console.log('Lưu điểm EQ lỗi:', e.message); } renderSetTabs(); renderStatus(); if(currentSet<10){ alert('Giỏi lắm! Bé làm đúng hết bộ này rồi, sang bộ tiếp theo nhé!'); currentSet += 1; renderSetTabs(); renderStatus(); renderQuestions(); } else { alert('Tuyệt vời! Bé đã hoàn thành đủ 10 bộ EQ của độ tuổi này.'); } } else { alert('Bé được ' + score + '/10. Bé làm lại để đúng hết nhé!'); renderQuestions(); } }
 function changeAge(age){ currentAge=age; currentSet=1; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); }
 function changeSet(no){ currentSet=no; renderSetTabs(); renderStatus(); renderQuestions(); }
-window.onload = () => { if(!kidName){ alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!'); window.location.href='index'; return; } document.getElementById('display-name').innerText=kidName; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); };
+
+function openDonateModal(){
+  const el = document.getElementById('donateModal');
+  if(el) el.style.display = 'flex';
+}
+function closeDonateModal(){
+  const el = document.getElementById('donateModal');
+  if(el) el.style.display = 'none';
+}
+window.addEventListener('click', function(event){
+  const modal = document.getElementById('donateModal');
+  if(event.target === modal) closeDonateModal();
+});
+
+window.onload = () => { if(!kidName){ alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!'); window.location.href='index.html'; return; } document.getElementById('display-name').innerText=kidName; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); };
 </script>
 </body>
 </html>
