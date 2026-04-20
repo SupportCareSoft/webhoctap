@@ -9,8 +9,61 @@
     <style>
         :root { --primary: #e91e63; --blue: #2196F3; --orange: #ff9800; --yellow: #ffeb3b; --green: #2ecc71; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; margin: 0; padding-bottom: 30px; }
-        .top-header { background: var(--yellow); padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #fbc02d; position: sticky; top: 0; z-index: 1000; }
-        .container { max-width: 1200px; margin: 15px auto; display: flex; gap: 15px; padding: 0 10px; }
+        .top-header{
+            background: transparent;
+            padding: 10px 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-shell{
+            width: min(1200px, 96%);
+            margin: 0 auto;
+            background: linear-gradient(135deg,#fff59d,#ffe082);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #fbc02d;
+            border-radius: 0 0 24px 24px;
+            gap: 12px;
+            box-shadow: 0 8px 18px rgba(0,0,0,.06);
+        }
+        .header-left, .header-right { display:flex; align-items:center; gap:10px; }
+        .container { max-width: 1200px; margin: 15px auto; display: flex; gap: 15px; padding: 0 10px; } 
+        .btn-home{
+            text-decoration:none; background:var(--primary); color:white; padding:8px 18px; border-radius:20px; font-weight:bold; font-size:14px;
+            box-shadow:0 4px #c2185b;
+        }
+        .user-badge{
+            font-weight:800; font-size:15px; color:#ad1457; background:rgba(255,255,255,.58);
+            padding:10px 14px; border-radius:18px; border:2px solid rgba(255,255,255,.58); white-space:nowrap;
+        }
+        .donate-btn{
+            border:none; border-radius:999px; cursor:pointer; background:linear-gradient(135deg,#ff5fa2,#e91e63);
+            color:#fff; font-size:15px; font-weight:800; box-shadow:0 8px 18px rgba(233,30,99,.30);
+            display:flex; align-items:center; justify-content:center; gap:8px; padding:11px 16px; min-height:46px; position:relative;
+        }
+        .donate-btn::after{
+            content:''; position:absolute; top:-3px; right:-3px; width:12px; height:12px; background:#fff; border:3px solid #ff4081; border-radius:50%;
+        }
+        .donate-heart{
+            width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.18);
+            display:flex; align-items:center; justify-content:center; font-size:16px;
+        }
+        .donate-text-strong{
+            display:flex; flex-direction:column; align-items:flex-start; line-height:1.1;
+        }
+        .donate-text-strong small{ font-size:11px; font-weight:700; opacity:.92; }
+        .donate-hero{
+            width:88px; height:88px; border-radius:24px; margin:0 auto 12px; background:linear-gradient(135deg,#fff0f6,#fff8e1);
+            display:flex; align-items:center; justify-content:center; font-size:42px; border:2px solid #ffd1e1;
+        }
+        .qr-wrap{
+            background:linear-gradient(135deg,#fdfdfd,#f7fbff); border:2px dashed #b3e5fc; border-radius:22px; padding:14px; margin-top:14px; text-align:center;
+        }
+        .qr-wrap img{ width:220px; max-width:100%; border-radius:16px; background:#fff; padding:10px; box-shadow:0 4px 14px rgba(0,0,0,.06); }
+        .qr-note{ margin-top:10px; font-size:13px; color:#607d8b; font-weight:700; line-height:1.7; }
         .sidebar { width: 220px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); height: fit-content; }
         .grade-item { padding: 12px; margin: 8px 0; border-radius: 12px; cursor: pointer; font-weight: bold; border: 1px solid #eee; transition: 0.3s; text-align: center; }
         .grade-item.active { background: var(--orange); color: white; border-color: var(--orange); }
@@ -43,13 +96,47 @@
             .container { flex-direction: column; }
             .sidebar { width: auto; }
         }
+        @media (max-width: 768px) {
+            .top-header{ padding:8px 8px 0; }
+            .header-shell{ width:calc(100% - 4px); padding:10px; flex-direction:column; align-items:stretch; }
+            .header-left,.header-right{ width:100%; justify-content:center; flex-wrap:wrap; }
+            .btn-home{ width:100%; text-align:center; }
+            .donate-btn{ width:100%; justify-content:center; }
+            .donate-text-strong{ align-items:center; }
+            .user-badge{ text-align:center; white-space:normal; }
+        }
     </style>
 </head>
 <body>
 
 <div class="top-header">
-    <a href="index" style="text-decoration:none; background:var(--primary); color:white; padding:8px 18px; border-radius:20px; font-weight:bold; font-size:14px;">🏠 Trang Chủ</a>
-    <div style="font-weight:bold; font-size:15px;">Bé: <span id="display-name" style="color:var(--primary)">...</span></div>
+    <div class="header-shell">
+        <div class="header-left">
+            <a href="index.html" class="btn-home">🏠 Trang Chủ</a>
+            <button class="donate-btn" onclick="openDonateModal()">
+                <span class="donate-heart">💝</span>
+                <span class="donate-text-strong">Ủng hộ phát triển<small>Quét QR để tiếp sức cho trang học của bé</small></span>
+            </button>
+        </div>
+        <div class="header-right">
+            <div class="user-badge">📖 Bé: <span id="display-name" style="color:var(--primary)">...</span></div>
+        </div>
+    </div>
+</div>
+
+<div id="donateModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); align-items:center; justify-content:center; z-index:3000; padding:16px;">
+    <div class="main-content" style="max-width:430px; width:100%; position:relative; text-align:center;">
+        <button onclick="closeDonateModal()" style="position:absolute;top:10px;right:12px;border:none;background:#f3f3f3;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:24px;">×</button>
+        <div class="donate-hero">💝</div>
+        <h2 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h2>
+        <div class="topic-note" style="background:#f5faff;border-radius:16px;padding:12px;line-height:1.8;color:#455a64;font-weight:700;font-size:14px;">
+            Mỗi lượt ủng hộ là một lời động viên để tiếp tục phát triển thêm nhiều bài học Tiếng Việt, Toán, Tiếng Anh, EQ và IQ hấp dẫn hơn cho bé mỗi ngày.
+        </div>
+        <div class="qr-wrap">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=%F0%9F%92%9D%20Cam%20on%20bo%20me%20da%20ung%20ho%20de%20phat%20trien%20them%20noi%20dung%20cho%20trang%20hoc%20tap%20cua%20be." alt="QR cảm ơn">
+            <div class="qr-note">Quét mã để nhận lời cảm ơn và tiếp sức cho việc phát triển thêm nội dung học tập cho bé.</div>
+        </div>
+    </div>
 </div>
 
 <div class="container">
@@ -442,6 +529,20 @@ function setActiveMenu(g) {
     if (document.getElementById('btn-' + g)) document.getElementById('btn-' + g).classList.add('active');
     setGrade(g);
 }
+
+
+function openDonateModal(){
+    const el = document.getElementById('donateModal');
+    if(el) el.style.display = 'flex';
+}
+function closeDonateModal(){
+    const el = document.getElementById('donateModal');
+    if(el) el.style.display = 'none';
+}
+window.addEventListener('click', function(event){
+    const modal = document.getElementById('donateModal');
+    if(event.target === modal) closeDonateModal();
+});
 
 window.onload = () => {
     document.getElementById('display-name').innerText = kidName;
