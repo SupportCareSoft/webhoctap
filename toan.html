@@ -18,6 +18,31 @@
         .nav-row { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; }
         .btn-home { background: var(--primary); color: white; padding: 10px 25px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 4px #ad1457; }
         .kid-info-box { background: white; border: 2px solid var(--blue); padding: 8px 25px; border-radius: 25px; color: var(--blue); font-weight: bold; font-size: 18px; }
+        .donate-btn{
+            border:none; border-radius:999px; cursor:pointer; background:linear-gradient(135deg,#ff5fa2,#e91e63);
+            color:#fff; font-size:15px; font-weight:800; box-shadow:0 8px 18px rgba(233,30,99,.30);
+            display:flex; align-items:center; justify-content:center; gap:8px; padding:11px 16px; min-height:46px; position:relative;
+        }
+        .donate-btn::after{
+            content:''; position:absolute; top:-3px; right:-3px; width:12px; height:12px; background:#fff; border:3px solid #ff4081; border-radius:50%;
+        }
+        .donate-heart{
+            width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.18);
+            display:flex; align-items:center; justify-content:center; font-size:16px;
+        }
+        .donate-text-strong{
+            display:flex; flex-direction:column; align-items:flex-start; line-height:1.1;
+        }
+        .donate-text-strong small{ font-size:11px; font-weight:700; opacity:.92; }
+        .donate-hero{
+            width:88px; height:88px; border-radius:24px; margin:0 auto 12px; background:linear-gradient(135deg,#fff0f6,#fff8e1);
+            display:flex; align-items:center; justify-content:center; font-size:42px; border:2px solid #ffd1e1;
+        }
+        .qr-wrap{
+            background:linear-gradient(135deg,#fdfdfd,#f7fbff); border:2px dashed #b3e5fc; border-radius:22px; padding:14px; margin-top:14px; text-align:center;
+        }
+        .qr-wrap img{ width:220px; max-width:100%; border-radius:16px; background:#fff; padding:10px; box-shadow:0 4px 14px rgba(0,0,0,.06); }
+        .qr-note{ margin-top:10px; font-size:13px; color:#607d8b; font-weight:700; line-height:1.7; }
 
         select { padding: 12px 20px; border-radius: 15px; border: 3px solid var(--blue); font-weight: bold; font-size: 18px; width: 450px; outline: none; }
 
@@ -43,18 +68,53 @@
         .history-table th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
 
         @media (max-width: 1100px) { .chibi-side { display: none; } }
+        @media (max-width: 768px) {
+            .top-header{ padding:8px 8px 0; }
+            .header-shell{ width:calc(100% - 4px); padding:10px; flex-direction:column; align-items:stretch; }
+            .header-left,.header-right{ width:100%; justify-content:center; flex-wrap:wrap; }
+            .btn-home{ width:100%; text-align:center; }
+            .donate-btn{ width:100%; justify-content:center; }
+            .donate-text-strong{ align-items:center; }
+            .kid-info-box{ text-align:center; width:100%; font-size:16px; }
+            .nav-row{ flex-direction:column; }
+            select{ width:100%; max-width:100%; font-size:16px; }
+            .main-wrapper{ padding:12px; }
+        }
     </style>
 </head>
 <body>
 
     <div class="top-header">
-        <div class="header-left">🏠 Phạm Quốc Đại | 📞 0393125184</div>
-         <!--<div class="header-right">Chào mừng bé Bi! ✨</div>-->
+        <div class="header-shell">
+            <div class="header-left">
+                <div style="font-weight:bold; font-size:14px;">🏠 Phạm Quốc Đại | 📞 0393125184</div>
+                <button class="donate-btn" onclick="openDonateModal()">
+                    <span class="donate-heart">💝</span>
+                    <span class="donate-text-strong">Ủng hộ phát triển<small>Quét QR để tiếp sức cho trang học của bé</small></span>
+                </button>
+            </div>
+            <div class="header-right"></div>
+        </div>
+    </div>
+
+    <div id="donateModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); align-items:center; justify-content:center; z-index:3000; padding:16px;">
+        <div class="exercise-area" style="max-width:430px; width:100%; position:relative; text-align:center; background:white;">
+            <button onclick="closeDonateModal()" style="position:absolute;top:10px;right:12px;border:none;background:#f3f3f3;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:24px;">×</button>
+            <div class="donate-hero">💝</div>
+            <h2 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h2>
+            <div style="background:#f5faff;border-radius:16px;padding:12px;line-height:1.8;color:#455a64;font-weight:700;font-size:14px;">
+                Mỗi lượt ủng hộ là một lời động viên để tiếp tục phát triển thêm nhiều bài học Toán, Tiếng Việt, Tiếng Anh, EQ và IQ hấp dẫn hơn cho bé mỗi ngày.
+            </div>
+            <div class="qr-wrap">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=%F0%9F%92%9D%20Cam%20on%20bo%20me%20da%20ung%20ho%20de%20phat%20trien%20them%20noi%20dung%20cho%20trang%20hoc%20tap%20cua%20be." alt="QR cảm ơn">
+                <div class="qr-note">Quét mã để nhận lời cảm ơn và tiếp sức cho việc phát triển thêm nội dung học tập cho bé.</div>
+            </div>
+        </div>
     </div>
 
     <div class="nav-bar">
         <div class="nav-row">
-            <a href="index" class="btn-home">🏠 Về Trang Chủ</a>
+            <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
             <div id="kid-badge" class="kid-info-box">Bé Bi đang học! 🚀</div>
         </div>
         <select id="level-select" onchange="generateMath()">
@@ -108,6 +168,20 @@
         const database = firebase.database();
         const kidName = localStorage.getItem('kidName') || "Bi";
         document.getElementById('kid-badge').innerText = `Bé ${kidName} đang học! 🚀`;
+
+
+        function openDonateModal(){
+            const el = document.getElementById('donateModal');
+            if(el) el.style.display = 'flex';
+        }
+        function closeDonateModal(){
+            const el = document.getElementById('donateModal');
+            if(el) el.style.display = 'none';
+        }
+        window.addEventListener('click', function(event){
+            const modal = document.getElementById('donateModal');
+            if(event.target === modal) closeDonateModal();
+        });
 
         function generateMath() {
             const level = document.getElementById('level-select').value;
