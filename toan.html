@@ -8,27 +8,21 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root {
-            --yellow-header: #ffeb3b;
             --bg-light: #e0f7fa;
             --primary: #e91e63;
             --blue: #2196F3;
             --green: #4CAF50;
             --purple: #9c27b0;
-            --orange: #ff9800;
             --shadow: 0 8px 18px rgba(0,0,0,.08);
         }
-
         * { box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background-color: var(--bg-light);
             margin: 0;
-            padding: 0;
             min-height: 100vh;
             color: #333;
         }
-
         .top-header {
             background: transparent;
             padding: 10px 12px 0;
@@ -36,7 +30,6 @@
             top: 0;
             z-index: 1000;
         }
-
         .header-shell {
             width: min(1200px, 96%);
             margin: 0 auto;
@@ -50,14 +43,12 @@
             gap: 12px;
             box-shadow: var(--shadow);
         }
-
         .header-left, .header-right {
             display: flex;
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
         }
-
         .btn-home {
             background: var(--primary);
             color: white;
@@ -68,7 +59,6 @@
             box-shadow: 0 4px #ad1457;
             white-space: nowrap;
         }
-
         .kid-info-box {
             background: white;
             border: 2px solid var(--blue);
@@ -79,7 +69,6 @@
             font-size: 16px;
             white-space: nowrap;
         }
-
         .donate-btn {
             border: none;
             border-radius: 999px;
@@ -96,7 +85,6 @@
             position: relative;
             font-family: Arial, 'Segoe UI', sans-serif;
         }
-
         .donate-btn::after {
             content: '';
             position: absolute;
@@ -108,7 +96,6 @@
             border: 3px solid #ff4081;
             border-radius: 50%;
         }
-
         .donate-heart {
             width: 24px;
             height: 24px;
@@ -120,7 +107,6 @@
             font-size: 14px;
             flex: 0 0 24px;
         }
-
         .donate-text-strong {
             display: flex;
             flex-direction: column;
@@ -128,16 +114,8 @@
             line-height: 1.15;
             text-align: left;
         }
-
-        .donate-text-strong strong {
-            font-size: 15px;
-            font-weight: 800;
-        }
-
-        .donate-text-strong small {
-            font-size: 12px;
-            font-weight: 600;
-        }
+        .donate-text-strong strong { font-size: 15px; font-weight: 800; }
+        .donate-text-strong small { font-size: 12px; font-weight: 600; }
 
         .nav-bar {
             background: white;
@@ -151,7 +129,6 @@
             margin: 12px auto 0;
             border-radius: 26px;
         }
-
         .nav-row {
             display: flex;
             align-items: center;
@@ -160,7 +137,6 @@
             width: 100%;
             flex-wrap: wrap;
         }
-
         select {
             padding: 12px 20px;
             border-radius: 15px;
@@ -172,7 +148,6 @@
             outline: none;
             background: white;
         }
-
         .main-wrapper {
             display: flex;
             justify-content: center;
@@ -180,16 +155,13 @@
             padding: 20px;
             gap: 15px;
         }
-
         .chibi-side {
             width: 140px;
             flex-shrink: 0;
             position: sticky;
             top: 150px;
         }
-
         .chibi-side img { width: 100%; }
-
         .exercise-area {
             background: rgba(255, 255, 255, 0.55);
             padding: 30px;
@@ -198,14 +170,12 @@
             width: 100%;
             box-shadow: 0 4px 14px rgba(0,0,0,.04);
         }
-
         .math-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 15px;
             width: 100%;
         }
-
         .math-card {
             background: white;
             padding: 15px 25px;
@@ -215,7 +185,6 @@
             gap: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.04);
         }
-
         .num-box {
             background: #FFD54F;
             padding: 8px 12px;
@@ -225,7 +194,6 @@
             min-width: 50px;
             text-align: center;
         }
-
         .ans-input {
             width: 90px;
             height: 45px;
@@ -237,7 +205,6 @@
             outline: none;
             margin-left: auto;
         }
-
         .ans-input.correct { border-color: var(--green) !important; background: #e8f5e9; }
         .ans-input.wrong { border-color: var(--primary) !important; background: #ffebee; }
 
@@ -248,14 +215,12 @@
             align-items: center;
             gap: 20px;
         }
-
         .btn-group {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
         }
-
         .btn-footer {
             padding: 15px 30px;
             border-radius: 20px;
@@ -266,7 +231,6 @@
             cursor: pointer;
             box-shadow: 0 6px rgba(0,0,0,0.08);
         }
-
         #history-section {
             display: none;
             width: 90%;
@@ -278,7 +242,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border: 2px solid var(--purple);
         }
-
         .history-table { width: 100%; border-collapse: collapse; }
         .history-table th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
 
@@ -292,7 +255,6 @@
             z-index: 3000;
             padding: 16px;
         }
-
         .modal-card {
             max-width: 430px;
             width: 100%;
@@ -303,7 +265,6 @@
             padding: 18px;
             box-shadow: 0 18px 40px rgba(0,0,0,.18);
         }
-
         .modal-close {
             position: absolute;
             top: 10px;
@@ -316,7 +277,6 @@
             cursor: pointer;
             font-size: 24px;
         }
-
         .modal-hero {
             width: 88px;
             height: 88px;
@@ -329,7 +289,6 @@
             font-size: 42px;
             border: 2px solid #ffd1e1;
         }
-
         .qr-wrap {
             background: linear-gradient(135deg,#fdfdfd,#f7fbff);
             border: 2px dashed #b3e5fc;
@@ -338,7 +297,6 @@
             margin-top: 14px;
             text-align: center;
         }
-
         .qr-wrap img {
             width: 220px;
             max-width: 100%;
@@ -347,7 +305,6 @@
             padding: 10px;
             box-shadow: 0 4px 14px rgba(0,0,0,.06);
         }
-
         .qr-note {
             margin-top: 10px;
             font-size: 13px;
@@ -371,13 +328,11 @@
             box-shadow: 0 10px 22px rgba(81,45,168,.28);
             cursor: pointer;
         }
-
         .feedback-form {
             display: grid;
             gap: 10px;
             margin-top: 10px;
         }
-
         .feedback-form input,
         .feedback-form textarea {
             width: 100%;
@@ -388,12 +343,10 @@
             outline: none;
             font-family: inherit;
         }
-
         .feedback-form textarea {
             min-height: 120px;
             resize: vertical;
         }
-
         .feedback-submit {
             border: none;
             border-radius: 16px;
@@ -404,7 +357,6 @@
             padding: 12px 14px;
             cursor: pointer;
         }
-
         .feedback-msg {
             margin-top: 10px;
             border-radius: 14px;
@@ -413,11 +365,16 @@
             font-weight: 700;
             display: none;
         }
+        .hidden-iframe {
+            display: none;
+            width: 0;
+            height: 0;
+            border: 0;
+        }
 
         @media (max-width: 1100px) {
             .chibi-side { display: none; }
         }
-
         @media (max-width: 768px) {
             .top-header { padding: 8px 8px 0; }
             .header-shell {
@@ -508,6 +465,8 @@
         </div>
     </div>
 
+    <iframe name="telegramFeedbackTarget" class="hidden-iframe"></iframe>
+
     <button class="feedback-fab" onclick="openFeedbackModal()">💬 Góp ý</button>
 
     <div class="nav-bar">
@@ -567,8 +526,8 @@
         document.getElementById('kid-badge').innerText = `Bé ${kidName} đang học! 🚀`;
 
         // THAY 2 GIÁ TRỊ DƯỚI ĐÂY BẰNG TELEGRAM THẬT
-        const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
-        const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
+        const TELEGRAM_BOT_TOKEN = "8692523139:AAEV1A1lA5xO1bUfnBY7Gj3KKODBIjArHNI";
+        const TELEGRAM_CHAT_ID = "567048046";
 
         function openDonateModal() {
             const el = document.getElementById('donateModal');
@@ -590,7 +549,7 @@
             if (el) el.style.display = 'none';
         }
 
-        async function submitFeedbackToTelegram() {
+        function submitFeedbackToTelegram() {
             const parentName = document.getElementById('fb-parent-name').value.trim();
             const phone = document.getElementById('fb-phone').value.trim();
             const content = document.getElementById('fb-content').value.trim();
@@ -604,7 +563,12 @@
                 return;
             }
 
-            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === '8692523139:AAEV1A1lA5xO1bUfnBY7Gj3KKODBIjArHNI' || !TELEGRAM_CHAT_ID || TELEGRAM_CHAT_ID === '567048046') {
+            if (
+                !TELEGRAM_BOT_TOKEN ||
+                TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' ||
+                !TELEGRAM_CHAT_ID ||
+                TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID'
+            ) {
                 box.style.display = 'block';
                 box.style.background = '#fff8e1';
                 box.style.color = '#e65100';
@@ -612,51 +576,54 @@
                 return;
             }
 
-            const message =
-`💬 GÓP Ý MỚI TỪ TRANG TOÁN
-
-👨‍👩‍👧 Phụ huynh: ${parentName}
-📞 SĐT: ${phone}
-👶 Bé: ${kidName}
-🆔 Username: ${kidUsername}
-🌐 Trang: toan.html
-
-📝 Nội dung góp ý:
-${content}`;
+            const message = [
+                '💬 GÓP Ý MỚI TỪ TRANG TOÁN',
+                '',
+                `👨‍👩‍👧 Phụ huynh: ${parentName}`,
+                `📞 SĐT: ${phone}`,
+                `👶 Bé: ${kidName}`,
+                `🆔 Username: ${kidUsername}`,
+                '🌐 Trang: toan.html',
+                '',
+                '📝 Nội dung góp ý:',
+                content
+            ].join('\n');
 
             try {
-                const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message
-                    })
-                });
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                form.target = 'telegramFeedbackTarget';
+                form.style.display = 'none';
 
-                const data = await res.json();
+                const chatIdInput = document.createElement('input');
+                chatIdInput.name = 'chat_id';
+                chatIdInput.value = TELEGRAM_CHAT_ID;
 
-                if (data.ok) {
-                    box.style.display = 'block';
-                    box.style.background = '#e8f5e9';
-                    box.style.color = '#2e7d32';
-                    box.innerText = 'Đã gửi góp ý thành công. Cảm ơn phụ huynh!';
+                const textInput = document.createElement('textarea');
+                textInput.name = 'text';
+                textInput.value = message;
+                textInput.style.display = 'none';
 
-                    document.getElementById('fb-parent-name').value = '';
-                    document.getElementById('fb-phone').value = '';
-                    document.getElementById('fb-content').value = '';
-                } else {
-                    box.style.display = 'block';
-                    box.style.background = '#ffebee';
-                    box.style.color = '#c62828';
-                    box.innerText = 'Gửi Telegram thất bại. Kiểm tra lại bot token hoặc chat id.';
-                    console.log(data);
-                }
+                form.appendChild(chatIdInput);
+                form.appendChild(textInput);
+                document.body.appendChild(form);
+                form.submit();
+                setTimeout(() => form.remove(), 1000);
+
+                box.style.display = 'block';
+                box.style.background = '#e8f5e9';
+                box.style.color = '#2e7d32';
+                box.innerText = 'Đã gửi góp ý.';
+
+                document.getElementById('fb-parent-name').value = '';
+                document.getElementById('fb-phone').value = '';
+                document.getElementById('fb-content').value = '';
             } catch (e) {
                 box.style.display = 'block';
                 box.style.background = '#ffebee';
                 box.style.color = '#c62828';
-                box.innerText = 'Có lỗi khi gửi góp ý tới Telegram.';
+                box.innerText = 'Có lỗi khi gửi góp ý tới Telegram: ' + e.message;
                 console.log(e);
             }
         }
