@@ -7,21 +7,37 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --yellow-header: #ffeb3b; --bg-light: #e0f7fa; --primary: #e91e63; --blue: #2196F3; --green: #4CAF50; --purple: #9c27b0; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-light); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        :root {
+            --yellow-header: #ffeb3b;
+            --bg-light: #e0f7fa;
+            --primary: #e91e63;
+            --blue: #2196F3;
+            --green: #4CAF50;
+            --purple: #9c27b0;
+        }
 
-        /* Header vàng */
-        .top-header{
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .top-header {
             background: transparent;
             padding: 10px 12px 0;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
-        .header-shell{
+
+        .header-shell {
             width: min(1200px, 96%);
             margin: 0 auto;
-            background: linear-gradient(135deg,#fff59d,#ffe082);
+            background: linear-gradient(135deg, #fff59d, #ffe082);
             padding: 10px 14px;
             display: flex;
             justify-content: space-between;
@@ -31,13 +47,81 @@
             gap: 12px;
             box-shadow: 0 8px 18px rgba(0,0,0,.06);
         }
-        .header-left,.header-right{
-            display:flex;
-            align-items:center;
-            gap:10px;
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        
-        /* Điều hướng căn giữa */
+
+        .header-info {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .donate-btn {
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff5fa2, #e91e63);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(233,30,99,.30);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px 16px;
+            min-height: 46px;
+            position: relative;
+            font-family: Arial, 'Segoe UI', sans-serif;
+        }
+
+        .donate-btn::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border: 3px solid #ff4081;
+            border-radius: 50%;
+        }
+
+        .donate-heart {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .donate-text-strong {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.15;
+            letter-spacing: 0;
+        }
+
+        .donate-text-strong strong {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .donate-text-strong small {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 1;
+        }
+
         .nav-bar {
             background: white;
             padding: 18px 20px 20px;
@@ -50,72 +134,248 @@
             margin: 12px auto 0;
             border-radius: 26px;
         }
-        .nav-row { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; }
-        .btn-home { background: var(--primary); color: white; padding: 10px 25px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 4px #ad1457; }
-        .kid-info-box { background: white; border: 2px solid var(--blue); padding: 8px 25px; border-radius: 25px; color: var(--blue); font-weight: bold; font-size: 18px; }
-        .donate-btn{
-            border:none; border-radius:999px; cursor:pointer; background:linear-gradient(135deg,#ff5fa2,#e91e63);
-            color:#fff; font-size:15px; font-weight:800; box-shadow:0 8px 18px rgba(233,30,99,.30);
-            display:flex; align-items:center; justify-content:center; gap:8px; padding:11px 16px; min-height:46px; position:relative;
-        }
-        .donate-btn::after{
-            content:''; position:absolute; top:-3px; right:-3px; width:12px; height:12px; background:#fff; border:3px solid #ff4081; border-radius:50%;
-        }
-        .donate-heart{
-            width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.18);
-            display:flex; align-items:center; justify-content:center; font-size:16px;
-        }
-        .donate-text-strong{
-            display:flex; flex-direction:column; align-items:flex-start; line-height:1.1;
-        }
-        .donate-text-strong small{ font-size:11px; font-weight:700; opacity:.92; }
-        .donate-hero{
-            width:88px; height:88px; border-radius:24px; margin:0 auto 12px; background:linear-gradient(135deg,#fff0f6,#fff8e1);
-            display:flex; align-items:center; justify-content:center; font-size:42px; border:2px solid #ffd1e1;
-        }
-        .qr-wrap{
-            background:linear-gradient(135deg,#fdfdfd,#f7fbff); border:2px dashed #b3e5fc; border-radius:22px; padding:14px; margin-top:14px; text-align:center;
-        }
-        .qr-wrap img{ width:220px; max-width:100%; border-radius:16px; background:#fff; padding:10px; box-shadow:0 4px 14px rgba(0,0,0,.06); }
-        .qr-note{ margin-top:10px; font-size:13px; color:#607d8b; font-weight:700; line-height:1.7; }
 
-        select { padding: 12px 20px; border-radius: 15px; border: 3px solid var(--blue); font-weight: bold; font-size: 18px; width: 450px; outline: none; }
+        .nav-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
 
-        /* Bố cục chính */
-        .main-wrapper { display: flex; justify-content: center; align-items: flex-start; padding: 20px; gap: 15px; flex-grow: 1; }
-        .chibi-side { width: 140px; flex-shrink: 0; position: sticky; top: 150px; }
+        .btn-home {
+            background: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px #ad1457;
+        }
+
+        .kid-info-box {
+            background: white;
+            border: 2px solid var(--blue);
+            padding: 8px 25px;
+            border-radius: 25px;
+            color: var(--blue);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        select {
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 3px solid var(--blue);
+            font-weight: bold;
+            font-size: 18px;
+            width: 450px;
+            outline: none;
+            max-width: 100%;
+        }
+
+        .main-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .chibi-side {
+            width: 140px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 150px;
+        }
+
         .chibi-side img { width: 100%; }
-        .exercise-area { background: rgba(255, 255, 255, 0.5); padding: 30px; border-radius: 35px; max-width: 1100px; width: 100%; }
-        .math-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; width: 100%; }
 
-        .math-card { background: white; padding: 15px 25px; border-radius: 20px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
-        .num-box { background: #FFD54F; padding: 8px 12px; border-radius: 10px; font-weight: 900; font-size: 22px; min-width: 50px; text-align: center; }
-        .ans-input { width: 90px; height: 45px; border: 3px solid #eee; border-radius: 12px; text-align: center; font-size: 22px; font-weight: bold; outline: none; margin-left: auto; }
+        .exercise-area {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 30px;
+            border-radius: 35px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            width: 100%;
+        }
+
+        .math-card {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        .num-box {
+            background: #FFD54F;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 22px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .ans-input {
+            width: 90px;
+            height: 45px;
+            border: 3px solid #eee;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            outline: none;
+            margin-left: auto;
+        }
+
         .ans-input.correct { border-color: var(--green) !important; background: #e8f5e9; }
         .ans-input.wrong { border-color: var(--primary) !important; background: #ffebee; }
 
-        .action-footer { padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .btn-group { display: flex; gap: 15px; }
-        .btn-footer { padding: 15px 30px; border-radius: 20px; border: none; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .action-footer {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
 
-        #history-section { display: none; width: 90%; max-width: 800px; background: white; border-radius: 25px; padding: 20px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid var(--purple); }
+        .btn-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+
+        .btn-footer {
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #history-section {
+            display: none;
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid var(--purple);
+        }
+
         .history-table { width: 100%; border-collapse: collapse; }
         .history-table th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
 
+        .donate-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: 16px;
+        }
+
+        .donate-card {
+            max-width: 430px;
+            width: 100%;
+            position: relative;
+            text-align: center;
+            background: white;
+            border-radius: 28px;
+            padding: 18px;
+            box-shadow: 0 18px 40px rgba(0,0,0,.18);
+        }
+
+        .donate-close {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            border: none;
+            background: #f3f3f3;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .donate-hero {
+            width: 88px;
+            height: 88px;
+            border-radius: 24px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg,#fff0f6,#fff8e1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            border: 2px solid #ffd1e1;
+        }
+
+        .qr-wrap {
+            background: linear-gradient(135deg,#fdfdfd,#f7fbff);
+            border: 2px dashed #b3e5fc;
+            border-radius: 22px;
+            padding: 14px;
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        .qr-wrap img {
+            width: 220px;
+            max-width: 100%;
+            border-radius: 16px;
+            background: #fff;
+            padding: 10px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.06);
+        }
+
+        .qr-note {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #607d8b;
+            font-weight: 700;
+            line-height: 1.7;
+        }
+
         @media (max-width: 1100px) { .chibi-side { display: none; } }
+
         @media (max-width: 768px) {
-            .top-header{ padding:8px 8px 0; }
-            .header-shell{ width:calc(100% - 4px); padding:10px; flex-direction:column; align-items:stretch; }
-            .header-left,.header-right{ width:100%; justify-content:center; flex-wrap:wrap; }
-            .btn-home{ width:100%; text-align:center; }
-            .donate-btn{ width:100%; justify-content:center; }
-            .donate-text-strong{ align-items:center; }
-            .kid-info-box{ text-align:center; width:100%; font-size:16px; }
-            .nav-row{ flex-direction:column; }
-            select{ width:100%; max-width:100%; font-size:16px; }
-            .main-wrapper{ padding:12px; }
-            .btn-group{ flex-direction:column; width:100%; }
-            .btn-footer{ width:100%; }
+            .top-header { padding: 8px 8px 0; }
+            .header-shell {
+                width: calc(100% - 4px);
+                padding: 10px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-left, .header-right {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .btn-home { width: 100%; text-align: center; }
+            .donate-btn { width: 100%; justify-content: center; }
+            .donate-text-strong { align-items: center; text-align: center; }
+            .kid-info-box { text-align: center; width: 100%; font-size: 16px; }
+            .nav-row { flex-direction: column; }
+            select { width: 100%; max-width: 100%; font-size: 16px; }
+            .main-wrapper { padding: 12px; }
+            .btn-group { flex-direction: column; width: 100%; }
+            .btn-footer { width: 100%; }
         }
     </style>
 </head>
@@ -124,19 +384,22 @@
     <div class="top-header">
         <div class="header-shell">
             <div class="header-left">
-                <div style="font-weight:bold; font-size:14px;">🏠 Phạm Quốc Đại | 📞 0393125184</div>
+                <div class="header-info">🏠 Phạm Quốc Đại | 📞 0393125184</div>
                 <button class="donate-btn" onclick="openDonateModal()">
                     <span class="donate-heart">💝</span>
-                    <span class="donate-text-strong">Ủng hộ phát triển<small>Quét QR để tiếp sức cho trang học của bé</small></span>
+                    <span class="donate-text-strong">
+                        <strong>Ủng hộ phát triển</strong>
+                        <small>Quét QR để tiếp sức cho trang học của bé</small>
+                    </span>
                 </button>
             </div>
             <div class="header-right"></div>
         </div>
     </div>
 
-    <div id="donateModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); align-items:center; justify-content:center; z-index:3000; padding:16px;">
-        <div class="exercise-area" style="max-width:430px; width:100%; position:relative; text-align:center; background:white;">
-            <button onclick="closeDonateModal()" style="position:absolute;top:10px;right:12px;border:none;background:#f3f3f3;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:24px;">×</button>
+    <div id="donateModal" class="donate-modal">
+        <div class="donate-card">
+            <button class="donate-close" onclick="closeDonateModal()">×</button>
             <div class="donate-hero">💝</div>
             <h2 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h2>
             <div style="background:#f5faff;border-radius:16px;padding:12px;line-height:1.8;color:#455a64;font-weight:700;font-size:14px;">
@@ -191,33 +454,34 @@
     </div>
 
     <script>
-  const firebaseConfig = {
-  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
-  authDomain: "bon-bi.firebaseapp.com",
-  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
-  projectId: "bon-bi",
-  storageBucket: "bon-bi.firebasestorage.app",
-  messagingSenderId: "988400970351",
-  appId: "1:988400970351:web:21e9181950114225417b9a"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+            authDomain: "bon-bi.firebaseapp.com",
+            databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+            projectId: "bon-bi",
+            storageBucket: "bon-bi.firebasestorage.app",
+            messagingSenderId: "988400970351",
+            appId: "1:988400970351:web:21e9181950114225417b9a"
+        };
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const kidName = localStorage.getItem('kidName') || "Bi";
         document.getElementById('kid-badge').innerText = `Bé ${kidName} đang học! 🚀`;
 
+        function openDonateModal() {
+            const el = document.getElementById('donateModal');
+            if (el) el.style.display = 'flex';
+        }
 
-        function openDonateModal(){
+        function closeDonateModal() {
             const el = document.getElementById('donateModal');
-            if(el) el.style.display = 'flex';
+            if (el) el.style.display = 'none';
         }
-        function closeDonateModal(){
-            const el = document.getElementById('donateModal');
-            if(el) el.style.display = 'none';
-        }
-        window.addEventListener('click', function(event){
+
+        window.addEventListener('click', function(event) {
             const modal = document.getElementById('donateModal');
-            if(event.target === modal) closeDonateModal();
+            if (event.target === modal) closeDonateModal();
         });
 
         function generateMath() {
@@ -228,15 +492,15 @@
 
             while(count < 20) {
                 let n1, n2, op, ans, html = "";
-                
-                if (level === 'l2') { // LOGIC LỚP 2 CHUẨN
-                    let table = [2, 3, 4, 5][Math.floor(Math.random() * 4)]; // Bảng nhân 2,3,4,5
-                    let num = Math.floor(Math.random() * 9) + 1; // Từ 1 đến 9
+
+                if (level === 'l2') {
+                    let table = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+                    let num = Math.floor(Math.random() * 9) + 1;
                     op = Math.random() > 0.5 ? 'x' : ':';
                     if (op === 'x') {
                         n1 = table; n2 = num; ans = n1 * n2;
                     } else {
-                        ans = num; n2 = table; n1 = ans * n2; // Phép chia ngược từ phép nhân
+                        ans = num; n2 = table; n1 = ans * n2;
                     }
                 } else if (level === 'l1-hard') {
                     op = Math.random() > 0.5 ? '+' : '-';
@@ -251,10 +515,18 @@
                     ans = (op === '+') ? n1 + n2 : n1 - n2;
                 } else if (level === 'l3') {
                     op = Math.random() > 0.5 ? 'x' : ':';
-                    if (op === 'x') { n1 = Math.floor(Math.random() * 150) + 10; n2 = Math.floor(Math.random() * 7) + 2; ans = n1 * n2; }
-                    else { n2 = Math.floor(Math.random() * 8) + 2; ans = Math.floor(Math.random() * 100) + 10; n1 = ans * n2; }
+                    if (op === 'x') { 
+                        n1 = Math.floor(Math.random() * 150) + 10; 
+                        n2 = Math.floor(Math.random() * 7) + 2; 
+                        ans = n1 * n2; 
+                    } else { 
+                        n2 = Math.floor(Math.random() * 8) + 2; 
+                        ans = Math.floor(Math.random() * 100) + 10; 
+                        n1 = ans * n2; 
+                    }
                 } else if (level === 'l5') {
-                    n1 = (Math.random() * 50 + 5).toFixed(1); n2 = (Math.random() * 40 + 5).toFixed(1);
+                    n1 = (Math.random() * 50 + 5).toFixed(1); 
+                    n2 = (Math.random() * 40 + 5).toFixed(1);
                     op = Math.random() > 0.5 ? '+' : '-';
                     ans = (op === '+') ? (parseFloat(n1) + parseFloat(n2)).toFixed(1) : (parseFloat(n1) - parseFloat(n2)).toFixed(1);
                 } else if (level === 'l4') {
@@ -262,11 +534,19 @@
                     n1 = Math.floor(Math.random()*89)+10;
                     html = `<span class="num-box">${n1}</span> <b>${u.f}</b> = <input type="number" class="ans-input" data-ans="${n1*u.r}"> <b>${u.t}</b>`;
                     container.innerHTML += `<div class="math-card">${html}</div>`;
-                    count++; continue;
+                    count++; 
+                    continue;
                 } else if (level === 'kid5') {
-                    n1 = Math.floor(Math.random()*9)+1; n2 = Math.floor(Math.random()*(10-n1)); op = '+'; ans = n1+n2;
+                    n1 = Math.floor(Math.random()*9)+1; 
+                    n2 = Math.floor(Math.random()*(10-n1)); 
+                    op = '+'; 
+                    ans = n1+n2;
                 } else {
-                    n1 = Math.floor(Math.random()*80)+10; op = Math.random()>0.5?'+':'-'; let u1=n1%10; n2=op==='+'?Math.floor(Math.random()*(10-u1)):Math.floor(Math.random()*(u1+1)); ans=op==='+'?n1+n2:n1-n2;
+                    n1 = Math.floor(Math.random()*80)+10; 
+                    op = Math.random()>0.5?'+':'-'; 
+                    let u1=n1%10; 
+                    n2=op==='+'?Math.floor(Math.random()*(10-u1)):Math.floor(Math.random()*(u1+1)); 
+                    ans=op==='+'?n1+n2:n1-n2;
                 }
 
                 html = `<span class="num-box">${n1}</span> <b class="math-op">${op}</b> <span class="num-box">${n2}</span> <b class="math-op">=</b> <input type="text" class="ans-input" data-ans="${ans}">`;
@@ -279,10 +559,19 @@
             let score = 0;
             document.querySelectorAll('.ans-input').forEach(i => {
                 i.classList.remove('correct', 'wrong');
-                if(parseFloat(i.value) === parseFloat(i.dataset.ans)) { i.classList.add('correct'); score++; }
-                else i.classList.add('wrong');
+                if(parseFloat(i.value) === parseFloat(i.dataset.ans)) { 
+                    i.classList.add('correct'); 
+                    score++; 
+                } else {
+                    i.classList.add('wrong');
+                }
             });
-            database.ref('results').push({ name: kidName, score: score, level: document.getElementById('level-select').selectedOptions[0].text, time: Date.now() });
+            database.ref('results').push({ 
+                name: kidName, 
+                score: score, 
+                level: document.getElementById('level-select').selectedOptions[0].text, 
+                time: Date.now() 
+            });
             alert(`Bé ${kidName} đạt ${score}/20 điểm!`);
         }
 
@@ -304,6 +593,7 @@
                 });
             }
         }
+
         window.onload = generateMath;
     </script>
 </body>
