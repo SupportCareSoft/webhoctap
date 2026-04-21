@@ -105,7 +105,44 @@
             .donate-text-strong{ align-items:center; }
             .user-badge{ text-align:center; white-space:normal; }
         }
-    </style>
+    
+        .modal-overlay{
+            display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+            align-items:center;justify-content:center;z-index:3000;padding:16px
+        }
+        .modal-card{
+            max-width:430px;width:100%;position:relative;text-align:center;background:white;
+            border-radius:28px;padding:18px;box-shadow:0 18px 40px rgba(0,0,0,.18)
+        }
+        .modal-close{
+            position:absolute;top:10px;right:12px;border:none;background:#f3f3f3;width:36px;height:36px;
+            border-radius:50%;cursor:pointer;font-size:24px
+        }
+        .modal-hero{
+            width:88px;height:88px;border-radius:24px;margin:0 auto 12px;background:linear-gradient(135deg,#fff0f6,#fff8e1);
+            display:flex;align-items:center;justify-content:center;font-size:42px;border:2px solid #ffd1e1
+        }
+        .feedback-fab{
+            position:fixed;right:18px;bottom:18px;z-index:2500;border:none;
+            background:linear-gradient(135deg,#7c4dff,#512da8);color:white;border-radius:999px;
+            padding:13px 18px;font-size:15px;font-weight:800;box-shadow:0 10px 22px rgba(81,45,168,.28);cursor:pointer
+        }
+        .feedback-form{display:grid;gap:10px;margin-top:10px}
+        .feedback-form input,.feedback-form textarea{
+            width:100%;padding:12px 14px;border:2px solid #e6eef7;border-radius:16px;
+            font-size:15px;outline:none;font-family:inherit
+        }
+        .feedback-form textarea{min-height:120px;resize:vertical}
+        .feedback-submit{
+            border:none;border-radius:16px;background:var(--primary);color:white;font-weight:800;
+            font-size:15px;padding:12px 14px;cursor:pointer
+        }
+        .feedback-msg{
+            margin-top:10px;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;display:none
+        }
+        .hidden-iframe{display:none;width:0;height:0;border:0}
+
+</style>
 </head>
 <body>
 
@@ -138,6 +175,28 @@
         </div>
     </div>
 </div>
+
+
+<div id="feedbackModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeFeedbackModal()">×</button>
+        <div class="modal-hero" style="background:linear-gradient(135deg,#eef4ff,#f3e5f5);border-color:#c5cae9;">💬</div>
+        <h3 style="margin:0 0 8px;color:#5e35b1;font-size:28px;">Góp ý cho trang Tiếng Việt</h3>
+        <div class="topic-note" style="background:#f5faff;border-radius:16px;padding:12px;line-height:1.8;color:#455a64;font-weight:700;font-size:14px; margin-bottom:0;">
+            Phụ huynh có thể gửi góp ý, lỗi hiển thị hoặc đề xuất thêm nội dung để website ngày càng tốt hơn.
+        </div>
+        <div class="feedback-form">
+            <input type="text" id="fb-parent-name" placeholder="Tên phụ huynh...">
+            <input type="text" id="fb-phone" placeholder="Số điện thoại...">
+            <textarea id="fb-content" placeholder="Nhập nội dung góp ý..."></textarea>
+            <button class="feedback-submit" onclick="submitFeedbackToTelegram()">Gửi góp ý</button>
+        </div>
+        <div id="feedback-msg" class="feedback-msg"></div>
+    </div>
+</div>
+
+<iframe name="telegramFeedbackTarget" class="hidden-iframe"></iframe>
+<button class="feedback-fab" onclick="openFeedbackModal()">💬 Góp ý</button>
 
 <div class="container">
     <div class="sidebar" id="grade-menu"></div>
@@ -541,8 +600,104 @@ function closeDonateModal(){
 }
 window.addEventListener('click', function(event){
     const modal = document.getElementById('donateModal');
+    const feedbackModal = document.getElementById('feedbackModal');
     if(event.target === modal) closeDonateModal();
+    if(event.target === feedbackModal) closeFeedbackModal();
 });
+
+
+const kidUsername = localStorage.getItem('kidUsername') || "";
+const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
+const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
+
+function openFeedbackModal(){
+    const el = document.getElementById('feedbackModal');
+    if(el) el.style.display = 'flex';
+}
+function closeFeedbackModal(){
+    const el = document.getElementById('feedbackModal');
+    if(el) el.style.display = 'none';
+}
+
+function submitFeedbackToTelegram() {
+    const parentName = document.getElementById('fb-parent-name').value.trim();
+    const phone = document.getElementById('fb-phone').value.trim();
+    const content = document.getElementById('fb-content').value.trim();
+    const box = document.getElementById('feedback-msg');
+
+    if (!parentName || !phone || !content) {
+        box.style.display = 'block';
+        box.style.background = '#ffebee';
+        box.style.color = '#c62828';
+        box.innerText = 'Phụ huynh vui lòng nhập đầy đủ thông tin góp ý.';
+        return;
+    }
+
+    if (
+        !TELEGRAM_BOT_TOKEN ||
+        TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' ||
+        !TELEGRAM_CHAT_ID ||
+        TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID'
+    ) {
+        box.style.display = 'block';
+        box.style.background = '#fff8e1';
+        box.style.color = '#e65100';
+        box.innerText = 'Chưa cấu hình TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID.';
+        return;
+    }
+
+    const message = [
+        '💬 GÓP Ý MỚI TỪ TRANG TIẾNG VIỆT',
+        '',
+        `👨‍👩‍👧 Phụ huynh: ${parentName}`,
+        `📞 SĐT: ${phone}`,
+        `👶 Bé: ${kidName || ''}`,
+        `🆔 Username: ${kidUsername}`,
+        '🌐 Trang: tiengviet.html',
+        '',
+        '📝 Nội dung góp ý:',
+        content
+    ].join('\n');
+
+    try {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        form.target = 'telegramFeedbackTarget';
+        form.style.display = 'none';
+
+        const chatIdInput = document.createElement('input');
+        chatIdInput.name = 'chat_id';
+        chatIdInput.value = TELEGRAM_CHAT_ID;
+
+        const textInput = document.createElement('textarea');
+        textInput.name = 'text';
+        textInput.value = message;
+        textInput.style.display = 'none';
+
+        form.appendChild(chatIdInput);
+        form.appendChild(textInput);
+        document.body.appendChild(form);
+        form.submit();
+        setTimeout(() => form.remove(), 1000);
+
+        box.style.display = 'block';
+        box.style.background = '#e8f5e9';
+        box.style.color = '#2e7d32';
+        box.innerText = 'Đã gửi góp ý.';
+
+        document.getElementById('fb-parent-name').value = '';
+        document.getElementById('fb-phone').value = '';
+        document.getElementById('fb-content').value = '';
+    } catch (e) {
+        box.style.display = 'block';
+        box.style.background = '#ffebee';
+        box.style.color = '#c62828';
+        box.innerText = 'Có lỗi khi gửi góp ý tới Telegram: ' + e.message;
+        console.log(e);
+    }
+}
+
 
 window.onload = () => {
     document.getElementById('display-name').innerText = kidName;
