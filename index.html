@@ -9,30 +9,49 @@
     <style>
         :root {
             --primary: #e91e63;
+            --primary-dark: #ad1457;
             --blue: #2196F3;
+            --blue-dark: #1976d2;
+            --green: #4CAF50;
+            --green-dark: #2e7d32;
             --orange: #ff9800;
+            --orange-dark: #ef6c00;
             --purple: #9c27b0;
+            --purple-dark: #7b1fa2;
             --yellow: #ffeb3b;
             --bg: #e0f7fa;
+            --card: #ffffff;
+            --text: #37474f;
+            --muted: #607d8b;
+            --line: #e7eef5;
+            --shadow: 0 10px 28px rgba(0,0,0,.08);
         }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 0;
         }
 
         .top-header {
-            background: transparent;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(224,247,250,.95), rgba(224,247,250,.72));
+            backdrop-filter: blur(6px);
             padding: 10px 12px 0;
         }
 
         .header-shell {
-            width: min(1000px, 92%);
+            width: min(1180px, 94%);
             margin: 0 auto;
             background: linear-gradient(135deg, #fff59d, #ffe082);
-            padding: 10px 14px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -46,42 +65,67 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            min-width: 0;
         }
 
         .header-info {
-            font-weight: bold;
-            color: #333;
+            min-height: 50px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
+            padding: 10px 18px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.55);
+            border: 2px solid rgba(255,255,255,.62);
+            font-weight: 900;
+            color: #6d4c41;
+            white-space: nowrap;
         }
 
         .auth-zone {
             display: flex;
             align-items: center;
-            gap: 8px;
-            position: relative;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-status-badge{
+            min-height: 50px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            padding:12px 20px;
+            border-radius:22px;
+            background:#fff8e1;
+            border:3px solid rgba(255,255,255,.7);
+            color:#ad1457;
+            font-weight:900;
+            font-size:16px;
+            white-space:nowrap;
         }
 
         .btn-auth {
-            padding: 7px 12px;
-            border-radius: 12px;
+            min-height: 44px;
+            padding: 10px 16px;
+            border-radius: 14px;
             border: none;
             color: white;
-            font-weight: bold;
+            font-weight: 800;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             transition: 0.2s;
+            white-space: nowrap;
         }
 
-        .btn-reg { background: var(--blue); }
-        .btn-login { background: #4CAF50; }
-        .btn-out { background: #f44336; }
+        .btn-reg { background: var(--blue); box-shadow: 0 5px var(--blue-dark); }
+        .btn-login { background: var(--green); box-shadow: 0 5px var(--green-dark); }
+        .btn-out { background: var(--primary); box-shadow: 0 5px var(--primary-dark); }
 
         .btn-auth:hover {
-            opacity: 0.95;
-            transform: scale(1.04);
+            opacity: 0.96;
+            transform: translateY(-1px);
         }
 
         .donate-btn {
@@ -92,13 +136,13 @@
             color: #fff;
             font-size: 15px;
             font-weight: 800;
-            box-shadow: 0 8px 18px rgba(233,30,99,.30);
+            box-shadow: 0 8px 18px rgba(233,30,99,.24);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             padding: 11px 16px;
-            min-height: 46px;
+            min-height: 50px;
             position: relative;
         }
 
@@ -123,6 +167,7 @@
             align-items: center;
             justify-content: center;
             font-size: 16px;
+            flex: 0 0 26px;
         }
 
         .donate-text-strong {
@@ -130,6 +175,7 @@
             flex-direction: column;
             align-items: flex-start;
             line-height: 1.1;
+            text-align: left;
         }
 
         .donate-text-strong small {
@@ -138,101 +184,303 @@
             opacity: .92;
         }
 
-        .nav-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            padding: 20px;
-            flex-wrap: wrap;
+        .page-shell {
+            width: min(1180px, 94%);
+            margin: 16px auto 34px;
         }
 
-        .btn-nav {
-            padding: 12px 25px;
-            border-radius: 30px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 5px rgba(0,0,0,0.1);
-            transition: 0.2s;
-            cursor: pointer;
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.95fr;
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: stretch;
         }
 
-        .bg-pink { background: var(--primary); }
-        .bg-blue { background: var(--blue); }
-        .bg-orange { background: var(--orange); }
-        .bg-purple { background: var(--purple); }
+        .main-card,
+        .auth-card,
+        .menu-card,
+        .board-card,
+        .feature-card {
+            background: var(--card);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+        }
 
-        .main-box {
-            background: white;
-            margin: 0 auto 30px;
-            width: 92%;
-            max-width: 1000px;
-            border-radius: 30px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        .main-card {
+            padding: 24px 22px 18px;
+            min-height: 312px;
             display: flex;
-            flex-direction: column;
             align-items: center;
         }
 
         .welcome-section {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 10px;
-            width: 100%;
-            justify-content: center;
+            display: block;
         }
 
-        .welcome-img { width: 220px; }
+        .welcome-img {
+            display: none;
+        }
 
         .welcome-text h2 {
             color: var(--primary);
+            margin: 0 0 14px;
+            font-size: 38px;
+            line-height: 1.18;
+            font-weight: 900;
+            letter-spacing: -0.3px;
+        }
+
+        .welcome-note {
+            background: #fffdf5;
+            padding: 16px 18px;
+            border-radius: 22px;
+            font-weight: 800;
+            font-size: 14px;
+            line-height: 1.9;
+            color: #546e7a;
+            border: 1.5px dashed #ffd54f;
+            box-shadow: none;
+        }
+
+        .welcome-note .title {
+            font-size: 18px;
+            color: #d81b60;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+
+        .welcome-note .sub-box {
+            margin-top: 10px;
+            background: rgba(255,255,255,0.55);
+            padding: 10px 12px;
+            border-radius: 16px;
+        }
+
+        .auth-card {
+            padding: 22px 22px 18px;
+            min-height: 312px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .auth-title {
+            margin: 0 0 4px;
+            font-size: 22px;
+            color: var(--blue-dark);
+            font-weight: 900;
+        }
+
+        .auth-sub {
+            margin: 0 0 6px;
+            font-size: 14px;
+            color: #607d8b;
+            line-height: 1.8;
+            font-weight: 700;
+        }
+
+        .auth-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            align-items: center;
+            margin-top: 2px;
+        }
+
+        .auth-row input {
+            min-height: 52px;
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--line);
+            border-radius: 18px;
+            outline: none;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .auth-row input:focus,
+        .modal-form input:focus,
+        .feedback-form input:focus,
+        .feedback-form textarea:focus {
+            border-color: var(--blue);
+        }
+
+        .auth-alert {
+            display: none;
+            background: #fff8e1;
+            color: #e65100;
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .user-logged-box {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: nowrap;
+            background: #fff8e1;
+            border: 2px dashed #ffd54f;
+            border-radius: 20px;
+            padding: 12px 14px;
+            margin-top: 4px;
+        }
+
+        .user-logged-text {
+            font-weight: 900;
+            color: #c2185b;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        .nav-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .btn-nav {
+            padding: 16px;
+            border-radius: 24px;
+            text-decoration: none;
+            color: white;
+            box-shadow: 0 8px 18px rgba(0,0,0,.12);
+            transition: 0.2s;
+            cursor: pointer;
+            min-height: 122px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .btn-nav:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-nav .icon { font-size: 30px; }
+        .btn-nav .name { font-size: 20px; font-weight: 900; }
+        .btn-nav .desc { font-size: 13px; line-height: 1.6; font-weight: 700; opacity: .96; }
+
+        .bg-pink { background: linear-gradient(135deg, #f06292, #e91e63); }
+        .bg-blue { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+        .bg-orange { background: linear-gradient(135deg, #ffb74d, #fb8c00); }
+        .bg-purple { background: linear-gradient(135deg, #ba68c8, #8e24aa); }
+        .bg-green { background: linear-gradient(135deg, #66bb6a, #43a047); }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card {
+            padding: 18px;
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            background: #f5fbff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
             margin-bottom: 10px;
         }
 
+        .feature-card h3 {
+            margin: 0 0 8px;
+            color: var(--blue-dark);
+            font-size: 18px;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
         .leaderboard-row {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            margin-top: 20px;
-            border-top: 2px dashed #eee;
-            padding-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
         }
 
         .board-card {
-            flex: 1;
+            padding: 18px;
             background: #fffde7;
-            border-radius: 20px;
-            padding: 15px;
             border: 2px solid #fff59d;
-            min-height: 150px;
+        }
+
+        .board-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .board-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            text-align: center;
+            margin: 0;
+            font-size: 20px;
             color: #d84315;
+        }
+
+        .board-tag {
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: white;
+            color: #ef6c00;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .rank-list {
+            display: grid;
+            gap: 10px;
         }
 
         .rank-item {
             display: flex;
             justify-content: space-between;
-            padding: 6px 10px;
-            border-bottom: 1px solid #fff;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.72);
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 900;
+            border: 1px solid #fff3c4;
+        }
+
+        .rank-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .rank-left span:last-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .modal-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.45);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 9999;
@@ -247,6 +495,8 @@
             padding: 22px 18px 18px;
             position: relative;
             box-shadow: 0 14px 40px rgba(0,0,0,0.2);
+            max-height: min(88vh, 760px);
+            overflow: auto;
         }
 
         .modal-card h3 {
@@ -256,27 +506,44 @@
             font-size: 28px;
         }
 
-        .modal-form {
+        .modal-form,
+        .feedback-form {
             display: grid;
             gap: 10px;
         }
 
-        .modal-form input {
+        .modal-form input,
+        .feedback-form input,
+        .feedback-form textarea {
             padding: 11px 12px;
             border-radius: 16px;
             border: 2px solid #e7eef5;
             outline: none;
             font-size: 15px;
-        }
-
-        .modal-form input:focus {
-            border-color: #2196F3;
-        }
-
-        .modal-form .btn-auth {
             width: 100%;
-            min-height: 44px;
+        }
+
+        .feedback-form textarea {
+            min-height: 110px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .modal-form .btn-auth,
+        .feedback-submit {
+            width: 100%;
+            min-height: 46px;
             font-size: 14px;
+        }
+
+        .feedback-submit {
+            border: none;
+            border-radius: 16px;
+            background: var(--purple);
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px var(--purple-dark);
         }
 
         .modal-close {
@@ -300,19 +567,29 @@
             padding: 10px 12px;
             font-size: 13px;
             line-height: 1.6;
-            font-weight: bold;
+            font-weight: 700;
             color: #6d4c41;
         }
 
-        .modal-error {
+        .modal-error,
+        .feedback-msg {
             margin-top: 10px;
-            background: #ffcdd2;
-            color: #c62828;
             border-radius: 12px;
             padding: 8px 10px;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 800;
             text-align: center;
+            display: none;
+        }
+
+        .modal-error {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .feedback-msg {
+            background: #ffebee;
+            color: #c62828;
         }
 
         .auth-choice-box {
@@ -330,23 +607,25 @@
             border-radius: 16px;
         }
 
-        .auth-required-hero {
+        .auth-required-hero,
+        .donate-hero,
+        .modal-hero {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 90px;
-            height: 90px;
+            width: 88px;
+            height: 88px;
             margin: 0 auto 14px;
             border-radius: 24px;
             background: linear-gradient(135deg, #fff8e1, #ffe0f0);
             border: 2px solid #ffe082;
-            font-size: 44px;
+            font-size: 42px;
         }
 
         .auth-required-title {
             text-align: center;
             color: #8e24aa;
-            font-weight: 800;
+            font-weight: 900;
             font-size: 28px;
             margin-bottom: 10px;
         }
@@ -362,19 +641,6 @@
         }
 
         .auth-required-text b { color: #e65100; }
-
-        .donate-hero {
-            width: 88px;
-            height: 88px;
-            border-radius: 24px;
-            margin: 0 auto 12px;
-            background: linear-gradient(135deg,#fff0f6,#fff8e1);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:42px;
-            border:2px solid #ffd1e1;
-        }
 
         .qr-wrap {
             background: linear-gradient(135deg,#fdfdfd,#f7fbff);
@@ -402,48 +668,105 @@
             line-height: 1.7;
         }
 
+        .feedback-fab {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 2500;
+            border: none;
+            background: linear-gradient(135deg, #7c4dff, #512da8);
+            color: white;
+            border-radius: 999px;
+            padding: 13px 18px;
+            font-size: 15px;
+            font-weight: 800;
+            box-shadow: 0 10px 22px rgba(81,45,168,.28);
+            cursor: pointer;
+        }
+
+        .hidden-iframe {
+            display: none;
+            width: 0;
+            height: 0;
+            border: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+            .nav-container { grid-template-columns: repeat(2, 1fr); }
+        }
+
         @media (max-width: 768px) {
             .top-header { padding: 8px 8px 0; }
+
             .header-shell {
                 width: calc(100% - 4px);
                 padding: 10px;
                 flex-direction: column;
                 align-items: stretch;
             }
+
             .header-left, .header-right {
                 width: 100%;
                 justify-content: center;
                 flex-wrap: wrap;
             }
-            .header-info { justify-content: center; text-align: center; }
-            .auth-zone { width: 100%; justify-content: center; }
-            #auth-actions { width: 100%; justify-content: center; }
-            .btn-auth { min-height: 42px; }
-            .donate-btn { width: 100%; justify-content: center; }
+
+            .header-info,
+            .donate-btn,
+            .header-status-badge {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+
             .donate-text-strong { align-items: center; }
-            .nav-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
+            .auth-zone, #auth-actions, #user-logged { width: 100%; justify-content: center; }
+
+            .page-shell {
+                width: calc(100% - 12px);
+                margin: 12px auto 28px;
+            }
+
+            .main-card,
+            .auth-card,
+            .menu-card,
+            .board-card,
+            .feature-card {
+                border-radius: 24px;
                 padding: 14px 12px;
             }
-            .btn-nav { justify-content: center; text-align: center; }
-            .welcome-section { flex-direction: column; text-align: center; }
-            .leaderboard-row { flex-direction: column; }
-            #user-logged {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            #user-logged span { text-align: center; }
-        }
 
-        @media (max-width: 430px) {
-            .nav-container { grid-template-columns: 1fr; }
+            .welcome-section {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 14px;
+            }
+
+            .welcome-text h2 { font-size: 26px; line-height: 1.24; }
+            .main-card, .auth-card { min-height: auto; }
+            .auth-row { grid-template-columns: 1fr; }
+            .btn-auth { min-height: 44px; }
+
+            .nav-container { grid-template-columns: 1fr; gap: 10px; }
+            .btn-nav { min-height: 108px; }
+
+            .feature-grid { grid-template-columns: 1fr; }
+            .leaderboard-row { grid-template-columns: 1fr; }
+
             .modal-card { padding: 20px 14px 16px; border-radius: 20px; }
             .modal-card h3 { font-size: 24px; }
             .auth-choice-box { flex-direction: column; }
             .auth-required-title { font-size: 24px; }
-            .auth-required-hero { width: 78px; height: 78px; font-size: 38px; }
+            .auth-required-hero, .donate-hero, .modal-hero { width: 78px; height: 78px; font-size: 38px; }
+
+            .feedback-fab {
+                right: 12px;
+                bottom: 12px;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -452,11 +775,11 @@
     <div class="top-header">
         <div class="header-shell">
             <div class="header-left">
-                <div class="header-info">🏠 THẾ GIỚI HỌC TẬP CỦA BÉ</div>
+                <div class="header-info">🌈 THẾ GIỚI HỌC TẬP CỦA BÉ</div>
                 <button class="donate-btn" onclick="openDonateModal()">
                     <span class="donate-heart">💝</span>
                     <span class="donate-text-strong">
-                        Ủng hộ phát triển
+                        <strong>Ủng hộ phát triển</strong>
                         <small>Quét QR để tiếp sức cho trang học của bé</small>
                     </span>
                 </button>
@@ -464,31 +787,13 @@
 
             <div class="header-right">
                 <div class="auth-zone">
-                    <div id="auth-actions" style="display: flex; gap: 8px; align-items: center;">
-                        <button class="btn-auth btn-reg" onclick="openModal('registerModal')">Đăng Ký</button>
-                        <button class="btn-auth btn-login" onclick="openModal('loginModal')">Đăng Nhập</button>
-                    </div>
-
-                    <div id="user-logged" style="display: none; align-items: center; gap: 10px;">
-                        <span style="font-weight: bold; color: #c2185b;">Chào mừng bé: <span id="display-name" style="color: #1976D2;"></span>! ✨</span>
-                        <button class="btn-auth btn-out" onclick="logout()">Thoát</button>
-                    </div>
+                    <div id="header-status" class="header-status-badge">👋 Bé chưa đăng nhập</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="nav-container">
-        
-        <a href="toan.html" class="btn-nav bg-blue" onclick="return checkLogin()">🔢 Toán Học</a>
-        <a href="tiengviet.html" class="btn-nav bg-orange" onclick="return checkLogin()">📖 Tiếng Việt</a>
-        <a href="TA.html" class="btn-nav bg-purple" onclick="return checkLogin()">🔤 Tiếng Anh</a>
-        <a href="EQ.html" class="btn-nav bg-pink" onclick="return checkLogin()">💖 EQ</a>
-        <a href="IQ.html" class="btn-nav bg-blue" onclick="return checkLogin()">🧠 IQ</a>
-        <a href="baocao.html" class="btn-nav bg-purple" onclick="return checkLogin()">📊 Báo cáo</a>
-    </div>
-
-    <div id="registerModal" class="modal-overlay" style="display:none;">
+    <div id="registerModal" class="modal-overlay">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal('registerModal')">×</button>
             <h3>📝 Đăng Ký</h3>
@@ -503,11 +808,11 @@
                 Username: viết liền, không dấu, không khoảng trắng.<br>
                 Mật khẩu: ít nhất 8 ký tự và có 1 ký tự đặc biệt.
             </div>
-            <div id="error-msg-register" class="modal-error" style="display:none;"></div>
+            <div id="error-msg-register" class="modal-error"></div>
         </div>
     </div>
 
-    <div id="loginModal" class="modal-overlay" style="display:none;">
+    <div id="loginModal" class="modal-overlay">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal('loginModal')">×</button>
             <h3>🔐 Đăng Nhập</h3>
@@ -516,18 +821,18 @@
                 <input type="password" id="login-password" placeholder="Mật khẩu...">
                 <button class="btn-auth btn-login" onclick="handleAuth('login')">Vào học ngay</button>
             </div>
-            <div id="error-msg-login" class="modal-error" style="display:none;"></div>
+            <div id="error-msg-login" class="modal-error"></div>
         </div>
     </div>
 
-    <div id="authRequiredModal" class="modal-overlay" style="display:none;">
+    <div id="authRequiredModal" class="modal-overlay">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal('authRequiredModal')">×</button>
             <div class="auth-required-hero">🔐</div>
             <div class="auth-required-title">Bé cần đăng nhập</div>
             <div class="auth-required-text">
                 Nếu bé <b>đã có tài khoản</b> thì chọn <b>Đăng nhập</b> nhé.<br>
-                Nếu bé <b>chưa có tài khoản</b> thì chọn <b>Đăng ký</b> để cô/chú tạo tài khoản cho bé.
+                Nếu bé <b>chưa có tài khoản</b> thì chọn <b>Đăng ký</b> để tạo tài khoản cho bé.
             </div>
             <div class="auth-choice-box">
                 <button class="btn-auth btn-reg" onclick="openAuthFromRequired('register')">📝 Đăng Ký</button>
@@ -536,7 +841,7 @@
         </div>
     </div>
 
-    <div id="donateModal" class="modal-overlay" style="display:none;">
+    <div id="donateModal" class="modal-overlay">
         <div class="modal-card">
             <button class="modal-close" onclick="closeDonateModal()">×</button>
             <div class="donate-hero">💝</div>
@@ -554,33 +859,127 @@
         </div>
     </div>
 
-    <div class="main-box">
-        <div class="welcome-section">
-            <img src="https://i.ibb.co/wNgDKjCL/anh2.png" class="welcome-img">
-            <div class="welcome-text">
-                <h2>Chào mừng bé yêu đến với Thế Giới Học Tập!</h2>
-                <div style="background: linear-gradient(135deg, #fff9c4, #fff3e0); padding: 18px; border-radius: 22px; font-weight: bold; font-size: 14px; line-height: 1.8; color: #5d4037; border: 2px dashed #ffd54f; box-shadow: 0 6px 16px rgba(255, 193, 7, 0.15);">
-                    <div style="font-size: 18px; color: #d81b60; margin-bottom: 10px;">💛 Gửi bố mẹ và bé yêu</div>
-                    Mỗi em bé đều có một cách tiếp thu riêng, và điều quan trọng nhất là con được học trong cảm giác <b>vui vẻ, tự tin và được khích lệ mỗi ngày</b>.<br>
-                    Website này được tạo ra để giúp bé làm quen và luyện tập <b>Toán, Tiếng Việt, Tiếng Anh, EQ và IQ</b> theo cách nhẹ nhàng, dễ hiểu, sinh động và phù hợp với lứa tuổi.<br>
-                    Khi tham gia học đều đặn, bé sẽ có thêm cơ hội rèn <b>tư duy, sự tập trung, thói quen tự học</b> và mạnh dạn hơn khi làm bài.<br>
-                    Bố mẹ cũng có thể đồng hành cùng con dễ hơn vì hệ thống có lưu kết quả, giúp theo dõi quá trình tiến bộ của bé qua từng bài học.<br>
-                    <div style="margin-top: 10px; background: rgba(255,255,255,0.55); padding: 10px 12px; border-radius: 16px;">
-                        Nếu <b>bé chưa có tài khoản</b>, bố mẹ hãy chọn <b>Đăng ký</b> để tạo tài khoản cho con nhé.<br>
-                        Nếu <b>bé đã có tài khoản</b>, chỉ cần chọn <b>Đăng nhập</b> để bắt đầu làm bài và lưu lại kết quả học tập.
+    <div id="feedbackModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeFeedbackModal()">×</button>
+            <div class="modal-hero" style="background:linear-gradient(135deg,#eef4ff,#f3e5f5);border-color:#c5cae9;">💬</div>
+            <h3>Góp ý cho trang chủ</h3>
+            <div class="auth-required-text">
+                Phụ huynh có thể gửi góp ý, lỗi hiển thị hoặc đề xuất thêm nội dung để website ngày càng tốt hơn.
+            </div>
+            <div class="feedback-form">
+                <input type="text" id="fb-parent-name" placeholder="Tên phụ huynh...">
+                <input type="text" id="fb-phone" placeholder="Số điện thoại...">
+                <textarea id="fb-content" placeholder="Nhập nội dung góp ý..."></textarea>
+                <button class="feedback-submit" onclick="submitFeedbackToTelegram()">Gửi góp ý</button>
+            </div>
+            <div id="feedback-msg" class="feedback-msg"></div>
+        </div>
+    </div>
+
+    <iframe name="telegramFeedbackTarget" class="hidden-iframe"></iframe>
+    <button class="feedback-fab" onclick="openFeedbackModal()">💬 Góp ý</button>
+
+    <div class="page-shell">
+        <div class="hero-grid">
+            <div class="main-card">
+                <div class="welcome-text">
+                    <h2>🎓 Học vui mỗi ngày, bố mẹ theo dõi dễ dàng</h2>
+                    <p style="margin:0 0 16px; line-height:1.75; font-weight:800; color:#546e7a; font-size:15px;">
+                        Website giúp bé luyện <b>Toán</b>, <b>Tiếng Việt</b>, <b>Tiếng Anh</b> và rèn thêm <b>EQ/IQ</b> theo từng độ tuổi.
+                        Mỗi bài ngắn gọn, dễ tập trung và có lưu kết quả để phụ huynh xem lại.
+                    </p>
+                    <div class="welcome-note">
+                        Nếu <b>bé đã có tài khoản</b>, bố mẹ hãy cho con <b>Đăng nhập</b> để tiếp tục học.
+                        Nếu chưa có, chỉ cần nhập tên bé và bấm <b>Đăng ký</b> để bắt đầu.
                     </div>
                 </div>
+            </div>
+
+            <div class="auth-card">
+                <h2 class="auth-title">🔐 Bắt đầu học tập</h2>
+                <p class="auth-sub">Mỗi bé dùng một tên tài khoản riêng để lưu kết quả và xem báo cáo tiến bộ sau này.</p>
+
+                <div id="quick-auth" class="auth-row">
+                    <input type="text" id="quick-name" placeholder="Nhập tên bé để bắt đầu...">
+                    <button class="btn-auth btn-reg" onclick="openQuickRegister()">Đăng Ký</button>
+                    <button class="btn-auth btn-login" onclick="openQuickLogin()">Đăng Nhập</button>
+                </div>
+
+                <div id="auth-alert" class="auth-alert"></div>
+
+                <div id="quick-user-logged" class="user-logged-box" style="display:none;">
+                    <span class="user-logged-text">✨ Chào mừng bé: <span id="display-name-quick" style="color:#1976D2;"></span></span>
+                    <button class="btn-auth btn-out" onclick="logout()">Thoát</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-container">
+            <a href="toan.html" class="btn-nav bg-blue" onclick="return checkLogin()">
+                <div class="icon">🔢</div>
+                <div class="name">Toán Học</div>
+                <div class="desc">Luyện bài ngắn gọn, dễ thao tác trên điện thoại và tablet.</div>
+            </a>
+            <a href="tiengviet.html" class="btn-nav bg-orange" onclick="return checkLogin()">
+                <div class="icon">📖</div>
+                <div class="name">Tiếng Việt</div>
+                <div class="desc">Ôn âm, vần, từ ngữ và câu theo từng lớp.</div>
+            </a>
+            <a href="TA.html" class="btn-nav bg-purple" onclick="return checkLogin()">
+                <div class="icon">🔤</div>
+                <div class="name">Tiếng Anh</div>
+                <div class="desc">Bài tập theo chủ đề, ngắn gọn và rõ ràng.</div>
+            </a>
+            <a href="EQ.html" class="btn-nav bg-pink" onclick="return checkLogin()">
+                <div class="icon">💖</div>
+                <div class="name">EQ</div>
+                <div class="desc">Rèn nhận biết cảm xúc, ứng xử và thói quen tốt.</div>
+            </a>
+            <a href="IQ.html" class="btn-nav bg-green" onclick="return checkLogin()">
+                <div class="icon">🧠</div>
+                <div class="name">IQ</div>
+                <div class="desc">Tư duy logic, quan sát, ghi nhớ theo độ tuổi.</div>
+            </a>
+            <a href="baocao.html" class="btn-nav bg-purple" onclick="return checkLogin()">
+                <div class="icon">📊</div>
+                <div class="name">Báo cáo</div>
+                <div class="desc">Theo dõi kết quả, tiến bộ và phần cần luyện thêm.</div>
+            </a>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⏱️</div>
+                <h3>Bài ngắn, dễ tập trung</h3>
+                <p>Mỗi lượt học được chia thành chặng ngắn để bé không mệt và dễ duy trì thói quen học mỗi ngày.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Có lưu kết quả</h3>
+                <p>Kết quả được lưu theo tài khoản để phụ huynh xem lại và đồng hành cùng con dễ hơn.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💖</div>
+                <h3>Giao diện thân thiện</h3>
+                <p>Màu sắc vui mắt, nút bấm rõ ràng và phù hợp hơn khi dùng trên điện thoại hoặc tablet.</p>
             </div>
         </div>
 
         <div class="leaderboard-row">
             <div class="board-card">
-                <h3>🏆 BẢNG VÀNG HÔM NAY</h3>
-                <div id="top-day">Đang tải...</div>
+                <div class="board-head">
+                    <h3>🏆 BẢNG VÀNG HÔM NAY</h3>
+                    <div class="board-tag">24 giờ gần nhất</div>
+                </div>
+                <div id="top-day" class="rank-list"><div class="rank-item"><span>Đang tải...</span></div></div>
             </div>
             <div class="board-card">
-                <h3>👑 NGÔI SAO CỦA THÁNG</h3>
-                <div id="top-month">Đang tải...</div>
+                <div class="board-head">
+                    <h3>👑 NGÔI SAO CỦA THÁNG</h3>
+                    <div class="board-tag">30 ngày gần nhất</div>
+                </div>
+                <div id="top-month" class="rank-list"><div class="rank-item"><span>Đang tải...</span></div></div>
             </div>
         </div>
     </div>
@@ -598,9 +997,8 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // THAY 2 GIÁ TRỊ DƯỚI ĐÂY BẰNG TELEGRAM THẬT
-        const TELEGRAM_BOT_TOKEN = "8692523139:AAEV1A1lA5xO1bUfnBY7Gj3KKODBIjArHNI";
-        const TELEGRAM_CHAT_ID = "567048046";
+        const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
+        const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
 
         function openDonateModal() {
             const el = document.getElementById('donateModal');
@@ -627,6 +1025,8 @@
             const phone = document.getElementById('fb-phone').value.trim();
             const content = document.getElementById('fb-content').value.trim();
             const box = document.getElementById('feedback-msg');
+            const kidName = localStorage.getItem('kidName') || '';
+            const kidUsername = localStorage.getItem('kidUsername') || '';
 
             if (!parentName || !phone || !content) {
                 box.style.display = 'block';
@@ -650,13 +1050,13 @@
             }
 
             const message = [
-                '💬 GÓP Ý MỚI TỪ TRANG TOÁN',
+                '💬 GÓP Ý MỚI TỪ TRANG CHỦ',
                 '',
                 `👨‍👩‍👧 Phụ huynh: ${parentName}`,
                 `📞 SĐT: ${phone}`,
                 `👶 Bé: ${kidName}`,
                 `🆔 Username: ${kidUsername}`,
-                '🌐 Trang: toan.html',
+                '🌐 Trang: index.html',
                 '',
                 '📝 Nội dung góp ý:',
                 content
@@ -687,7 +1087,7 @@
                 box.style.display = 'block';
                 box.style.background = '#e8f5e9';
                 box.style.color = '#2e7d32';
-                box.innerText = 'Đã gửi góp ý thành công, cám ơn bạn đã chia sẽ thông tin.';
+                box.innerText = 'Đã gửi góp ý thành công, cảm ơn phụ huynh!';
 
                 document.getElementById('fb-parent-name').value = '';
                 document.getElementById('fb-phone').value = '';
@@ -697,18 +1097,45 @@
                 box.style.background = '#ffebee';
                 box.style.color = '#c62828';
                 box.innerText = 'Có lỗi khi gửi góp ý tới Telegram: ' + e.message;
-                console.log(e);
             }
         }
+
+        function showQuickAlert(msg){
+            const el = document.getElementById('auth-alert');
+            el.innerText = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        function updateAuthCardUI(name) {
+            const title = document.getElementById('auth-card-title');
+            const sub = document.getElementById('auth-card-sub');
+            const quickAuth = document.getElementById('quick-auth');
+            const quickLogged = document.getElementById('quick-user-logged');
+            const quickName = document.getElementById('display-name-quick');
+            const headerStatus = document.getElementById('header-status');
+
+            if (name && name.trim() !== '') {
+                title.innerText = '✨ Bé đã sẵn sàng học tập';
+                sub.innerText = 'Bé đã đăng nhập rồi. Bố mẹ có thể cho con vào học ngay và hệ thống sẽ tiếp tục lưu kết quả, báo cáo tiến bộ của bé.';
+                quickAuth.style.display = 'none';
+                quickLogged.style.display = 'flex';
+                quickName.innerText = name;
+                headerStatus.innerHTML = `✨ Bé đang đăng nhập: <span style="color:#1976D2">${name}</span>`;
+            } else {
+                title.innerText = '🔐 Bắt đầu học tập';
+                sub.innerText = 'Đây là khu vực chính để bố mẹ đăng ký hoặc đăng nhập cho bé. Sau khi vào tài khoản, hệ thống sẽ lưu kết quả và báo cáo tiến bộ của con.';
+                quickAuth.style.display = 'grid';
+                quickLogged.style.display = 'none';
+                headerStatus.innerHTML = '👋 Bé chưa đăng nhập';
+            }
+        }
+
         function checkState() {
             const name = localStorage.getItem('kidName');
             const username = localStorage.getItem('kidUsername');
 
-            if (name) {
-                document.getElementById('auth-actions').style.display = 'none';
-                document.getElementById('user-logged').style.display = 'flex';
-                document.getElementById('display-name').innerText = name;
-            }
+            updateAuthCardUI(name || '');
 
             if (username) {
                 database.ref('users/' + username).once('value').then(snapshot => {
@@ -716,7 +1143,7 @@
                         const user = snapshot.val();
                         if (user.kidName) {
                             localStorage.setItem('kidName', user.kidName);
-                            document.getElementById('display-name').innerText = user.kidName;
+                            updateAuthCardUI(user.kidName);
                         }
                     }
                 }).catch(() => {});
@@ -743,16 +1170,6 @@
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
             clearErrors();
-        }
-
-        function openDonateModal() {
-            const el = document.getElementById('donateModal');
-            if (el) el.style.display = 'flex';
-        }
-
-        function closeDonateModal() {
-            const el = document.getElementById('donateModal');
-            if (el) el.style.display = 'none';
         }
 
         function openAuthFromRequired(mode) {
@@ -868,6 +1285,32 @@
             location.reload();
         }
 
+        function openQuickRegister(){
+            const quick = document.getElementById('quick-name').value.trim();
+            if (!quick) {
+                showQuickAlert('Bố mẹ hãy nhập tên bé trước nhé!');
+                return;
+            }
+            document.getElementById('reg-kidname').value = quick;
+            const slug = quick.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/g, '');
+            document.getElementById('reg-username').value = slug;
+            openModal('registerModal');
+        }
+
+        function openQuickLogin(){
+            const quick = document.getElementById('quick-name').value.trim();
+            if (!quick) {
+                showQuickAlert('Bố mẹ hãy nhập tên đăng nhập hoặc tên bé trước nhé!');
+                return;
+            }
+            document.getElementById('login-username').value = quick.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/g, '');
+            openModal('loginModal');
+        }
+
         function loadLeaderboard() {
             const mathRef = database.ref('results').once('value');
             const englishRef = database.ref('english_history').once('value');
@@ -877,34 +1320,43 @@
 
                 snapshots[0].forEach(c => {
                     let val = c.val();
-                    if (val.name && val.score) allData.push({ name: val.name, score: parseInt(val.score), time: val.time || 0 });
+                    if (val.name && val.score) {
+                        allData.push({ name: val.name, score: parseInt(val.score), time: val.time || 0 });
+                    }
                 });
 
                 snapshots[1].forEach(c => {
                     let val = c.val();
                     if (val.studentName && val.result) {
-                        let scoreValue = parseInt(val.result.split('/')[0]) || 0;
+                        let scoreValue = parseInt(String(val.result).split('/')[0]) || 0;
                         allData.push({ name: val.studentName, score: scoreValue, time: val.timestamp || 0 });
                     }
                 });
 
                 const now = Date.now();
+
                 const render = (period, elementId) => {
                     let filtered = allData.filter(r => (now - r.time) < period);
                     let best = {};
+
                     filtered.forEach(r => {
                         if (!best[r.name] || r.score > best[r.name]) best[r.name] = r.score;
                     });
 
-                    let sorted = Object.keys(best).map(n => ({ n, s: best[n] }))
-                                 .sort((a, b) => b.s - a.s).slice(0, 5);
+                    let sorted = Object.keys(best)
+                        .map(n => ({ n, s: best[n] }))
+                        .sort((a, b) => b.s - a.s)
+                        .slice(0, 5);
 
-                    let html = "";
-                    const m = ["🥇", "🥈", "🥉", "4", "5"];
-                    sorted.forEach((it, i) => {
-                        html += `<div class="rank-item"><span>${m[i]} ${it.n}</span><span style="color:#e91e63">${it.s}đ</span></div>`;
-                    });
-                    document.getElementById(elementId).innerHTML = html || "<div style='font-size:12px;color:#999;text-align:center;margin-top:20px;'>Chưa có dữ liệu</div>";
+                    const medals = ['🥇', '🥈', '🥉', '🏅', '⭐'];
+                    let html = sorted.map((it, i) => `
+                        <div class="rank-item">
+                            <div class="rank-left"><span>${medals[i]}</span><span>${it.n}</span></div>
+                            <div style="color:#e91e63">${it.s}đ</div>
+                        </div>
+                    `).join('');
+
+                    document.getElementById(elementId).innerHTML = html || "<div style='font-size:12px;color:#999;text-align:center;padding:12px;'>Chưa có dữ liệu</div>";
                 };
 
                 render(24*60*60*1000, 'top-day');
@@ -913,13 +1365,14 @@
         }
 
         window.onclick = function(event) {
-            ['registerModal', 'loginModal', 'authRequiredModal'].forEach(id => {
+            ['registerModal', 'loginModal', 'authRequiredModal', 'donateModal', 'feedbackModal'].forEach(id => {
                 const modal = document.getElementById(id);
-                if (event.target === modal) closeModal(id);
+                if (event.target === modal) {
+                    if (id === 'donateModal') closeDonateModal();
+                    else if (id === 'feedbackModal') closeFeedbackModal();
+                    else closeModal(id);
+                }
             });
-
-            const donateModal = document.getElementById('donateModal');
-            if (event.target === donateModal) closeDonateModal();
         };
 
         window.onload = checkState;
