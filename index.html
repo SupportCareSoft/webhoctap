@@ -289,6 +289,14 @@
             margin-top: 2px;
         }
 
+        .auth-row-simple{
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .auth-row-simple .btn-auth{
+            width:100%;
+        }
+
         .auth-row input {
             min-height: 52px;
             width: 100%;
@@ -900,13 +908,10 @@
                 <h2 class="auth-title">🔐 Bắt đầu học tập</h2>
                 <p class="auth-sub">Mỗi bé dùng một tên tài khoản riêng để lưu kết quả và xem báo cáo tiến bộ sau này.</p>
 
-                <div id="quick-auth" class="auth-row">
-                    <input type="text" id="quick-name" placeholder="Nhập tên bé để bắt đầu...">
-                    <button class="btn-auth btn-reg" onclick="openQuickRegister()">Đăng Ký</button>
-                    <button class="btn-auth btn-login" onclick="openQuickLogin()">Đăng Nhập</button>
+                <div id="quick-auth" class="auth-row auth-row-simple">
+                    <button class="btn-auth btn-reg" onclick="openModal('registerModal')">Đăng Ký</button>
+                    <button class="btn-auth btn-login" onclick="openModal('loginModal')">Đăng Nhập</button>
                 </div>
-
-                <div id="auth-alert" class="auth-alert"></div>
 
                 <div id="quick-user-logged" class="user-logged-box" style="display:none;">
                     <span class="user-logged-text">✨ Chào mừng bé: <span id="display-name-quick" style="color:#1976D2;"></span></span>
@@ -985,7 +990,7 @@
     </div>
 
     <script>
-        const firebaseConfig = {
+       const firebaseConfig = {
             apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
             authDomain: "bon-bi.firebaseapp.com",
             databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
@@ -1098,13 +1103,6 @@
                 box.style.color = '#c62828';
                 box.innerText = 'Có lỗi khi gửi góp ý tới Telegram: ' + e.message;
             }
-        }
-
-        function showQuickAlert(msg){
-            const el = document.getElementById('auth-alert');
-            el.innerText = msg;
-            el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 3000);
         }
 
         function updateAuthCardUI(name) {
