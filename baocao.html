@@ -9,12 +9,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root{
-      --pink:#e91e63; --blue:#2196f3; --orange:#ff9800; --purple:#9c27b0; --yellow:#ffeb3b;
-      --bg:#f4fbff; --card:#ffffff; --green:#2ecc71; --text:#37474f; --muted:#607d8b; --border:#e7eef5;
-      --red:#ef5350;
+      --primary:#e91e63; --blue:#2196f3; --orange:#ff9800; --purple:#9c27b0; --yellow:#ffeb3b;
+      --green:#2ecc71; --bg:#e0f7fa; --danger:#ef5350; --text:#37474f; --muted:#607d8b; --border:#e7eef5;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#eaf9ff,#fffdf7);color:var(--text)}
+    body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#333}
     .top-header{
       background:transparent;
       padding:10px 12px 0;
@@ -33,8 +32,8 @@
       box-shadow:0 8px 18px rgba(0,0,0,.06)
     }
     .header-left,.header-right{display:flex;align-items:center;gap:10px}
-    .btn-home{background:var(--pink);color:#fff;text-decoration:none;padding:10px 16px;border-radius:24px;font-weight:800;box-shadow:0 4px #c2185b}
-    .user{
+    .btn-home{background:var(--primary);color:#fff;text-decoration:none;padding:10px 18px;border-radius:24px;font-weight:700;box-shadow:0 4px #c2185b}
+    .user-logged{
       font-weight:800;color:#ad1457;background:rgba(255,255,255,.58);
       padding:10px 14px;border-radius:18px;border:2px solid rgba(255,255,255,.58);white-space:nowrap
     }
@@ -63,28 +62,41 @@
     }
     .qr-wrap img{width:220px;max-width:100%;border-radius:16px;background:#fff;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
     .qr-note{margin-top:10px;font-size:13px;color:#607d8b;font-weight:700;line-height:1.7}
+
     .wrap{width:min(1180px,94%);margin:18px auto 28px}
     .hero{
-      background:linear-gradient(135deg,#fff59d,#ffe082);border-radius:24px;padding:18px;
-      box-shadow:0 10px 25px rgba(0,0,0,.06);margin-bottom:16px
+      background:#fff;border-radius:30px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.05);margin-bottom:16px
     }
-    .hero h1{margin:0;color:#8e24aa;font-size:30px}
-    .hero p{margin:8px 0 0;color:#6d4c41;font-weight:700;line-height:1.7}
+    .hero-title{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap
+    }
+    .hero h1{margin:0;color:var(--purple);font-size:30px}
+    .hero-desc{
+      background:#f5faff;border-radius:16px;padding:12px;line-height:1.7;color:#455a64;margin-top:12px;font-weight:700
+    }
+    .kid-line{
+      margin-top:14px;background:linear-gradient(135deg,#fffef8,#eef8ff);border:2px dashed #ffe082;border-radius:20px;
+      padding:14px 16px;font-size:24px;font-weight:800;color:#263238
+    }
     .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
     .stat-card{
-      background:var(--card);border-radius:22px;padding:18px 16px;box-shadow:0 10px 25px rgba(0,0,0,.06);
-      border:2px solid #f3f6fb;
+      background:#fff;border-radius:22px;padding:18px 16px;box-shadow:0 10px 25px rgba(0,0,0,.06);border:2px solid #f3f6fb
     }
     .stat-card .icon{font-size:28px;margin-bottom:8px}
     .stat-card .label{font-size:13px;font-weight:800;color:var(--muted);margin-bottom:8px}
     .stat-card .value{font-size:28px;font-weight:900;color:#37474f}
     .stat-card .sub{margin-top:6px;font-size:13px;font-weight:700;color:#78909c}
-    .report-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+    .report-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
     .card{
-      background:var(--card);border-radius:24px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.06);
-      border:2px solid #f3f6fb;margin-bottom:16px;
+      background:#fff;border-radius:24px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.06);
+      border:2px solid #f3f6fb;margin-bottom:16px
     }
-    .card h2{margin:0 0 6px;color:#7b1fa2;font-size:22px}
+    .card h2{margin:0 0 10px;color:#7b1fa2;font-size:22px}
+    .chart-box{height:300px}
+    .subject-list{display:grid;gap:10px}
+    .subject-item{display:flex;justify-content:space-between;align-items:center;background:#fafcff;border-radius:16px;padding:12px 14px;border:1px solid #edf2f8}
+    .subject-item .left{font-weight:800}
+    .subject-item .right{font-size:13px;color:#607d8b;font-weight:700;text-align:right}
     .mini-table{width:100%;border-collapse:collapse}
     .mini-table th,.mini-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:14px;vertical-align:top}
     .mini-table th{color:#607d8b;font-size:13px}
@@ -93,58 +105,90 @@
     .warn{background:#fff8e1;color:#ef6c00}
     .tip{background:#f8fbff;border-radius:18px;padding:12px 14px;border:1px dashed #dce8f7;margin-bottom:10px}
     .tip strong{color:#d81b60}
-    .chart-box{height:300px}
-    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .subject-list{display:grid;gap:10px}
-    .subject-item{display:flex;justify-content:space-between;align-items:center;background:#fafcff;border-radius:16px;padding:12px 14px;border:1px solid #edf2f8}
-    .subject-item .left{font-weight:800}
-    .subject-item .right{font-size:13px;color:#607d8b;font-weight:700;text-align:right}
     .empty{
       background:#fff8e1;border:2px dashed #ffd54f;border-radius:22px;padding:18px;text-align:center;
       color:#6d4c41;font-weight:700;line-height:1.8
     }
+
+    .modal-overlay{
+      display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+      align-items:center;justify-content:center;z-index:3000;padding:16px
+    }
+    .modal-card{
+      max-width:430px;width:100%;position:relative;text-align:center;background:white;
+      border-radius:28px;padding:18px;box-shadow:0 18px 40px rgba(0,0,0,.18)
+    }
+    .modal-close{
+      position:absolute;top:10px;right:12px;border:none;background:#f3f3f3;width:36px;height:36px;
+      border-radius:50%;cursor:pointer;font-size:24px
+    }
+
     @media (max-width: 920px){
       .summary-grid{grid-template-columns:1fr 1fr}
-      .report-grid,.two-col{grid-template-columns:1fr}
+      .report-grid{grid-template-columns:1fr}
       .chart-box{height:260px}
     }
-    @media (max-width: 520px){
+    @media (max-width:768px){
       .top-header{padding:8px 8px 0}
       .header-shell{width:calc(100% - 4px);padding:10px;flex-direction:column;align-items:stretch}
       .header-left,.header-right{width:100%;justify-content:center;flex-wrap:wrap}
-      .btn-home{text-align:center;width:100%}
+      .btn-home{width:100%;text-align:center}
       .donate-btn{width:100%;justify-content:center}
       .donate-text-strong{align-items:center}
-      .user{text-align:center;white-space:normal}
-      .summary-grid{grid-template-columns:1fr}
+      .user-logged{text-align:center;font-size:14px;white-space:normal}
+      .wrap{width:calc(100% - 12px);margin:12px auto 20px}
+      .hero{padding:14px 12px;border-radius:24px}
       .hero h1{font-size:24px}
+      .kid-line{font-size:20px}
+      .summary-grid{grid-template-columns:1fr}
       .card h2{font-size:20px}
       .stat-card .value{font-size:24px}
     }
-  </style>
+  
+    .feedback-fab{
+      position:fixed;right:18px;bottom:18px;z-index:2500;border:none;
+      background:linear-gradient(135deg,#7c4dff,#512da8);color:white;border-radius:999px;
+      padding:13px 18px;font-size:15px;font-weight:800;box-shadow:0 10px 22px rgba(81,45,168,.28);cursor:pointer
+    }
+    .feedback-form{display:grid;gap:10px;margin-top:10px}
+    .feedback-form input,.feedback-form textarea{
+      width:100%;padding:12px 14px;border:2px solid #e6eef7;border-radius:16px;
+      font-size:15px;outline:none;font-family:inherit
+    }
+    .feedback-form textarea{min-height:120px;resize:vertical}
+    .feedback-submit{
+      border:none;border-radius:16px;background:var(--purple);color:white;font-weight:800;
+      font-size:15px;padding:12px 14px;cursor:pointer
+    }
+    .feedback-msg{
+      margin-top:10px;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;display:none
+    }
+    .hidden-iframe{display:none;width:0;height:0;border:0}
+
+</style>
 </head>
 <body>
   <div class="top-header">
     <div class="header-shell">
       <div class="header-left">
-        <a href="index.html" class="btn-home">🏠 Về trang chủ</a>
+        <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
         <button class="donate-btn" onclick="openDonateModal()">
           <span class="donate-heart">💝</span>
           <span class="donate-text-strong">Ủng hộ phát triển<small>Quét QR để tiếp sức cho trang học của bé</small></span>
         </button>
       </div>
       <div class="header-right">
-        <div class="user">📊 Báo cáo của bé: <span id="display-name" style="color:#1976d2">...</span></div>
+        <div class="user-logged">📊 Báo cáo của bé: <span id="display-name" style="color:var(--blue)">...</span></div>
       </div>
     </div>
   </div>
 
-  <div id="donateModal" class="modal-overlay" style="display:none;">
-    <div class="card" style="text-align:center; max-width:430px; width:100%; position:relative;">
-      <button onclick="closeDonateModal()" style="position:absolute;top:10px;right:12px;border:none;background:#f3f3f3;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:24px;">×</button>
+  <div id="donateModal" class="modal-overlay">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeDonateModal()">×</button>
       <div class="donate-hero">💝</div>
-      <h2 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h2>
-      <div class="tip" style="margin-bottom:0;">
+      <h3 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h3>
+      <div class="hero-desc" style="margin-top:0">
         Mỗi lượt ủng hộ là một lời động viên để tiếp tục phát triển thêm nhiều bài học, báo cáo và nội dung hữu ích hơn cho bé mỗi ngày.
       </div>
       <div class="qr-wrap">
@@ -154,36 +198,64 @@
     </div>
   </div>
 
+
+  <div id="feedbackModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeFeedbackModal()">×</button>
+      <div class="donate-hero" style="background:linear-gradient(135deg,#eef4ff,#f3e5f5);border-color:#c5cae9;">💬</div>
+      <h3 style="margin:0 0 8px;color:#5e35b1;font-size:28px;">Góp ý cho trang Báo cáo</h3>
+      <div class="hero-desc" style="margin-top:0">
+        Phụ huynh có thể gửi góp ý, lỗi hiển thị hoặc đề xuất thêm nội dung để website ngày càng tốt hơn.
+      </div>
+      <div class="feedback-form">
+        <input type="text" id="fb-parent-name" placeholder="Tên phụ huynh...">
+        <input type="text" id="fb-phone" placeholder="Số điện thoại...">
+        <textarea id="fb-content" placeholder="Nhập nội dung góp ý..."></textarea>
+        <button class="feedback-submit" onclick="submitFeedbackToTelegram()">Gửi góp ý</button>
+      </div>
+      <div id="feedback-msg" class="feedback-msg"></div>
+    </div>
+  </div>
+
+  <iframe name="telegramFeedbackTarget" class="hidden-iframe"></iframe>
+  <button class="feedback-fab" onclick="openFeedbackModal()">💬 Góp ý</button>
+
   <div class="wrap">
     <div class="hero">
-      <h1>📈 Báo cáo học tập theo tài khoản</h1>
+      <div class="hero-title">
+        <h1>📈 Báo cáo học tập theo tài khoản</h1>
+      </div>
+      <div class="hero-desc">
+        Phụ huynh có thể xem nhanh tổng lượt làm bài, số câu đúng, môn bé làm tốt và tiến bộ 7 ngày gần nhất.
+      </div>
+      <div class="kid-line">🧒 Bé: <span id="kid-line-name">...</span></div>
     </div>
 
     <div id="reportContent" style="display:none;">
       <div class="summary-grid">
         <div class="stat-card">
           <div class="icon">📝</div>
-          <div class="label">Tổng số bài đã lưu</div>
+          <div class="label">Tổng số lượt bài</div>
           <div class="value" id="totalLessons">0</div>
-          <div class="sub">Tính trên toàn bộ môn học đã có dữ liệu</div>
+          <div class="sub">Tính trên các môn đã có dữ liệu</div>
         </div>
         <div class="stat-card">
           <div class="icon">✅</div>
           <div class="label">Tổng số câu đúng</div>
-          <div class="value" id="totalCorrect">0</div>
-          <div class="sub">Cộng từ các lần làm bài đã lưu</div>
+          <div class="value" id="totalCorrect">0/0</div>
+          <div class="sub">Cộng từ các lần làm bài</div>
         </div>
         <div class="stat-card">
           <div class="icon">📚</div>
-          <div class="label">Số môn đã có dữ liệu</div>
+          <div class="label">Số môn có dữ liệu</div>
           <div class="value" id="subjectCount">0</div>
-          <div class="sub">Toán, Tiếng Việt, Tiếng Anh, EQ</div>
+          <div class="sub">Toán, Tiếng Anh, EQ</div>
         </div>
         <div class="stat-card">
           <div class="icon">🌟</div>
-          <div class="label">Môn tốt nhất hiện tại</div>
+          <div class="label">Môn tốt nhất</div>
           <div class="value" id="bestSubject" style="font-size:24px">-</div>
-          <div class="sub">Dựa trên tỷ lệ đúng trung bình</div>
+          <div class="sub">Theo tỷ lệ đúng trung bình</div>
         </div>
       </div>
 
@@ -191,20 +263,18 @@
         <div>
           <div class="card">
             <h2>1. Tổng quan</h2>
-            <div class="chart-box"><canvas id="todayOverviewChart"></canvas></div>
+            <div class="chart-box"><canvas id="overviewChart"></canvas></div>
           </div>
 
           <div class="card">
             <h2>2. Kết quả theo từng môn</h2>
-            <div class="two-col">
-              <div class="chart-box"><canvas id="subjectScoreChart"></canvas></div>
-              <div class="subject-list" id="subjectList"></div>
-            </div>
+            <div class="chart-box" style="height:280px"><canvas id="subjectChart"></canvas></div>
+            <div class="subject-list" id="subjectList" style="margin-top:14px"></div>
           </div>
 
           <div class="card">
             <h2>3. Tiến bộ 7 ngày gần nhất</h2>
-            <div class="chart-box"><canvas id="weeklyProgressChart"></canvas></div>
+            <div class="chart-box"><canvas id="weeklyChart"></canvas></div>
           </div>
         </div>
 
@@ -213,18 +283,14 @@
             <h2>4. Điểm mạnh và phần cần luyện thêm</h2>
             <table class="mini-table">
               <thead>
-                <tr>
-                  <th>Nội dung</th>
-                  <th>Nhận xét</th>
-                  <th>Mức độ</th>
-                </tr>
+                <tr><th>Nội dung</th><th>Nhận xét</th><th>Mức độ</th></tr>
               </thead>
-              <tbody id="strengthWeaknessTable"></tbody>
+              <tbody id="strengthTable"></tbody>
             </table>
           </div>
 
           <div class="card">
-            <h2>5. Gợi ý cho phụ huynh ngày mai</h2>
+            <h2>5. Gợi ý cho phụ huynh</h2>
             <div id="parentTips"></div>
           </div>
         </div>
@@ -238,27 +304,34 @@
   </div>
 
   <script>
-   const firebaseConfig = {
-  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
-  authDomain: "bon-bi.firebaseapp.com",
-  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
-  projectId: "bon-bi",
-  storageBucket: "bon-bi.firebasestorage.app",
-  messagingSenderId: "988400970351",
-  appId: "1:988400970351:web:21e9181950114225417b9a"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+      authDomain: "bon-bi.firebaseapp.com",
+      databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+      projectId: "bon-bi",
+      storageBucket: "bon-bi.firebasestorage.app",
+      messagingSenderId: "988400970351",
+      appId: "1:988400970351:web:21e9181950114225417b9a"
+    };
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    const kidName = localStorage.getItem('kidName');
-    const kidUsername = localStorage.getItem('kidUsername');
+    let overviewChart, subjectChart, weeklyChart;
 
-    if (!kidName) {
-      alert("Bé hãy đăng nhập trước để xem báo cáo nhé!");
-      window.location.href = "index.html";
-    } else {
-      document.getElementById("display-name").innerText = kidName;
+    function openDonateModal(){
+      const el = document.getElementById('donateModal');
+      if(el) el.style.display = 'flex';
     }
+    function closeDonateModal(){
+      const el = document.getElementById('donateModal');
+      if(el) el.style.display = 'none';
+    }
+    window.addEventListener('click', function(event){
+      const modal = document.getElementById('donateModal');
+      const feedbackModal = document.getElementById('feedbackModal');
+      if(event.target === modal) closeDonateModal();
+      if(event.target === feedbackModal) closeFeedbackModal();
+    });
 
     function normalizeDate(ts) {
       const d = new Date(ts);
@@ -276,27 +349,177 @@
         d.setDate(today.getDate() - i);
         arr.push({
           key: normalizeDate(d.getTime()),
-          label: `T${d.getDay() === 0 ? 'CN' : d.getDay() + 1}`
+          label: `${d.getDate()}/${d.getMonth() + 1}`
         });
       }
       return arr;
     }
 
+    function destroyCharts() {
+      [overviewChart, subjectChart, weeklyChart].forEach(c => {
+        if (c) c.destroy();
+      });
+    }
 
-    function openDonateModal(){
-      const el = document.getElementById('donateModal');
+    function renderCharts(subjects, totals, weeklyData) {
+      destroyCharts();
+
+      overviewChart = new Chart(document.getElementById("overviewChart"), {
+        type: "bar",
+        data: {
+          labels: ["Lượt làm bài", "Câu đúng", "Tổng câu", "Số môn"],
+          datasets: [{
+            data: [totals.totalLessons, totals.totalCorrect, totals.totalQuestions, totals.subjectCount],
+            borderWidth: 2,
+            borderRadius: 10
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      subjectChart = new Chart(document.getElementById("subjectChart"), {
+        type: "bar",
+        data: {
+          labels: subjects.map(s => s.name),
+          datasets: [{
+            label: "Tỷ lệ đúng (%)",
+            data: subjects.map(s => s.score),
+            borderWidth: 2,
+            borderRadius: 10
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: { y: { beginAtZero: true, max: 100 } }
+        }
+      });
+
+      weeklyChart = new Chart(document.getElementById("weeklyChart"), {
+        type: "line",
+        data: {
+          labels: weeklyData.map(x => x.day),
+          datasets: [{
+            label: "Tỷ lệ đúng (%)",
+            data: weeklyData.map(x => x.score),
+            fill: false,
+            tension: 0.3,
+            borderWidth: 3,
+            pointRadius: 4
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } },
+          scales: { y: { beginAtZero: true, max: 100 } }
+        }
+      });
+    }
+
+
+    const kidUsername = localStorage.getItem('kidUsername') || "";
+    const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
+    const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
+
+    function openFeedbackModal(){
+      const el = document.getElementById('feedbackModal');
       if(el) el.style.display = 'flex';
     }
-    function closeDonateModal(){
-      const el = document.getElementById('donateModal');
+    function closeFeedbackModal(){
+      const el = document.getElementById('feedbackModal');
       if(el) el.style.display = 'none';
     }
-    window.addEventListener('click', function(event){
-      const modal = document.getElementById('donateModal');
-      if(event.target === modal) closeDonateModal();
-    });
+
+    function submitFeedbackToTelegram() {
+      const parentName = document.getElementById('fb-parent-name').value.trim();
+      const phone = document.getElementById('fb-phone').value.trim();
+      const content = document.getElementById('fb-content').value.trim();
+      const box = document.getElementById('feedback-msg');
+
+      if (!parentName || !phone || !content) {
+        box.style.display = 'block';
+        box.style.background = '#ffebee';
+        box.style.color = '#c62828';
+        box.innerText = 'Phụ huynh vui lòng nhập đầy đủ thông tin góp ý.';
+        return;
+      }
+
+      if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' || !TELEGRAM_CHAT_ID || TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID') {
+        box.style.display = 'block';
+        box.style.background = '#fff8e1';
+        box.style.color = '#e65100';
+        box.innerText = 'Chưa cấu hình TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID.';
+        return;
+      }
+
+      const message = [
+        '💬 GÓP Ý MỚI TỪ TRANG BÁO CÁO',
+        '',
+        `👨‍👩‍👧 Phụ huynh: ${parentName}`,
+        `📞 SĐT: ${phone}`,
+        `👶 Bé: ${localStorage.getItem('kidName') || ''}`,
+        `🆔 Username: ${kidUsername}`,
+        '🌐 Trang: baocao.html',
+        '',
+        '📝 Nội dung góp ý:',
+        content
+      ].join('\n');
+
+      try {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        form.target = 'telegramFeedbackTarget';
+        form.style.display = 'none';
+
+        const chatIdInput = document.createElement('input');
+        chatIdInput.name = 'chat_id';
+        chatIdInput.value = TELEGRAM_CHAT_ID;
+
+        const textInput = document.createElement('textarea');
+        textInput.name = 'text';
+        textInput.value = message;
+        textInput.style.display = 'none';
+
+        form.appendChild(chatIdInput);
+        form.appendChild(textInput);
+        document.body.appendChild(form);
+        form.submit();
+        setTimeout(() => form.remove(), 1000);
+
+        box.style.display = 'block';
+        box.style.background = '#e8f5e9';
+        box.style.color = '#2e7d32';
+        box.innerText = 'Đã gửi góp ý.';
+
+        document.getElementById('fb-parent-name').value = '';
+        document.getElementById('fb-phone').value = '';
+        document.getElementById('fb-content').value = '';
+      } catch (e) {
+        box.style.display = 'block';
+        box.style.background = '#ffebee';
+        box.style.color = '#c62828';
+        box.innerText = 'Có lỗi khi gửi góp ý tới Telegram: ' + e.message;
+        console.log(e);
+      }
+    }
+
 
     async function loadReport() {
+      const kidName = localStorage.getItem('kidName');
+      if (!kidName) {
+        alert("Bé hãy đăng nhập trước để xem báo cáo nhé!");
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.getElementById("display-name").innerText = kidName;
+      document.getElementById("kid-line-name").innerText = kidName;
+
       const [mathSnap, engSnap, eqSnap] = await Promise.all([
         database.ref('results').once('value'),
         database.ref('english_history').once('value'),
@@ -312,7 +535,7 @@
           records.push({
             subject: "Toán",
             correct: scoreNum,
-            total: 10,
+            total: 20,
             timestamp: v.time || 0
           });
         }
@@ -322,12 +545,10 @@
         const v = c.val() || {};
         if (v.studentName === kidName && v.result) {
           const parts = String(v.result).split('/');
-          const correct = parseInt(parts[0]) || 0;
-          const total = parseInt(parts[1]) || 10;
           records.push({
             subject: "Tiếng Anh",
-            correct,
-            total,
+            correct: parseInt(parts[0]) || 0,
+            total: parseInt(parts[1]) || 10,
             timestamp: v.timestamp || 0
           });
         }
@@ -337,18 +558,15 @@
         const v = c.val() || {};
         if (v.studentName === kidName && v.result) {
           const parts = String(v.result).split('/');
-          const correct = parseInt(parts[0]) || 0;
-          const total = parseInt(parts[1]) || 10;
           records.push({
             subject: "EQ",
-            correct,
-            total,
+            correct: parseInt(parts[0]) || 0,
+            total: parseInt(parts[1]) || 10,
             timestamp: v.timestamp || 0
           });
         }
       });
 
-      // Tiếng Việt chưa thấy nhánh dữ liệu cố định trong file hiện tại, nên để sẵn nếu sau này thêm
       if (!records.length) {
         document.getElementById("emptyState").style.display = "block";
         return;
@@ -384,7 +602,8 @@
       document.getElementById("totalCorrect").innerText = `${totalCorrect}/${totalQuestions}`;
       document.getElementById("subjectCount").innerText = subjects.length;
       document.getElementById("bestSubject").innerText = bestSubject;
-document.getElementById("subjectList").innerHTML = subjects.map(s => `
+
+      document.getElementById("subjectList").innerHTML = subjects.map(s => `
         <div class="subject-item">
           <div class="left">${s.name}</div>
           <div class="right">
@@ -395,34 +614,29 @@ document.getElementById("subjectList").innerHTML = subjects.map(s => `
         </div>
       `).join("");
 
-      const strengthRows = [];
-      subjects.forEach(s => {
-        if (s.score >= 85) {
-          strengthRows.push({ item: s.name, note: "Bé đang làm rất tốt ở môn này.", level: "Tốt" });
-        } else if (s.score >= 70) {
-          strengthRows.push({ item: s.name, note: "Kết quả khá ổn, chỉ cần luyện thêm để vững hơn.", level: "Khá" });
-        } else {
-          strengthRows.push({ item: s.name, note: "Nên ôn thêm các bài cơ bản để bé tự tin hơn.", level: "Cần luyện thêm" });
-        }
-      });
-
-      document.getElementById("strengthWeaknessTable").innerHTML = strengthRows.map(row => {
-        const cls = row.level === "Tốt" ? "ok" : "warn";
-        return `
-          <tr>
-            <td><b>${row.item}</b></td>
-            <td>${row.note}</td>
-            <td><span class="pill ${cls}">${row.level}</span></td>
-          </tr>
-        `;
+      document.getElementById("strengthTable").innerHTML = subjects.map(s => {
+        const good = s.score >= 80;
+        const mid = s.score >= 60 && s.score < 80;
+        const note = good
+          ? "Bé đang làm khá tốt ở môn này."
+          : mid
+            ? "Kết quả ổn, nên luyện thêm để vững hơn."
+            : "Nên ôn thêm phần cơ bản để bé tự tin hơn.";
+        const level = good ? "Tốt" : (mid ? "Khá" : "Cần luyện");
+        const cls = good ? "ok" : "warn";
+        return `<tr>
+          <td><b>${s.name}</b></td>
+          <td>${note}</td>
+          <td><span class="pill ${cls}">${level}</span></td>
+        </tr>`;
       }).join("");
 
       const weakest = [...subjects].sort((a,b) => a.score - b.score)[0];
       const tips = [
         `Ngày mai nên ưu tiên ôn thêm <b>${weakest ? weakest.name : "môn còn yếu"}</b> trong khoảng 10–15 phút.`,
         `Nếu bé đang hứng thú với <b>${bestSubject}</b>, bố mẹ có thể cho con làm thêm 1 bài ngắn để duy trì động lực.`,
-        `Thời lượng học gợi ý cho ngày mai: khoảng <b>20–25 phút</b>, chia làm các chặng ngắn để bé không mệt.`,
-        `Sau mỗi bài, bố mẹ có thể khen bé ở điểm làm tốt trước, rồi mới nhắc phần cần luyện thêm.`
+        `Thời lượng học gợi ý: khoảng <b>20–25 phút</b>, chia thành các chặng ngắn để bé không mệt.`,
+        `Sau mỗi bài, bố mẹ hãy khen bé ở điểm làm tốt trước, rồi mới nhắc phần cần luyện thêm.`
       ];
       document.getElementById("parentTips").innerHTML = tips.map((tip, idx) =>
         `<div class="tip"><strong>Gợi ý ${idx + 1}:</strong> ${tip}</div>`
@@ -443,76 +657,21 @@ document.getElementById("subjectList").innerHTML = subjects.map(s => `
 
       const weeklyData = weeklyKeys.map(d => {
         const v = weeklyMap[d.key];
-        const score = v.total ? Math.round(v.correct * 100 / v.total) : 0;
-        return { day: d.label, score };
+        return {
+          day: d.label,
+          score: v.total ? Math.round(v.correct * 100 / v.total) : 0
+        };
       });
 
-      const firstNonZero = weeklyData.find(x => x.score > 0);
-      const lastScore = weeklyData[weeklyData.length - 1].score;
-      const startScore = firstNonZero ? firstNonZero.score : 0;
-      const diff = lastScore - startScore;
-new Chart(document.getElementById("todayOverviewChart"), {
-        type: "bar",
-        data: {
-          labels: ["Lượt làm bài", "Câu đúng", "Tổng câu", "Số môn"],
-          datasets: [{
-            data: [totalLessons, totalCorrect, totalQuestions, subjects.length],
-            borderWidth: 2,
-            borderRadius: 10
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-
-      new Chart(document.getElementById("subjectScoreChart"), {
-        type: "radar",
-        data: {
-          labels: subjects.map(s => s.name),
-          datasets: [{
-            label: "Tỷ lệ đúng trung bình",
-            data: subjects.map(s => s.score),
-            fill: true,
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: { r: { beginAtZero: true, suggestedMax: 100 } }
-        }
-      });
-
-      new Chart(document.getElementById("weeklyProgressChart"), {
-        type: "line",
-        data: {
-          labels: weeklyData.map(d => d.day),
-          datasets: [{
-            label: "Tiến bộ 7 ngày gần nhất",
-            data: weeklyData.map(d => d.score),
-            tension: 0.35,
-            fill: false,
-            borderWidth: 3,
-            pointRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, suggestedMax: 100 } }
-        }
-      });
+      renderCharts(subjects, {
+        totalLessons,
+        totalCorrect,
+        totalQuestions,
+        subjectCount: subjects.length
+      }, weeklyData);
     }
 
-    loadReport().catch(err => {
-      console.error(err);
-      document.getElementById("emptyState").style.display = "block";
-      document.getElementById("emptyState").innerHTML = "Không tải được dữ liệu báo cáo. Bố mẹ vui lòng thử lại sau nhé.";
-    });
+    loadReport();
   </script>
 </body>
 </html>
