@@ -8,17 +8,27 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root {
-            --yellow-header: #ffeb3b;
             --bg-light: #e0f7fa;
+            --card: #ffffff;
             --primary: #e91e63;
+            --primary-dark: #ad1457;
             --blue: #2196F3;
+            --blue-dark: #1976D2;
             --green: #4CAF50;
+            --green-dark: #388E3C;
             --purple: #9c27b0;
+            --purple-dark: #7b1fa2;
             --orange: #ff9800;
-            --shadow: 0 8px 18px rgba(0,0,0,.08);
+            --yellow-1: #fff59d;
+            --yellow-2: #ffe082;
+            --text: #37474f;
+            --muted: #607d8b;
+            --line: #e7eef5;
+            --shadow: 0 10px 28px rgba(0,0,0,.08);
         }
 
         * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -26,22 +36,23 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            color: #333;
+            color: var(--text);
         }
 
         .top-header {
-            background: transparent;
-            padding: 10px 12px 0;
             position: sticky;
             top: 0;
             z-index: 1000;
+            background: linear-gradient(to bottom, rgba(224,247,250,.95), rgba(224,247,250,.72));
+            backdrop-filter: blur(6px);
+            padding: 10px 12px 0;
         }
 
         .header-shell {
-            width: min(1200px, 96%);
+            width: min(1180px, 94%);
             margin: 0 auto;
-            background: linear-gradient(135deg, #fff59d, #ffe082);
-            padding: 10px 14px;
+            background: linear-gradient(135deg, var(--yellow-1), var(--yellow-2));
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -56,31 +67,33 @@
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
+            min-width: 0;
         }
 
         .btn-home {
             background: var(--primary);
             color: white;
-            padding: 12px 30px;
+            min-height: 50px;
+            padding: 12px 22px;
             border-radius: 999px;
             text-decoration: none;
             font-weight: 800;
-            font-size: 17px;
-            box-shadow: 0 5px #ad1457;
+            font-size: 16px;
+            box-shadow: 0 5px var(--primary-dark);
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 0 1 auto;
         }
 
-        .kid-info-box {
-            background: #fff8e1;
-            border: 3px solid rgba(255,255,255,.75);
-            padding: 12px 24px;
-            border-radius: 24px;
-            color: #ad1457;
-            font-weight: 900;
-            font-size: 17px;
-            white-space: nowrap;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
-        }
+        .home-icon{display:inline-block}
+        .home-text{display:inline-block}
+        .donate-short{display:none}
+        .kid-icon{display:inline-block;margin-right:4px}
+        .kid-label{display:inline-block;margin-right:4px}
+        .kid-name{display:inline-block}
 
         .donate-btn {
             border: none;
@@ -88,15 +101,16 @@
             cursor: pointer;
             background: linear-gradient(135deg, #ff5fa2, #e91e63);
             color: #fff;
-            box-shadow: 0 8px 18px rgba(233,30,99,.30);
+            box-shadow: 0 8px 18px rgba(233,30,99,.24);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             padding: 10px 16px;
-            min-height: 46px;
+            min-height: 50px;
             position: relative;
             font-family: Arial, 'Segoe UI', sans-serif;
+            flex: 1 1 auto;
         }
 
         .donate-btn::after {
@@ -127,7 +141,7 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            line-height: 1.15;
+            line-height: 1.12;
             text-align: left;
         }
 
@@ -137,152 +151,311 @@
         }
 
         .donate-text-strong small {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
+            opacity: .92;
+        }
+
+        .kid-info-box {
+            background: #fff8e1;
+            border: 3px solid rgba(255,255,255,.75);
+            padding: 12px 20px;
+            border-radius: 24px;
+            color: #ad1457;
+            font-weight: 900;
+            font-size: 16px;
+            white-space: nowrap;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-shell{
+            width:min(1180px,94%);
+            margin:16px auto 30px;
+        }
+
+        .hero-box{
+            background: var(--card);
+            border-radius: 28px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .hero-top{
+            display:grid;
+            grid-template-columns: 1fr auto;
+            gap:14px;
+            align-items:center;
+        }
+
+        .hero-title{
+            margin:0;
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .hero-desc{
+            margin-top:10px;
+            background: linear-gradient(135deg,#fffdf5,#f5fbff);
+            border: 1px dashed #ffe082;
+            border-radius: 18px;
+            padding: 12px 14px;
+            line-height: 1.8;
+            font-size: 14px;
+            font-weight: 700;
+            color: #546e7a;
+        }
+
+        .hero-chip{
+            min-height: 48px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding: 10px 14px;
+            border-radius: 18px;
+            background: #f5fbff;
+            border: 2px solid #dceefe;
+            color: var(--blue-dark);
+            font-weight: 800;
+            white-space: nowrap;
         }
 
         .nav-bar {
             background: white;
-            padding: 18px 20px 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            width: min(1200px, 96%);
-            margin: 12px auto 0;
+            width: 100%;
+            margin: 0 0 16px;
             border-radius: 26px;
+        }
+
+        .nav-title{
+            width: 100%;
+            margin: 0;
+            font-size: 15px;
+            color: var(--muted);
+            font-weight: 800;
         }
 
         .nav-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 14px;
             width: 100%;
             flex-wrap: wrap;
         }
 
         select {
-            padding: 12px 20px;
-            border-radius: 15px;
+            padding: 12px 18px;
+            border-radius: 16px;
             border: 3px solid var(--blue);
             font-weight: bold;
-            font-size: 18px;
+            font-size: 17px;
             width: 480px;
             max-width: 100%;
             outline: none;
             background: white;
+            min-height: 52px;
+        }
+
+        .mini-stat{
+            min-height: 52px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding: 10px 14px;
+            border-radius: 18px;
+            background: #fff8e1;
+            color: #6d4c41;
+            font-size: 14px;
+            font-weight: 800;
+            white-space: nowrap;
         }
 
         .main-wrapper {
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 20px;
-            gap: 15px;
+            gap: 16px;
         }
 
         .chibi-side {
-            width: 140px;
+            width: 120px;
             flex-shrink: 0;
             position: sticky;
-            top: 150px;
+            top: 120px;
         }
 
-        .chibi-side img { width: 100%; }
+        .chibi-side img { width: 100%; display:block; }
 
         .exercise-area {
-            background: rgba(255, 255, 255, 0.55);
-            padding: 30px;
-            border-radius: 35px;
-            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.62);
+            padding: 20px;
+            border-radius: 30px;
             width: 100%;
             box-shadow: 0 4px 14px rgba(0,0,0,.04);
         }
 
+        .exercise-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-bottom: 14px;
+        }
+
+        .exercise-head h2{
+            margin:0;
+            color: var(--blue-dark);
+            font-size: 22px;
+        }
+
+        .exercise-sub{
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
         .math-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
             width: 100%;
         }
 
         .math-card {
             background: white;
-            padding: 15px 25px;
-            border-radius: 20px;
+            padding: 14px 16px;
+            border-radius: 22px;
             display: flex;
             align-items: center;
             gap: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            border: 2px solid #eef3f8;
+            min-height: 84px;
         }
 
         .num-box {
             background: #FFD54F;
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 9px 12px;
+            border-radius: 12px;
             font-weight: 900;
             font-size: 22px;
             min-width: 50px;
             text-align: center;
+            color:#212121;
+        }
+
+        .math-op{
+            font-size: 22px;
+            font-weight: 900;
+            color: #616161;
         }
 
         .ans-input {
-            width: 90px;
-            height: 45px;
+            width: 86px;
+            height: 46px;
             border: 3px solid #eee;
-            border-radius: 12px;
+            border-radius: 14px;
             text-align: center;
             font-size: 22px;
             font-weight: bold;
             outline: none;
             margin-left: auto;
+            background:#fff;
         }
 
         .ans-input.correct { border-color: var(--green) !important; background: #e8f5e9; }
         .ans-input.wrong { border-color: var(--primary) !important; background: #ffebee; }
 
         .action-footer {
-            padding: 26px 20px 40px;
+            padding: 20px 0 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 18px;
         }
 
         .btn-group {
             display: flex;
-            gap: 15px;
+            gap: 14px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .btn-footer {
-            padding: 15px 30px;
-            border-radius: 20px;
+            min-height: 50px;
+            padding: 12px 24px;
+            border-radius: 18px;
             border: none;
             color: white;
-            font-weight: bold;
-            font-size: 16px;
+            font-weight: 800;
+            font-size: 15px;
             cursor: pointer;
             box-shadow: 0 6px rgba(0,0,0,0.08);
         }
 
         #history-section {
             display: none;
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             background: white;
-            border-radius: 25px;
-            padding: 20px;
-            margin-top: 10px;
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 4px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 2px solid var(--purple);
+            border: 2px solid rgba(156,39,176,.18);
+        }
+
+        .history-title{
+            text-align: center;
+            color: var(--purple);
+            margin: 0 0 12px;
+            font-size: 22px;
         }
 
         .history-table { width: 100%; border-collapse: collapse; }
-        .history-table th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        .history-table th, .history-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; font-size:14px; }
+        .history-table th{ color: var(--muted); font-size:13px; }
+
+        .mobile-action-bar{
+            display:none;
+            position: sticky;
+            bottom: 0;
+            z-index: 900;
+            padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+            background: linear-gradient(to top, rgba(224,247,250,.98), rgba(224,247,250,.84));
+            backdrop-filter: blur(8px);
+        }
+
+        .mobile-action-inner{
+            width:min(1180px,96%);
+            margin:0 auto;
+            background:#fff;
+            border-radius:22px;
+            box-shadow:0 10px 24px rgba(0,0,0,.12);
+            padding:8px;
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:8px;
+        }
+
+        .mobile-action-inner .btn-footer{
+            min-height:46px;
+            padding:10px 8px;
+            font-size:13px;
+            border-radius:14px;
+        }
 
         .modal-overlay {
             display: none;
@@ -304,6 +477,8 @@
             border-radius: 28px;
             padding: 18px;
             box-shadow: 0 18px 40px rgba(0,0,0,.18);
+            max-height: min(88vh, 760px);
+            overflow: auto;
         }
 
         .modal-close {
@@ -392,7 +567,7 @@
         }
 
         .feedback-form textarea {
-            min-height: 120px;
+            min-height: 110px;
             resize: vertical;
         }
 
@@ -416,39 +591,117 @@
             display: none;
         }
 
-        @media (max-width: 1100px) {
+        .hidden-iframe{display:none;width:0;height:0;border:0}
+
+        @media (max-width: 1024px) {
+            .main-wrapper {
+                display:block;
+            }
             .chibi-side { display: none; }
         }
 
         @media (max-width: 768px) {
-            .top-header { padding: 8px 8px 0; }
+            .top-header { padding: 6px 6px 0; }
             .header-shell {
                 width: calc(100% - 4px);
-                padding: 10px;
-                flex-direction: column;
-                align-items: stretch;
+                padding: 7px;
+                flex-direction: row;
+                align-items: center;
+                gap: 5px;
+                border-radius: 0 0 18px 18px;
             }
             .header-left, .header-right {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
+                width: auto;
+                flex-wrap: nowrap;
+                gap: 5px;
             }
-            .btn-home,
-            .kid-info-box,
+            .header-left {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+            .header-right {
+                flex: 0 1 auto;
+                min-width: 0;
+            }
+            .btn-home {
+                width: 38px;
+                min-width: 38px;
+                height: 38px;
+                min-height: 38px;
+                padding: 0;
+                border-radius: 11px;
+                box-shadow: 0 3px var(--primary-dark);
+                gap: 0;
+                flex: 0 0 38px;
+                font-size: 17px;
+            }
+            .home-text { display: none; }
+
             .donate-btn {
-                width: 100%;
-                text-align: center;
-                justify-content: center;
+                width: auto;
+                min-height: 38px;
+                padding: 7px 8px;
+                border-radius: 12px;
+                gap: 5px;
+                flex: 0 0 auto;
+                min-width: 0;
             }
-            .donate-text-strong { align-items: center; text-align: center; }
-            .nav-row { flex-direction: column; }
-            select { width: 100%; max-width: 100%; font-size: 16px; }
-            .main-wrapper { padding: 12px; }
-            .btn-group { flex-direction: column; width: 100%; }
-            .btn-footer { width: 100%; }
+            .donate-btn::after {
+                width: 10px;
+                height: 10px;
+                top: -2px;
+                right: -2px;
+                border-width: 2px;
+            }
+            .donate-heart {
+                width: 16px;
+                height: 16px;
+                flex: 0 0 16px;
+                font-size: 10px;
+            }
+            .donate-text-strong {
+                align-items: center;
+                text-align: center;
+            }
+            .donate-full { display: none; }
+            .donate-short { display: inline; }
+            .donate-text-strong strong { font-size: 10px; line-height: 1; }
+            .donate-text-strong small { display: none; }
+
+            .kid-info-box {
+                width: auto;
+                min-height: 38px;
+                padding: 7px 8px;
+                font-size: 12px;
+                border-radius: 12px;
+                max-width: 36vw;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            .kid-icon { margin-right: 2px; }
+            .kid-label { display: none; }
+            .kid-name {
+                display: inline-block;
+                max-width: 24vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+
+            .page-shell { width: calc(100% - 12px); margin: 12px auto 88px; }
+            .hero-box, .nav-bar, .exercise-area { border-radius: 24px; padding: 14px 12px; }
+            .hero-top, .nav-row { grid-template-columns: 1fr; flex-direction: column; }
+            .hero-title { font-size: 24px; line-height:1.24; }
+            .hero-chip, .mini-stat { width:100%; justify-content:center; }
+            select { width: 100%; max-width: 100%; font-size: 16px; min-height: 50px; }
+            .math-grid { grid-template-columns: 1fr; gap: 12px; }
+            .math-card { padding: 12px 14px; min-height: 78px; }
+            .btn-group { display:none; }
+            .mobile-action-bar{ display:block; }
             .feedback-fab {
                 right: 12px;
-                bottom: 12px;
+                bottom: 78px;
                 padding: 12px 16px;
                 font-size: 14px;
             }
@@ -460,11 +713,11 @@
     <div class="top-header">
         <div class="header-shell">
             <div class="header-left">
-                <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+                <a href="index.html" class="btn-home"><span class="home-icon">🏠</span><span class="home-text">Về Trang Chủ</span></a>
                 <button class="donate-btn" onclick="openDonateModal()">
                     <span class="donate-heart">💝</span>
                     <span class="donate-text-strong">
-                        <strong>Ủng hộ phát triển</strong>
+                        <strong><span class="donate-full">Ủng hộ phát triển</span><span class="donate-short">Ủng hộ</span></strong>
                         <small>Quét QR để tiếp sức cho trang học của bé</small>
                     </span>
                 </button>
@@ -510,44 +763,76 @@
         </div>
     </div>
 
+    <iframe name="telegramFeedbackTarget" class="hidden-iframe"></iframe>
     <button class="feedback-fab" onclick="openFeedbackModal()">💬 Góp ý</button>
 
-    <div class="nav-bar">
-        <div class="nav-row">
-            <select id="level-select" onchange="generateMath()">
-                <option value="kid5">Bé 5 tuổi: Phạm vi 10</option>
-                <option value="l1-easy">Lớp 1: Cộng trừ KHÔNG NHỚ</option>
-                <option value="l1-hard">Lớp 1: Cộng trừ CÓ NHỚ</option>
-                <option value="l2">Lớp 2: Nhân/Chia bảng 2, 3, 4, 5</option>
-                <option value="l3">Lớp 3: Nhân/Chia nâng cao</option>
-                <option value="l4">Lớp 4: Đổi đơn vị (kg, m, km)</option>
-                <option value="l5">Lớp 5: Số thập phân</option>
-            </select>
+    <div class="page-shell">
+        <div class="hero-box">
+            <div class="hero-top">
+                <div>
+                    <h1 class="hero-title">🧮 Luyện Toán mỗi ngày</h1>
+                    <div class="hero-desc">
+                        Bài tập được chia theo từng độ tuổi và lớp học. Bé làm theo từng chặng ngắn, rõ ràng và dễ thao tác hơn trên điện thoại, tablet lẫn máy tính.
+                    </div>
+                </div>
+                <div class="hero-chip">🎯 1 đề / 20 câu</div>
+            </div>
+        </div>
+
+        <div class="nav-bar">
+            <h3 class="nav-title">Chọn cấp độ luyện tập</h3>
+            <div class="nav-row">
+                <select id="level-select" onchange="generateMath()">
+                    <option value="kid5">Bé 5 tuổi: Phạm vi 10</option>
+                    <option value="l1-easy">Lớp 1: Cộng trừ KHÔNG NHỚ</option>
+                    <option value="l1-hard">Lớp 1: Cộng trừ CÓ NHỚ</option>
+                    <option value="l2">Lớp 2: Nhân/Chia bảng 2, 3, 4, 5</option>
+                    <option value="l3">Lớp 3: Nhân/Chia nâng cao</option>
+                    <option value="l4">Lớp 4: Đổi đơn vị (kg, m, km)</option>
+                    <option value="l5">Lớp 5: Số thập phân</option>
+                </select>
+            
+            </div>
+        </div>
+
+        <div class="main-wrapper">
+            <div class="chibi-side"><img src="https://i.ibb.co/TB3TPsD5/anh3.png" alt="chibi"></div>
+            <div class="exercise-area">
+                <div class="exercise-head">
+                    <div>
+                        <h2>Bé làm từng câu thật cẩn thận nhé</h2>
+                        <div class="exercise-sub">Bấm nộp bài để xem đúng sai ngay sau khi làm xong.</div>
+                    </div>
+                </div>
+
+                <div id="container" class="math-grid"></div>
+
+                <div class="action-footer">
+                    <div class="btn-group">
+                        <button class="btn-footer" style="background: var(--blue);" onclick="generateMath()">🔄 Đổi bài mới</button>
+                        <button class="btn-footer" style="background: var(--green);" onclick="checkResults()">✅ Nộp bài</button>
+                        <button class="btn-footer" style="background: var(--purple);" onclick="toggleHistory()">📊 Lịch sử</button>
+                    </div>
+                    <div id="history-section">
+                        <h3 class="history-title">Kết quả 30 ngày gần nhất</h3>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <table class="history-table">
+                                <thead><tr><th>Ngày</th><th>Lớp</th><th>Điểm</th></tr></thead>
+                                <tbody id="history-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chibi-side"><img src="https://i.ibb.co/wZ9Yz65T/anh2.png" alt="chibi"></div>
         </div>
     </div>
 
-    <div class="main-wrapper">
-        <div class="chibi-side"><img src="https://i.ibb.co/TB3TPsD5/anh3.png" alt="chibi"></div>
-        <div class="exercise-area">
-            <div id="container" class="math-grid"></div>
-        </div>
-        <div class="chibi-side"><img src="https://i.ibb.co/wZ9Yz65T/anh2.png" alt="chibi"></div>
-    </div>
-
-    <div class="action-footer">
-        <div class="btn-group">
-            <button class="btn-footer" style="background: var(--blue);" onclick="generateMath()">🔄 Đổi bài mới</button>
+    <div class="mobile-action-bar">
+        <div class="mobile-action-inner">
+            <button class="btn-footer" style="background: var(--blue);" onclick="generateMath()">🔄 Đổi bài</button>
             <button class="btn-footer" style="background: var(--green);" onclick="checkResults()">✅ Nộp bài</button>
             <button class="btn-footer" style="background: var(--purple);" onclick="toggleHistory()">📊 Lịch sử</button>
-        </div>
-        <div id="history-section">
-            <h3 style="text-align: center; color: var(--purple);">Kết quả 30 ngày gần nhất</h3>
-            <div style="max-height: 300px; overflow-y: auto;">
-                <table class="history-table">
-                    <thead><tr><th>Ngày</th><th>Lớp</th><th>Điểm</th></tr></thead>
-                    <tbody id="history-body"></tbody>
-                </table>
-            </div>
         </div>
     </div>
 
@@ -566,9 +851,8 @@
         const database = firebase.database();
         const kidName = localStorage.getItem('kidName') || "Bi";
         const kidUsername = localStorage.getItem('kidUsername') || "";
-        document.getElementById('kid-badge').innerHTML = `💖 Bé đang học Toán: <span style="color:#1e88e5">${kidName}</span>`;
+        document.getElementById('kid-badge').innerHTML = `<span class="kid-icon">💖</span><span class="kid-label">Bé đang học Toán:</span><span class="kid-name" style="color:#1e88e5">${kidName}</span>`;
 
-        // THAY 2 GIÁ TRỊ DƯỚI ĐÂY BẰNG TELEGRAM THẬT
         const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN";
         const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID";
 
@@ -592,7 +876,7 @@
             if (el) el.style.display = 'none';
         }
 
-        async function submitFeedbackToTelegram() {
+        function submitFeedbackToTelegram() {
             const parentName = document.getElementById('fb-parent-name').value.trim();
             const phone = document.getElementById('fb-phone').value.trim();
             const content = document.getElementById('fb-content').value.trim();
@@ -606,7 +890,12 @@
                 return;
             }
 
-            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === '8692523139:AAEV1A1lA5xO1bUfnBY7Gj3KKODBIjArHNI' || !TELEGRAM_CHAT_ID || TELEGRAM_CHAT_ID === '567048046') {
+            if (
+                !TELEGRAM_BOT_TOKEN ||
+                TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' ||
+                !TELEGRAM_CHAT_ID ||
+                TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID'
+            ) {
                 box.style.display = 'block';
                 box.style.background = '#fff8e1';
                 box.style.color = '#e65100';
@@ -614,51 +903,54 @@
                 return;
             }
 
-            const message =
-`💬 GÓP Ý MỚI TỪ TRANG TOÁN
-
-👨‍👩‍👧 Phụ huynh: ${parentName}
-📞 SĐT: ${phone}
-👶 Bé: ${kidName}
-🆔 Username: ${kidUsername}
-🌐 Trang: toan.html
-
-📝 Nội dung góp ý:
-${content}`;
+            const message = [
+                '💬 GÓP Ý MỚI TỪ TRANG TOÁN',
+                '',
+                `👨‍👩‍👧 Phụ huynh: ${parentName}`,
+                `📞 SĐT: ${phone}`,
+                `👶 Bé: ${kidName}`,
+                `🆔 Username: ${kidUsername}`,
+                '🌐 Trang: toan.html',
+                '',
+                '📝 Nội dung góp ý:',
+                content
+            ].join('\n');
 
             try {
-                const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message
-                    })
-                });
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                form.target = 'telegramFeedbackTarget';
+                form.style.display = 'none';
 
-                const data = await res.json();
+                const chatIdInput = document.createElement('input');
+                chatIdInput.name = 'chat_id';
+                chatIdInput.value = TELEGRAM_CHAT_ID;
 
-                if (data.ok) {
-                    box.style.display = 'block';
-                    box.style.background = '#e8f5e9';
-                    box.style.color = '#2e7d32';
-                    box.innerText = 'Đã gửi góp ý thành công. Cảm ơn phụ huynh!';
+                const textInput = document.createElement('textarea');
+                textInput.name = 'text';
+                textInput.value = message;
+                textInput.style.display = 'none';
 
-                    document.getElementById('fb-parent-name').value = '';
-                    document.getElementById('fb-phone').value = '';
-                    document.getElementById('fb-content').value = '';
-                } else {
-                    box.style.display = 'block';
-                    box.style.background = '#ffebee';
-                    box.style.color = '#c62828';
-                    box.innerText = 'Gửi Telegram thất bại. Kiểm tra lại bot token hoặc chat id.';
-                    console.log(data);
-                }
+                form.appendChild(chatIdInput);
+                form.appendChild(textInput);
+                document.body.appendChild(form);
+                form.submit();
+                setTimeout(() => form.remove(), 1000);
+
+                box.style.display = 'block';
+                box.style.background = '#e8f5e9';
+                box.style.color = '#2e7d32';
+                box.innerText = 'Đã gửi góp ý thành công. Cảm ơn phụ huynh!';
+
+                document.getElementById('fb-parent-name').value = '';
+                document.getElementById('fb-phone').value = '';
+                document.getElementById('fb-content').value = '';
             } catch (e) {
                 box.style.display = 'block';
                 box.style.background = '#ffebee';
                 box.style.color = '#c62828';
-                box.innerText = 'Có lỗi khi gửi góp ý tới Telegram.';
+                box.innerText = 'Có lỗi khi gửi góp ý tới Telegram: ' + e.message;
                 console.log(e);
             }
         }
