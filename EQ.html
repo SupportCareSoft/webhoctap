@@ -1,624 +1,360 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bibon EQ</title>
-
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 <style>
-
-:root{
-  --primary:#e91e63;
-  --purple:#673ab7;
-  --orange:#ff9800;
-  --green:#4caf50;
-  --bg:#eefcff;
-}
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  background:var(--bg);
-  font-family:'Segoe UI',sans-serif;
-  color:#333;
-}
-
-/* ================= HEADER ================= */
-
+:root{--primary:#e91e63;--blue:#2196f3;--orange:#ff9800;--purple:#9c27b0;--yellow:#ffeb3b;--green:#2ecc71;--bg:#e0f7fa;--danger:#ef5350}
+*{box-sizing:border-box} body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#333}
 .top-header{
-  padding:8px 10px;
+  background:transparent;
+  padding:10px 12px 0;
 }
-
 .header-shell{
-  width:min(1180px,96%);
-  margin:auto;
-  background:#fff3b0;
-  border-radius:24px;
+  width:min(1180px,94%);
+  margin:0 auto;
+  background:linear-gradient(135deg,#fff59d,#ffe082);
   padding:10px 14px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:10px;
-  border-bottom:4px solid #fbc02d;
-  box-shadow:0 4px 10px rgba(0,0,0,.05);
+  border-bottom:5px solid #fbc02d;
+  border-radius:0 0 24px 24px;
+  gap:12px;
+  box-shadow:0 8px 18px rgba(0,0,0,.06)
 }
-
-.header-actions{
-  display:flex;
-  gap:10px;
+.header-left,.header-right{display:flex;align-items:center;gap:10px}
+.btn-home{background:var(--primary);color:#fff;text-decoration:none;padding:10px 18px;border-radius:24px;font-weight:700;box-shadow:0 4px #c2185b}
+.user-logged{
+  font-weight:800;color:#ad1457;background:rgba(255,255,255,.58);
+  padding:10px 14px;border-radius:18px;border:2px solid rgba(255,255,255,.58);white-space:nowrap
 }
-
-.header-btn{
-  border:none;
-  border-radius:18px;
-  padding:12px 20px;
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  text-decoration:none;
-  box-shadow:0 4px rgba(0,0,0,.1);
-}
-
-.home-btn{
-  background:linear-gradient(135deg,#ff4d8d,#e91e63);
-}
-
 .donate-btn{
-  background:linear-gradient(135deg,#7c4dff,#512da8);
+  border:none;border-radius:999px;cursor:pointer;background:linear-gradient(135deg,#ff5fa2,#e91e63);
+  color:#fff;font-size:15px;font-weight:800;box-shadow:0 8px 18px rgba(233,30,99,.30);
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;min-height:46px;position:relative
+}
+.donate-btn::after{
+  content:'';position:absolute;top:-3px;right:-3px;width:12px;height:12px;background:#fff;border:3px solid #ff4081;border-radius:50%
+}
+.donate-heart{
+  width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;font-size:16px
+}
+.donate-text-strong{
+  display:flex;flex-direction:column;align-items:flex-start;line-height:1.1
+}
+.donate-text-strong small{font-size:11px;font-weight:700;opacity:.92}
+.donate-hero{
+  width:88px;height:88px;border-radius:24px;margin:0 auto 12px;background:linear-gradient(135deg,#fff0f6,#fff8e1);
+  display:flex;align-items:center;justify-content:center;font-size:42px;border:2px solid #ffd1e1
+}
+.qr-wrap{
+  background:linear-gradient(135deg,#fdfdfd,#f7fbff);border:2px dashed #b3e5fc;border-radius:22px;padding:14px;margin-top:14px;text-align:center
+}
+.qr-wrap img{width:220px;max-width:100%;border-radius:16px;background:#fff;padding:10px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.qr-note{margin-top:10px;font-size:13px;color:#607d8b;font-weight:700;line-height:1.7}
+.main-box{background:#fff;margin:18px auto 28px;width:94%;max-width:1180px;border-radius:30px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.05)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;align-items:center;background:linear-gradient(135deg,#fffef8,#eef8ff);border:2px dashed #ffe082;border-radius:24px;padding:16px 18px;margin-bottom:18px}
+.hero h2{margin:0 0 8px;color:var(--purple)} .hero p{margin:0;line-height:1.7;font-weight:600;color:#546e7a}
+.status-box{background:#f8f9fa;border-radius:18px;padding:12px 16px;font-weight:700}
+.age-tabs,.set-tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.menu-btn,.set-btn{padding:10px 16px;border:none;border-radius:28px;background:#f0f0f0;font-weight:700;cursor:pointer;box-shadow:0 3px #ddd}
+.menu-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px #7b1fa2}
+.set-btn.active{background:var(--orange);color:#fff;box-shadow:0 3px #e67e22}
+.set-btn.done{background:#e8f5e9;color:#1b5e20;box-shadow:0 3px #a5d6a7}
+.helper{text-align:center;font-size:14px;color:#607d8b;font-weight:700;margin:8px 0 16px}
+.quiz-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:#fff;border:2px solid #eef2f6;border-radius:24px;padding:16px}
+.card.done{border-color:var(--green);background:#f8fff9}
+.type-tag{display:inline-block;background:#fff3cd;color:#8a6d3b;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;margin-bottom:8px}
+.card h4{margin:0 0 10px;color:#5e35b1;font-size:18px}
+.emoji-box{width:88px;height:88px;margin:8px auto 12px;display:flex;align-items:center;justify-content:center;background:#fff8e1;border:2px solid #ffe082;border-radius:20px;font-size:44px}
+.question-text{font-weight:800;line-height:1.6;margin-bottom:10px}
+.note-box{background:#f5faff;border-radius:16px;padding:12px;line-height:1.7;color:#455a64;margin-bottom:10px;font-weight:700}
+.opt-zone{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.opt-zone button{padding:8px 14px;border-radius:12px;border:2px solid #eee;background:white;cursor:pointer;font-weight:bold}
+.opt-zone button.correct{background:#e8f5e9;border-color:var(--green);color:#1b5e20}
+.opt-zone button.wrong{background:#ffebee;border-color:var(--danger);color:#b71c1c}
+.btn-submit{padding:14px 40px;border-radius:50px;border:none;background:#4CAF50;color:white;font-size:20px;font-weight:bold;cursor:pointer;margin:24px auto 8px;box-shadow:0 6px #388E3C;display:block}
+@media (max-width:900px){.hero,.quiz-grid{grid-template-columns:1fr}}
+@media (max-width:768px){
+.top-header{padding:8px 8px 0}
+.header-shell{width:calc(100% - 4px);padding:10px;flex-direction:column;align-items:stretch}
+.header-left,.header-right{width:100%;justify-content:center;flex-wrap:wrap}
+.btn-home{width:100%;text-align:center}
+.donate-btn{width:100%;justify-content:center}
+.donate-text-strong{align-items:center}
+.user-logged{text-align:center;font-size:14px;white-space:normal}
+.main-box{width:calc(100% - 12px);padding:14px 8px;border-radius:24px}
+.hero{padding:14px 12px;border-radius:20px}
+.hero h2{font-size:23px;text-align:center}
+.status-box{font-size:14px}
+.age-tabs,.set-tabs{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.age-tabs::-webkit-scrollbar,.set-tabs::-webkit-scrollbar{display:none}
+.menu-btn,.set-btn{flex:0 0 auto;white-space:nowrap;font-size:13px;padding:10px 14px}
+.quiz-grid{grid-template-columns:1fr;gap:12px}
+.card{padding:14px 10px;border-radius:20px}
+.question-text{font-size:18px}
+.btn-submit{width:100%;font-size:18px;padding:14px 16px}
+.feedback-fab{right:12px;bottom:12px;padding:12px 16px;font-size:14px}
 }
 
-.user-box{
-  background:#fff;
-  padding:12px 20px;
-  border-radius:20px;
-  font-size:16px;
-  font-weight:800;
-  color:#1976d2;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  align-items:center;justify-content:center;z-index:3000;padding:16px
 }
-
-/* ================= MAIN ================= */
-
-.main-box{
-  width:min(1180px,96%);
-  margin:14px auto;
-  background:#fff;
-  border-radius:28px;
-  padding:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,.05);
+.modal-card{
+  max-width:430px;width:100%;position:relative;text-align:center;background:white;
+  border-radius:28px;padding:18px;box-shadow:0 18px 40px rgba(0,0,0,.18)
 }
-
-/* ================= HERO ================= */
-
-.hero{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:14px;
-  background:linear-gradient(135deg,#fffef8,#eef8ff);
-  border-radius:24px;
-  padding:18px 20px;
-  border:2px dashed #ffd54f;
-  margin-bottom:18px;
+.modal-close{
+  position:absolute;top:10px;right:12px;border:none;background:#f3f3f3;width:36px;height:36px;
+  border-radius:50%;cursor:pointer;font-size:24px
 }
-
-.hero h2{
-  margin:0 0 8px;
-  color:#5e35b1;
-  font-size:28px;
+.modal-hero{
+  width:88px;height:88px;border-radius:24px;margin:0 auto 12px;background:linear-gradient(135deg,#fff0f6,#fff8e1);
+  display:flex;align-items:center;justify-content:center;font-size:42px;border:2px solid #ffd1e1
 }
-
-.hero p{
-  margin:0;
-  line-height:1.5;
-  font-size:17px;
-  font-weight:600;
-}
-
-.status-box{
-  background:#fff;
-  border-radius:20px;
-  padding:14px 18px;
-  line-height:2;
-  font-size:16px;
-  font-weight:700;
-  min-width:250px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-}
-
-/* ================= SELECT ================= */
-
-.age-select-wrap{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  flex-wrap:wrap;
-  margin-bottom:18px;
-}
-
-.age-select-wrap label{
-  font-size:16px;
-  font-weight:800;
-  color:#5e35b1;
-}
-
-.age-select{
-  padding:12px 16px;
-  border-radius:16px;
-  border:2px solid #ddd;
-  background:#fff;
-  min-width:220px;
-  font-size:16px;
-  font-weight:700;
-}
-
-/* ================= SET BUTTONS ================= */
-
-.set-tabs{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.set-btn{
-  border:none;
-  background:#edf4fb;
-  padding:12px 22px;
-  border-radius:18px;
-  font-size:16px;
-  font-weight:800;
-  color:#1e293b;
-  cursor:pointer;
-  box-shadow:0 4px rgba(0,0,0,.05);
-  transition:.2s;
-}
-
-.set-btn:hover{
-  transform:translateY(-1px);
-}
-
-.set-btn.active{
-  background:#ff9800;
-  color:#fff;
-}
-
-.set-btn.done{
-  background:#4caf50;
-  color:#fff;
-}
-
-/* ================= QUESTIONS ================= */
-
-.quiz-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:20px;
-  align-items:stretch;
-}
-
-.card{
-  background:#fff;
-  border:2px solid #edf1f5;
-  border-radius:26px;
-  padding:18px;
-  display:flex;
-  flex-direction:column;
-  min-height:430px;
-  box-shadow:0 4px 12px rgba(0,0,0,.04);
-}
-
-.type-tag{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:max-content;
-  padding:8px 14px;
-  border-radius:999px;
-  background:#fff3cd;
-  color:#8a6d3b;
-  font-size:14px;
-  font-weight:800;
-  margin-bottom:16px;
-}
-
-/* GIỮ CHIỀU CAO ĐỀU */
-
-.question-head{
-  min-height:120px;
-  display:flex;
-  align-items:flex-start;
-}
-
-.question-text{
-  width:100%;
-  font-size:28px;
-  line-height:1.45;
-  font-weight:800;
-  color:#1e293b;
-  word-break:break-word;
-}
-
-/* ================= ANSWERS ================= */
-
-.opt-zone{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  margin-top:auto;
-}
-
-.opt-zone button{
-  width:100%;
-  border:2px solid #ececec;
-  background:#fff;
-  border-radius:18px;
-  padding:16px 18px;
-  font-size:18px;
-  text-align:left;
-  cursor:pointer;
-  transition:.18s;
-  min-height:62px;
-  display:flex;
-  align-items:center;
-}
-
-.opt-zone button:hover{
-  background:#f8fbff;
-  border-color:#dbeafe;
-}
-
-.opt-zone button.correct{
-  background:#e8f5e9;
-  border-color:#4caf50;
-  color:#1b5e20;
-}
-
-.opt-zone button.wrong{
-  background:#ffebee;
-  border-color:#ef5350;
-  color:#b71c1c;
-}
-
-/* ================= SUBMIT ================= */
-
-.btn-submit{
-  margin:28px auto 0;
-  display:block;
-  border:none;
-  background:#4caf50;
-  color:#fff;
-  padding:16px 42px;
-  border-radius:999px;
-  font-size:20px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 6px #2e7d32;
-}
-
-/* ================= FEEDBACK ================= */
-
 .feedback-fab{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  border:none;
-  background:linear-gradient(135deg,#7c4dff,#512da8);
-  color:#fff;
-  border-radius:999px;
-  padding:14px 18px;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 10px 22px rgba(81,45,168,.28);
+  position:fixed;right:18px;bottom:18px;z-index:2500;border:none;
+  background:linear-gradient(135deg,#7c4dff,#512da8);color:white;border-radius:999px;
+  padding:13px 18px;font-size:15px;font-weight:800;box-shadow:0 10px 22px rgba(81,45,168,.28);cursor:pointer
 }
-
-/* ================= MOBILE ================= */
-
-@media(max-width:768px){
-
-  .header-shell{
-    flex-direction:column;
-    align-items:stretch;
-  }
-
-  .header-actions{
-    width:100%;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-  }
-
-  .header-btn{
-    width:100%;
-  }
-
-  .user-box{
-    text-align:center;
-  }
-
-  .hero{
-    grid-template-columns:1fr;
-  }
-
-  .status-box{
-    width:100%;
-    min-width:auto;
-  }
-
-  .quiz-grid{
-    grid-template-columns:1fr;
-  }
-
-  .card{
-    min-height:auto;
-  }
-
-  .question-head{
-    min-height:auto;
-  }
-
-  .question-text{
-    font-size:23px;
-  }
-
-  .set-tabs{
-    flex-wrap:nowrap;
-    overflow-x:auto;
-    padding-bottom:8px;
-  }
-
-  .set-tabs::-webkit-scrollbar{
-    display:none;
-  }
-
-  .set-btn{
-    flex:0 0 auto;
-  }
-
-  .btn-submit{
-    width:100%;
-  }
-
+.feedback-form{display:grid;gap:10px;margin-top:10px}
+.feedback-form input,.feedback-form textarea{
+  width:100%;padding:12px 14px;border:2px solid #e6eef7;border-radius:16px;
+  font-size:15px;outline:none;font-family:inherit
 }
+.feedback-form textarea{min-height:120px;resize:vertical}
+.feedback-submit{
+  border:none;border-radius:16px;background:var(--purple);color:white;font-weight:800;
+  font-size:15px;padding:12px 14px;cursor:pointer
+}
+.feedback-msg{
+  margin-top:10px;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;display:none
+}
+.hidden-iframe{display:none;width:0;height:0;border:0}
 
 </style>
 </head>
-
 <body>
-
-<!-- ================= HEADER ================= -->
-
 <div class="top-header">
-
   <div class="header-shell">
-
-    <div class="header-actions">
-
-      <a href="index.html" class="header-btn home-btn">
-        🏠 Trang chủ
-      </a>
-
-      <button class="header-btn donate-btn">
-        💝 Ủng hộ
+    <div class="header-left">
+      <a href="index.html" class="btn-home">🏠 Về Trang Chủ</a>
+      <button class="donate-btn" onclick="openDonateModal()">
+        <span class="donate-heart">💝</span>
+        <span class="donate-text-strong">Ủng hộ phát triển<small>Quét QR để tiếp sức cho trang học của bé</small></span>
       </button>
-
     </div>
-
-    <div class="user-box">
-      💖 Bé: Quốc Anh
+    <div class="header-right">
+      <div class="user-logged">💖 Bé đang học EQ: <span id="display-name" style="color:var(--blue)">...</span></div>
     </div>
-
   </div>
-
 </div>
 
-<!-- ================= MAIN ================= -->
+<div id="donateModal" class="modal-overlay" style="display:none;">
+  <div class="modal-card" style="text-align:center; max-width:430px;">
+    <button class="modal-close" onclick="closeDonateModal()">×</button>
+    <div class="donate-hero">💝</div>
+    <h3 style="margin:0 0 8px;color:#c2185b;font-size:28px;">Cảm ơn bố mẹ và bé</h3>
+    <div class="note-box" style="margin-bottom:0;">
+      Mỗi lượt ủng hộ là một lời động viên để tiếp tục phát triển thêm nhiều bài học EQ, IQ, Toán, Tiếng Việt và Tiếng Anh hấp dẫn hơn cho bé mỗi ngày.
+    </div>
+    <div class="qr-wrap">
+      <img src="https://i.ibb.co/Xkpp8mBR/z6943077872275-b45da59ac0e58f1cc73a0d8846b1d3c8.jpg" alt="QR cảm ơn">
+      <div class="qr-note">Quét mã để nhận lời cảm ơn và tiếp sức cho việc phát triển thêm nội dung học tập cho bé.</div>
+    </div>
+  </div>
+</div>
+
+<div id="feedbackModal" class="modal-overlay" style="display:none;">
+  <div class="modal-card" style="text-align:center; max-width:430px;">
+    <button class="modal-close" onclick="closeFeedbackModal()">×</button>
+    <div class="modal-hero" style="background:linear-gradient(135deg,#eef4ff,#f3e5f5);border-color:#c5cae9;">💬</div>
+    <h3 style="margin:0 0 8px;color:#5e35b1;font-size:28px;">Góp ý cho trang EQ</h3>
+    <div class="note-box" style="margin-bottom:0;">
+      Phụ huynh có thể gửi góp ý, lỗi hiển thị hoặc đề xuất thêm nội dung để website ngày càng tốt hơn.
+    </div>
+    <div class="feedback-form">
+      <input type="text" id="fb-parent-name" placeholder="Tên phụ huynh...">
+      <input type="text" id="fb-phone" placeholder="Số điện thoại...">
+      <textarea id="fb-content" placeholder="Nhập nội dung góp ý..."></textarea>
+      <button class="feedback-submit" onclick="submitFeedbackToTelegram()">Gửi góp ý</button>
+    </div>
+    <div id="feedback-msg" class="feedback-msg"></div>
+  </div>
+</div>
+
+<iframe name="telegramFeedbackTarget" class="hidden-iframe"></iframe>
+
+<button class="feedback-fab" onclick="openFeedbackModal()">💬 Góp ý</button>
 
 <div class="main-box">
-
-  <!-- HERO -->
-
   <div class="hero">
-
     <div>
-      <h2>🚀 EQ 7-8 tuổi</h2>
-      <p>Luyện đồng cảm và kiểm soát cảm xúc.</p>
+      <h2 id="ageTitle">🐣 EQ 3-4 tuổi</h2>
+      <p id="ageDesc"></p>
     </div>
-
     <div class="status-box">
-      <div>🎯 Độ tuổi: 7-8 tuổi</div>
-      <div>📘 Bộ đề: 1/10</div>
-      <div>⭐ Hoàn thành: 0/10</div>
+      <div>🎯 Độ tuổi: <span id="statusAge">3-4 tuổi</span></div>
+      <div>📝 Bộ câu hỏi: <span id="statusSet">1</span>/10</div>
+      <div>⭐ Hoàn thành: <span id="statusDone">0</span>/10</div>
     </div>
-
   </div>
-
-  <!-- SELECT -->
-
-  <div class="age-select-wrap">
-
-    <label>🎯 Chọn độ tuổi:</label>
-
-    <select class="age-select">
-      <option>🚀 7-8 tuổi</option>
-      <option>🐣 3-4 tuổi</option>
-      <option>🌟 5-6 tuổi</option>
-      <option>🧠 9-10 tuổi</option>
-    </select>
-
-  </div>
-
-  <!-- SET -->
-
-  <div class="set-tabs">
-
-    <button class="set-btn active">📘 Đề 1</button>
-    <button class="set-btn">📘 Đề 2</button>
-    <button class="set-btn">📘 Đề 3</button>
-    <button class="set-btn">📘 Đề 4</button>
-    <button class="set-btn">📘 Đề 5</button>
-    <button class="set-btn">📘 Đề 6</button>
-    <button class="set-btn">📘 Đề 7</button>
-    <button class="set-btn">📘 Đề 8</button>
-    <button class="set-btn">📘 Đề 9</button>
-    <button class="set-btn">📘 Đề 10</button>
-
-  </div>
-
-  <!-- QUESTIONS -->
-
-  <div class="quiz-grid">
-
-    <!-- CARD -->
-
-    <div class="card">
-
-      <div class="type-tag">
-        Câu hỏi EQ
-      </div>
-
-      <div class="question-head">
-        <div class="question-text">
-          😟 Bạn bị điểm thấp, bạn nên làm gì?
-        </div>
-      </div>
-
-      <div class="opt-zone">
-
-        <button>
-          Khóc và bỏ cuộc
-        </button>
-
-        <button>
-          Xem lại lỗi và cố gắng hơn
-        </button>
-
-        <button>
-          Đổ lỗi cho người khác
-        </button>
-
-      </div>
-
-    </div>
-
-    <!-- CARD -->
-
-    <div class="card">
-
-      <div class="type-tag">
-        Câu hỏi EQ
-      </div>
-
-      <div class="question-head">
-        <div class="question-text">
-          🧑‍🤝‍🧑 Bạn mới chuyển lớp, bạn nên làm gì?
-        </div>
-      </div>
-
-      <div class="opt-zone">
-
-        <button>
-          Ngồi một mình
-        </button>
-
-        <button>
-          Chủ động làm quen với bạn
-        </button>
-
-        <button>
-          Trêu bạn khác
-        </button>
-
-      </div>
-
-    </div>
-
-    <!-- CARD -->
-
-    <div class="card">
-
-      <div class="type-tag">
-        Câu hỏi EQ
-      </div>
-
-      <div class="question-head">
-        <div class="question-text">
-          😡 Khi bạn rất tức giận, bạn nên làm gì?
-        </div>
-      </div>
-
-      <div class="opt-zone">
-
-        <button>
-          La hét
-        </button>
-
-        <button>
-          Hít thở sâu
-        </button>
-
-        <button>
-          Ném đồ
-        </button>
-
-      </div>
-
-    </div>
-
-    <!-- CARD -->
-
-    <div class="card">
-
-      <div class="type-tag">
-        Câu hỏi EQ
-      </div>
-
-      <div class="question-head">
-        <div class="question-text">
-          🎁 Bạn bè chia sẻ đồ chơi với bạn, bạn nên?
-        </div>
-      </div>
-
-      <div class="opt-zone">
-
-        <button>
-          Cảm ơn bạn
-        </button>
-
-        <button>
-          Giật thêm đồ chơi
-        </button>
-
-        <button>
-          Bỏ đi
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- SUBMIT -->
-
-  <button class="btn-submit">
-    🚀 Nộp bài EQ
-  </button>
-
+  <div class="age-tabs" id="ageTabs"></div>
+  <div class="set-tabs" id="setTabs"></div>
+  
+  <div class="quiz-grid" id="quizContainer"></div>
+  <button class="btn-submit" onclick="submitSet()">Nộp bài EQ 🚀</button>
 </div>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCuQCluWc07QOWpAC5lGCxMeOGoujq4k8w",
+  authDomain: "bon-bi.firebaseapp.com",
+  databaseURL: "https://bon-bi-default-rtdb.firebaseio.com",
+  projectId: "bon-bi",
+  storageBucket: "bon-bi.firebasestorage.app",
+  messagingSenderId: "988400970351",
+  appId: "1:988400970351:web:21e9181950114225417b9a"
+};
 
-<!-- FEEDBACK -->
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const kidName = localStorage.getItem('kidName');
+const ageBanks = {"m3": {"label": "3-4 tuổi", "icon": "🐣", "desc": "Nhận biết cảm xúc cơ bản, chờ đến lượt, xin lỗi, cảm ơn và nhờ người lớn giúp đỡ.", "emotions": [["😊", "vui vẻ"], ["😢", "buồn"], ["😡", "tức giận"], ["😨", "sợ hãi"], ["😴", "mệt"], ["😍", "thích"], ["😖", "khó chịu"], ["😌", "bình tĩnh"]], "situations": [["Bé làm rơi đồ chơi và buồn", "Nói với người lớn", ["Nói với người lớn", "Đập đồ", "Khóc mãi không nói"]], ["Bạn đang chơi, bé muốn chơi cùng", "Xin chơi cùng", ["Giật đồ chơi", "Xin chơi cùng", "Đẩy bạn"]], ["Bé làm đổ nước", "Xin lỗi và lau lại", ["Bỏ chạy", "Xin lỗi và lau lại", "Cười lớn"]], ["Bạn bị ngã", "Hỏi bạn có sao không", ["Cười bạn", "Hỏi bạn có sao không", "Bỏ đi"]], ["Bé rất tức giận", "Hít thở sâu", ["La hét", "Hít thở sâu", "Ném đồ"]], ["Bé muốn bánh", "Nói con muốn ăn bánh", ["Khóc to", "Nói con muốn ăn bánh", "Đập bàn"]], ["Đến giờ cất đồ chơi", "Cất đồ chơi gọn gàng", ["Giấu đồ chơi", "Cất đồ chơi gọn gàng", "Vứt lung tung"]], ["Bạn đang nói", "Lắng nghe bạn", ["Cắt lời bạn", "Lắng nghe bạn", "Quay đi"]], ["Bé làm đau bạn", "Xin lỗi bạn", ["Cãi lại", "Xin lỗi bạn", "Chạy mất"]], ["Bé sợ bóng tối", "Gọi người lớn giúp", ["Khóc một mình", "Gọi người lớn giúp", "Trốn xuống gầm bàn"]]]}, "m5": {"label": "5-6 tuổi", "icon": "🌟", "desc": "Nhận biết cảm xúc của mình và người khác, biết chia sẻ, chờ đợi và xin phép.", "emotions": [["😊", "hạnh phúc"], ["😢", "thất vọng"], ["😠", "bực mình"], ["😟", "lo lắng"], ["🥰", "được yêu thương"], ["😳", "ngại ngùng"], ["🤗", "ấm áp"], ["😮", "ngạc nhiên"]], "situations": [["Bạn chưa chọn bé chơi cùng", "Nói con hơi buồn", ["Đẩy bạn", "Nói con hơi buồn", "Bỏ đồ chơi của bạn"]], ["Bé muốn mượn bút màu của bạn", "Xin phép bạn", ["Lấy luôn", "Xin phép bạn", "Giấu bút"]], ["Bạn đang khóc", "An ủi bạn", ["Mặc kệ", "An ủi bạn", "Trêu bạn"]], ["Bé thua trò chơi", "Chấp nhận và chơi tiếp", ["Khóc ăn vạ", "Chấp nhận và chơi tiếp", "Đập đồ"]], ["Bé làm sai", "Nhận lỗi và sửa", ["Đổ lỗi", "Nhận lỗi và sửa", "Giận dỗi"]], ["Bạn có ít đồ chơi hơn", "Chia sẻ với bạn", ["Cất hết", "Chia sẻ với bạn", "Cười bạn"]], ["Đến lượt bạn khác", "Chờ đến lượt", ["Chen ngang", "Chờ đến lượt", "Giành phần"]], ["Bé thấy hồi hộp trước khi lên lớp", "Nói cảm xúc với cô", ["Trốn học", "Nói cảm xúc với cô", "Gây ồn"]], ["Bạn xin lỗi bé", "Nói không sao đâu", ["Mắng bạn", "Nói không sao đâu", "Bỏ đi"]], ["Bé rất nóng giận", "Đếm 1 đến 5", ["Hét lên", "Đếm 1 đến 5", "Đập cửa"]]]}, "m7": {"label": "7-8 tuổi", "icon": "🚀", "desc": "Luyện đồng cảm, tự kiểm soát, giải quyết mâu thuẫn đơn giản và giao tiếp tích cực.", "emotions": [["😌", "bình tĩnh"], ["😣", "áp lực"], ["😕", "bối rối"], ["😤", "ức chế"], ["🤩", "tự hào"], ["😔", "tổn thương"], ["🥺", "cần giúp đỡ"], ["🙂", "tôn trọng"]], "situations": [["Bạn bị cả nhóm quên tên trong trò chơi", "Mời bạn tham gia lại", ["Trêu bạn", "Mời bạn tham gia lại", "Làm ngơ"]], ["Bé bị điểm thấp", "Xem lại lỗi và cố gắng", ["Xé bài", "Xem lại lỗi và cố gắng", "Đổ lỗi bạn"]], ["Hai bạn cùng muốn một món đồ", "Thỏa thuận thay phiên", ["Giật lấy", "Thỏa thuận thay phiên", "Bỏ mặc nhau"]], ["Bạn nói điều làm bé buồn", "Nói cảm xúc của mình", ["Đánh bạn", "Nói cảm xúc của mình", "Trả đũa"]], ["Bé lỡ hứa mà quên", "Xin lỗi và hẹn lại", ["Lờ đi", "Xin lỗi và hẹn lại", "Nói dối tiếp"]], ["Bạn mới chuyển lớp", "Chủ động làm quen", ["Tránh xa", "Chủ động làm quen", "Chê bạn"]], ["Bé bị trêu", "Nói với thầy cô hoặc cha mẹ", ["Trêu lại mạnh hơn", "Nói với thầy cô hoặc cha mẹ", "Giấu mãi"]], ["Nhóm làm việc không thống nhất", "Lắng nghe từng ý kiến", ["Bỏ nhóm", "Lắng nghe từng ý kiến", "La lớn"]], ["Bé đang rất tức", "Tạm dừng rồi nói sau", ["Nói lời làm đau người khác", "Tạm dừng rồi nói sau", "Ném đồ"]], ["Bạn buồn vì thua cuộc", "Động viên bạn", ["Cười chê", "Động viên bạn", "Bỏ đi"]]]}, "m9": {"label": "9-10 tuổi", "icon": "🧠", "desc": "Rèn EQ sâu hơn: nhận diện cảm xúc phức hợp, giao tiếp tôn trọng, làm việc nhóm và tự điều chỉnh.", "emotions": [["😬", "căng thẳng"], ["😓", "áp lực"], ["😄", "phấn khởi"], ["😞", "thất vọng"], ["🤝", "hợp tác"], ["💛", "đồng cảm"], ["😶", "khó nói"], ["😎", "tự tin"]], "situations": [["Bạn bị hiểu lầm trong nhóm", "Bình tĩnh giải thích", ["Cãi lớn", "Bình tĩnh giải thích", "Bỏ nhóm ngay"]], ["Bé nhận góp ý từ cô giáo", "Lắng nghe để sửa", ["Tự ái", "Lắng nghe để sửa", "Tranh cãi"]], ["Bạn thân đang buồn nhưng không nói", "Hỏi han nhẹ nhàng", ["Ép bạn nói", "Hỏi han nhẹ nhàng", "Mặc kệ"]], ["Bé quá lo trước bài kiểm tra", "Lập kế hoạch ôn tập", ["Hoảng sợ", "Lập kế hoạch ôn tập", "Bỏ học"]], ["Nhóm có bạn làm ít việc", "Nhắc bạn tôn trọng", ["Nói xấu bạn", "Nhắc bạn tôn trọng", "Làm hết rồi giận"]], ["Bé không đồng ý ý kiến bạn", "Nói khác nhưng lịch sự", ["Chê bạn dở", "Nói khác nhưng lịch sự", "Phớt lờ bạn"]], ["Bạn vô tình làm hỏng đồ của bé", "Trao đổi bình tĩnh", ["Mắng dữ dội", "Trao đổi bình tĩnh", "Cắt chơi"]], ["Bé thấy bạn bị cô lập", "Rủ bạn tham gia", ["Không liên quan", "Rủ bạn tham gia", "Cười theo nhóm"]], ["Bé rất tức sau một cuộc cãi nhau", "Viết ra cảm xúc rồi bình tĩnh", ["Gửi tin nhắn khó nghe", "Viết ra cảm xúc rồi bình tĩnh", "Đập đồ"]], ["Bé hoàn thành việc khó", "Tự ghi nhận nỗ lực", ["Xem thường bản thân", "Tự ghi nhận nỗ lực", "Chê người khác"]]]}};
+let currentAge = 'm3', currentSet = 1, currentQuestions = [], answers = {};
+function progressKey(age){ return 'eq_progress_' + age; }
+function getProgress(age){ return JSON.parse(localStorage.getItem(progressKey(age)) || '{"doneSets":[]}'); }
+function markDone(age,setNo){ const p=getProgress(age); if(!p.doneSets.includes(setNo)) p.doneSets.push(setNo); localStorage.setItem(progressKey(age), JSON.stringify(p)); }
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function buildEmotionQuestion(item, idx){ const bank=ageBanks[currentAge].emotions; const others=bank.filter(x=>x[1]!==item[1]).map(x=>x[1]); return {id:'q'+idx,type:'emotion',tag:'Nhận biết cảm xúc',emoji:item[0],prompt:'Cảm xúc này là gì?',answer:item[1],options:shuffle([item[1],...shuffle(others).slice(0,2)])}; }
+function buildSituationQuestion(item, idx){ return {id:'q'+idx,type:'situation',tag:'Xử lý tình huống',prompt:item[0],answer:item[1],options:item[2]}; }
+function buildSet(ageKey,setNo){ const bank=ageBanks[ageKey]; const start=(setNo-1)%bank.situations.length; const emoStart=(setNo-1)%bank.emotions.length; const qs=[]; let n=1; for(let i=0;i<4;i++) qs.push(buildEmotionQuestion(bank.emotions[(emoStart+i)%bank.emotions.length], n++)); for(let i=0;i<6;i++) qs.push(buildSituationQuestion(bank.situations[(start+i)%bank.situations.length], n++)); return qs; }
+function renderAgeTabs(){ document.getElementById('ageTabs').innerHTML = Object.keys(ageBanks).map(key=>{ const t=ageBanks[key]; return '<button class="menu-btn ' + (key===currentAge?'active':'') + '" onclick="changeAge(\'' + key + '\')">' + t.icon + ' ' + t.label + '</button>'; }).join(''); }
+function renderSetTabs(){ const p=getProgress(currentAge); document.getElementById('setTabs').innerHTML = Array.from({length:10},(_,i)=>i+1).map(no=>{ let cls='set-btn'; if(no===currentSet) cls+=' active'; if(p.doneSets.includes(no)) cls+=' done'; return '<button class="' + cls + '" onclick="changeSet(' + no + ')">Bộ ' + no + '</button>'; }).join(''); }
+function renderStatus(){ const t=ageBanks[currentAge]; document.getElementById('ageTitle').innerText=t.icon + ' EQ ' + t.label; document.getElementById('ageDesc').innerText=t.desc; document.getElementById('statusAge').innerText=t.label; document.getElementById('statusSet').innerText=currentSet; document.getElementById('statusDone').innerText=getProgress(currentAge).doneSets.length; }
+function choose(qid,value){ const q=currentQuestions.find(x=>x.id===qid); if(!q) return; answers[qid]=value; q.options.forEach(opt=>{ const btn=document.getElementById(qid + '_' + encodeURIComponent(opt)); if(btn) btn.classList.remove('correct','wrong'); }); const chosen=document.getElementById(qid + '_' + encodeURIComponent(value)); const card=document.getElementById('card_' + qid); if(card) card.classList.remove('done'); if(value===q.answer){ if(chosen) chosen.classList.add('correct'); if(card) card.classList.add('done'); } else { if(chosen) chosen.classList.add('wrong'); } }
+function renderQuestions(){ currentQuestions=buildSet(currentAge,currentSet); answers={}; document.getElementById('quizContainer').innerHTML = currentQuestions.map((q,i)=>{ const emojiBox=q.emoji?'<div class="emoji-box">' + q.emoji + '</div>':''; const noteBox=q.type==='situation'?'<div class="note-box">Bé chọn cách ứng xử phù hợp nhất nhé.</div>':''; return '<div class="card" id="card_' + q.id + '"><div class="type-tag">' + q.tag + '</div><h4>Câu ' + (i+1) + '</h4>' + emojiBox + noteBox + '<div class="question-text">' + q.prompt + '</div><div class="opt-zone">' + q.options.map(opt=>'<button id="' + q.id + '_' + encodeURIComponent(opt) + '" onclick="choose(\'' + q.id + '\', \''
++ String(opt).replace(/'/g,"\\'") + '\')">' + opt + '</button>').join('') + '</div></div>'; }).join(''); }
+function isCorrect(q){ return answers[q.id]===q.answer; }
+async function submitSet(){ const unanswered=currentQuestions.filter(q=>!answers[q.id]); if(unanswered.length){ alert('Bé hãy làm hết tất cả 10 câu trước nhé!'); return; } const score=currentQuestions.filter(isCorrect).length; if(score===currentQuestions.length){ markDone(currentAge,currentSet); try{ await db.ref('eq_history').push({ studentName:kidName || 'Bé', ageGroup:currentAge, setNo:currentSet, result:score + '/' + currentQuestions.length, timestamp:Date.now(), date:new Date().toLocaleString('vi-VN') }); }catch(e){ console.log('Lưu điểm EQ lỗi:', e.message); } renderSetTabs(); renderStatus(); if(currentSet<10){ alert('Giỏi lắm! Bé làm đúng hết bộ này rồi, sang bộ tiếp theo nhé!'); currentSet += 1; renderSetTabs(); renderStatus(); renderQuestions(); } else { alert('Tuyệt vời! Bé đã hoàn thành đủ 10 bộ EQ của độ tuổi này.'); } } else { alert('Bé được ' + score + '/10. Bé làm lại để đúng hết nhé!'); renderQuestions(); } }
+function changeAge(age){ currentAge=age; currentSet=1; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); }
+function changeSet(no){ currentSet=no; renderSetTabs(); renderStatus(); renderQuestions(); }
+  
+function openDonateModal(){
+  const el = document.getElementById('donateModal');
+  if(el) el.style.display = 'flex';
+}
+function closeDonateModal(){
+  const el = document.getElementById('donateModal');
+  if(el) el.style.display = 'none';
+}
+window.addEventListener('click', function(event){
+  const donateModal = document.getElementById('donateModal');
+  const feedbackModal = document.getElementById('feedbackModal');
+  if(event.target === donateModal) closeDonateModal();
+  if(event.target === feedbackModal) closeFeedbackModal();
+});
 
-<button class="feedback-fab">
-  💬 Góp ý
-</button>
 
+const kidUsername = localStorage.getItem('kidUsername') || "";
+const TELEGRAM_BOT_TOKEN = "8692523139:AAEV1A1lA5xO1bUfnBY7Gj3KKODBIjArHNI";
+const TELEGRAM_CHAT_ID = "567048046";
+
+function openFeedbackModal(){
+  const el = document.getElementById('feedbackModal');
+  if(el) el.style.display = 'flex';
+}
+function closeFeedbackModal(){
+  const el = document.getElementById('feedbackModal');
+  if(el) el.style.display = 'none';
+}
+
+function submitFeedbackToTelegram() {
+  const parentName = document.getElementById('fb-parent-name').value.trim();
+  const phone = document.getElementById('fb-phone').value.trim();
+  const content = document.getElementById('fb-content').value.trim();
+  const box = document.getElementById('feedback-msg');
+
+  if (!parentName || !phone || !content) {
+    box.style.display = 'block';
+    box.style.background = '#ffebee';
+    box.style.color = '#c62828';
+    box.innerText = 'Phụ huynh vui lòng nhập đầy đủ thông tin góp ý.';
+    return;
+  }
+
+  if (
+    !TELEGRAM_BOT_TOKEN ||
+    TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' ||
+    !TELEGRAM_CHAT_ID ||
+    TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID'
+  ) {
+    box.style.display = 'block';
+    box.style.background = '#fff8e1';
+    box.style.color = '#e65100';
+    box.innerText = 'Chưa cấu hình TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID.';
+    return;
+  }
+
+  const message = [
+    '💬 GÓP Ý MỚI TỪ TRANG EQ',
+    '',
+    `👨‍👩‍👧 Phụ huynh: ${parentName}`,
+    `📞 SĐT: ${phone}`,
+    `👶 Bé: ${kidName || ''}`,
+    `🆔 Username: ${kidUsername}`,
+    '🌐 Trang: EQ.html',
+    '',
+    '📝 Nội dung góp ý:',
+    content
+  ].join('\n');
+
+  try {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    form.target = 'telegramFeedbackTarget';
+    form.style.display = 'none';
+
+    const chatIdInput = document.createElement('input');
+    chatIdInput.name = 'chat_id';
+    chatIdInput.value = TELEGRAM_CHAT_ID;
+
+    const textInput = document.createElement('textarea');
+    textInput.name = 'text';
+    textInput.value = message;
+    textInput.style.display = 'none';
+
+    form.appendChild(chatIdInput);
+    form.appendChild(textInput);
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(() => form.remove(), 1000);
+
+    box.style.display = 'block';
+    box.style.background = '#e8f5e9';
+    box.style.color = '#2e7d32';
+    box.innerText = 'Đã gửi góp ý.';
+
+    document.getElementById('fb-parent-name').value = '';
+    document.getElementById('fb-phone').value = '';
+    document.getElementById('fb-content').value = '';
+  } catch (e) {
+    box.style.display = 'block';
+    box.style.background = '#ffebee';
+    box.style.color = '#c62828';
+    box.innerText = 'Có lỗi khi gửi góp ý tới Telegram: ' + e.message;
+    console.log(e);
+  }
+}
+
+window.onload = () => { if(!kidName){ alert('Bé hãy quay lại Trang Chủ để đăng nhập nhé!'); window.location.href='index.html'; return; } document.getElementById('display-name').innerText=kidName; renderAgeTabs(); renderSetTabs(); renderStatus(); renderQuestions(); };
+</script>
 </body>
 </html>
